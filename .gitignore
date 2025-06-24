@@ -1,0 +1,6 @@
+.idea/
+*.pt
+data/
+*__pycache__*
+*.cif
+*.ssv
