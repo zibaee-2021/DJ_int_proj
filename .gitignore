@@ -4,3 +4,4 @@ data/
 *__pycache__*
 *.cif
 *.ssv
+.ipynb_checkpoints/
