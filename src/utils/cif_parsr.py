@@ -230,7 +230,7 @@ def parse_cif(pdb_id: str, mmcif_dict: dict) -> List[pd.DataFrame]:
         atomsite_pdf, polyseq_pdf = chain_pdf
         joined_pdf = _join_atomsite_to_polyseq(atomsite_pdf, polyseq_pdf)
         joined_pdf = joined_pdf.loc[joined_pdf['A_label_atom_id'].isin(('CA',))]  # ALPHA-CARBON ONLY
-        print(f'pdf.shape after removing everything except alpha-carbons={joined_pdf.shape}')
+        # print(f'pdf.shape after removing everything except alpha-carbons={joined_pdf.shape}')
         joined_pdf = _rearrange_cols(joined_pdf)
         joined_pdf = _cast_number_strings_to_numeric_types(joined_pdf)
         joined_pdf = _cast_objects_to_stringdtype(joined_pdf)
