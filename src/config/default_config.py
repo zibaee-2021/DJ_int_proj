@@ -1,4 +1,6 @@
 """
+THIS IS JUST A PLACEHOLDER AND WITH SOME EXAMPLE PARAMETERS ACCORDING TO CHATGPT4o !
+
 Default configuration settings for the project.
 """
 
