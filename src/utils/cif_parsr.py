@@ -45,6 +45,7 @@ import numpy as np
 import pandas as pd
 
 
+
 def _impute_missing_coords(pdf_to_impute, value_to_impute_with=0):
     missing_count = pdf_to_impute['A_Cartn_x'].isna().sum()
     print(f"BEFORE imputing, {missing_count} rows with missing values in column 'A_Cartn_x'")
@@ -215,6 +216,27 @@ def extract_fields_from_poly_seq(mmcif: dict) -> pd.DataFrame:
             'S_asym_id': asym_ids                               # 'A', 'A', 'A', 'A', etc
         })
     return poly_seq
+
+
+def parse_pdb_snapshot(t):
+    """
+    Filter out non-alpha-carbon atoms and keep only `serial`, `x`, `y`, `z`, `resSeq`, `resName`.
+    The PDB column names equivalents in mmCIFs:
+    `serial`        <==> `_atom_site.id`
+    `name`          <==> `_atom_site.label_atom_id`
+    `x`, `y`, `z`   <==> `_atom_site.Cartn_x`, `_atom_site.Cartn_y`, `_atom_site.Cartn_z`
+    `resSeq`        <==> `_pdbx_poly_seq_scheme.seq_id`
+    `resName`       <==> `_pdbx_poly_seq_scheme.mon_id`
+    :return:
+    """
+    pdf_chain = t.topology.to_dataframe()[0]
+    coords = t.xyz[0]  # shape (n_atoms, 3)
+    pdf_chain['x'] = coords[:, 0]
+    pdf_chain['y'] = coords[:, 1]
+    pdf_chain['z'] = coords[:, 2]
+    pdf_chain = pdf_chain.loc[pdf_chain['name'].isin(('CA',))]
+    pdf_chain = pdf_chain[['resSeq', 'resName', 'serial', 'x', 'y', 'z']]
+    return pdf_chain
 
 
 def parse_cif(pdb_id: str, mmcif_dict: dict) -> List[pd.DataFrame]:
