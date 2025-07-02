@@ -40,6 +40,7 @@ A_Cartn_y,        # COORDINATES           - ATOM Y-COORDINATES                  
 A_Cartn_z,        # COORDINATES           - ATOM Z-COORDINATES                                        JUST KEEP
 """
 
+import os
 from typing import List
 import numpy as np
 import pandas as pd
@@ -237,6 +238,16 @@ def parse_pdb_snapshot(t):
     pdf_chain = pdf_chain.loc[pdf_chain['name'].isin(('CA',))]
     pdf_chain = pdf_chain[['resSeq', 'resName', 'serial', 'x', 'y', 'z']]
     return pdf_chain
+
+
+def parse_pdb_alpha_carbs_only(pdbid_chain: str, u):
+    rpath_CA = os.path.join('..', 'data', 'ATLAS_parsed', pdbid_chain, 'CA_only')
+    os.makedirs(rpath_CA, exist_ok=True)
+
+    ca = u.select_atoms('protein and name CA')
+    # Write all frames to separate files
+    for i, _ in enumerate(u.trajectory):
+        ca.write(os.path.join(rpath_CA, f'frame_{i:05d}.pdb'))
 
 
 def parse_cif(pdb_id: str, mmcif_dict: dict) -> List[pd.DataFrame]:
