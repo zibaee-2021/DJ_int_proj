@@ -251,7 +251,7 @@ def parse_pdb_alpha_carbs_only(pdbid_chain: str, u):
 
 
 def parse_cif(pdb_id: str, mmcif_dict: dict) -> List[pd.DataFrame]:
-    print(f'Parse {pdb_id}')
+    print(f'parsing {pdb_id}')
     polyseq_pdf = extract_fields_from_poly_seq(mmcif_dict)
     atomsite_pdf = extract_fields_from_atom_site(mmcif_dict)
     atomsite_pdf = _remove_hetatm_rows(atomsite_pdf)
@@ -259,12 +259,16 @@ def parse_cif(pdb_id: str, mmcif_dict: dict) -> List[pd.DataFrame]:
     all_chains_pdfs = _split_up_by_chain(atomsite_pdf, polyseq_pdf)
     # IF CHAIN SPECIFIED IN PDBID, REMOVE ANY OTHER CHAINS <-- Implemented later in tokeniser.py, but could move here.
     parsed_cif_by_chain = []
+    empty_pdbidchains = []
     for chain_pdf in all_chains_pdfs:
         atomsite_pdf, polyseq_pdf = chain_pdf
         joined_pdf_chain = _join_atomsite_to_polyseq(atomsite_pdf, polyseq_pdf)
+        chain = joined_pdf_chain['S_asym_id'].iloc[0]
         joined_pdf_chain = joined_pdf_chain.loc[joined_pdf_chain['A_label_atom_id'].isin(('CA',))]  # ALPHA-CARBON ONLY
         # print(f'joined_pdf_chain.shape after removing everything except alpha-carbons={joined_pdf_chain.shape}')
         if joined_pdf_chain.empty:
+            pdbid_chain = f'{pdb_id}_{chain}'
+            empty_pdbidchains.append(pdbid_chain)
             continue
         joined_pdf_chain = _rearrange_cols(joined_pdf_chain)
         joined_pdf_chain = _cast_number_strings_to_numeric_types(joined_pdf_chain)
@@ -282,10 +286,13 @@ def parse_cif(pdb_id: str, mmcif_dict: dict) -> List[pd.DataFrame]:
                                              'A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']]    # COORDINATES
                                             # 'b_iso_or_equiv']]                       # B-FACTORS (only for crystallographic data, not NMR).
         parsed_cif_by_chain.append(joined_pdf_chain)
+    for pdbid_chain in empty_pdbidchains:
+        with open(os.path.join('..', 'data', 'NMR', 'tokenised_cifs', 'empties.txt'), 'a') as f:
+            f.write(pdbid_chain + '\n')
     return parsed_cif_by_chain
 
 
-if __name__ == '__main__':
-    from Bio.PDB.MMCIF2Dict import MMCIF2Dict
-    cif_pdfs_per_chain = parse_cif(pdb_id='1co0', mmcif_dict=MMCIF2Dict('../../data/NMR/raw_cifs/homomeric/1co0.cif'))
-    pass
+# if __name__ == '__main__':
+#     from Bio.PDB.MMCIF2Dict import MMCIF2Dict
+#     cif_pdfs_per_chain = parse_cif(pdb_id='1co0', mmcif_dict=MMCIF2Dict('../../data/NMR/raw_cifs/homomeric/1co0.cif'))
+#     pass
