@@ -1,25 +1,4 @@
 """
-CIF_PARSER.PY, WHICH IS MINIMALLY ADAPTED FROM THE MSC PROJECT, DOES FOLLOWING:
-    - GET THE RAW MMCIF DATA
-    - EXTRACT FIELDS OF INTEREST FROM THE RAW MMCIF TO 2 DATAFRAMES
-    - REMOVE HETATM ROWS FROM `_atom_site` DATAFRAME
-    - SEPARATE OUT BY POLYPEPTIDE CHAIN AND PROCESS ONE CHAIN AT A TIME:
-        - JOIN THE TWO DATAFRAMES ON RESIDUE POSITION `S_seq_id` AND `A_label_seq_id`
-        - CAST STRING TYPES TO NUMERIC TYPES, CAST TEXT (OBJECTS) TO PANDAS STRINGS
-        - REMOVE LOW OCCUPANCY ROWS, NANs AND/OR IMPUTE MISSING COORD ROWS
-        - SORT BY CERTAIN COLUMN 'S_seq_id' and 'A_id'
-        - REPLACE LOW OCCUPANCY ROWS WITH NANS
-        - REMOVE ROWS WITH MISSING DATA IN COORDINATES
-        - REMOVE UNNECESSARY COLUMNS
---------------------------------------------------------------------------------------------------
-
-(Note the CIF enum includes an `S_` or `A_` prefix, this is just for readability/provenance of each property, so the
-strings themselves must be read as a substring from the third character onwards, i.e. A_group_PDB[2:] in order for
-Bio.PDB.MMCIF2Dict.MMCIF2Dict(cif) to map to the fields in the raw mmCIF files, which is executed in
-`_extract_fields_from_poly_seq(mmcif_dict)` and `_extract_fields_from_atom_site(mmcif_dict)`).
-
-Extract 14 fields from the two joined fields. Output a list of 8-column dataframes, one per chain:
-
 'A_' = `_atom_site`.
 'S_' = `_pdbx_poly_seq_scheme`.
 
