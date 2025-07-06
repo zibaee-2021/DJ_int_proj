@@ -146,15 +146,15 @@ def _split_up_by_chain(atomsite_pdf: pd.DataFrame, polyseq_pdf: pd.DataFrame) ->
     :return: List of tuples containing each given pdf for each polypeptide chain,
     e.g. [(`atomsite_pdf_A`, `polyseq_pdf_A`), (`atomsite_pdf_B`, `polyseq_pdf_B`, etc)]
     """
-    num_of_chains_A = atomsite_pdf['A_label_asym_id'].nunique()
+    chains = atomsite_pdf['A_label_asym_id'].unique()
+    num_of_chains_A = len(chains)
     num_of_chains_S = polyseq_pdf['S_asym_id'].nunique()
     if num_of_chains_A != num_of_chains_S:
         print(f'There are {num_of_chains_A} chains in _atom_site, but {num_of_chains_S} chains in '
               f'_pdbx_poly_seq_scheme. Presumably because there are non-protein chains, (which will be removed later).')
-    chains = atomsite_pdf['A_label_asym_id'].unique()
     grouped_atomsite_dfs = [group_df for _, group_df in atomsite_pdf.groupby('A_label_asym_id')]
     grouped_polyseq_dfs = [group_df for _, group_df in polyseq_pdf.groupby('S_asym_id')]
-    grouped_tuple = [(grp_as,grp_ps) for grp_as, grp_ps in zip(grouped_atomsite_dfs, grouped_polyseq_dfs)]
+    grouped_tuple = [(grp_as, grp_ps) for grp_as, grp_ps in zip(grouped_atomsite_dfs, grouped_polyseq_dfs)]
     assert len(chains) == len(grouped_tuple)
     return grouped_tuple
 
@@ -264,6 +264,8 @@ def parse_cif(pdb_id: str, mmcif_dict: dict) -> List[pd.DataFrame]:
         joined_pdf = _join_atomsite_to_polyseq(atomsite_pdf, polyseq_pdf)
         joined_pdf = joined_pdf.loc[joined_pdf['A_label_atom_id'].isin(('CA',))]  # ALPHA-CARBON ONLY
         # print(f'pdf.shape after removing everything except alpha-carbons={joined_pdf.shape}')
+        if joined_pdf.empty:
+            continue
         joined_pdf = _rearrange_cols(joined_pdf)
         joined_pdf = _cast_number_strings_to_numeric_types(joined_pdf)
         joined_pdf = _cast_objects_to_stringdtype(joined_pdf)
@@ -278,6 +280,12 @@ def parse_cif(pdb_id: str, mmcif_dict: dict) -> List[pd.DataFrame]:
                                  'A_id',                                    # ATOM POSITION
                                  'A_label_atom_id',                         # ATOM NAME
                                  'A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']]    # COORDINATES
-                                 # 'b_iso_or_equiv']]                       # B-FACTORS (only use with crystallographic data not NMR).
+                                 # 'b_iso_or_equiv']]                       # B-FACTORS (only for crystallographic data, not NMR).
         parsed_cif_by_chain.append(joined_pdf)
     return parsed_cif_by_chain
+
+
+if __name__ == '__main__':
+    from Bio.PDB.MMCIF2Dict import MMCIF2Dict
+    cif_pdfs_per_chain = parse_cif(pdb_id='1co0', mmcif_dict=MMCIF2Dict('../../data/NMR/raw_cifs/homomeric/1co0.cif'))
+    pass
