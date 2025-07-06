@@ -261,27 +261,27 @@ def parse_cif(pdb_id: str, mmcif_dict: dict) -> List[pd.DataFrame]:
     parsed_cif_by_chain = []
     for chain_pdf in all_chains_pdfs:
         atomsite_pdf, polyseq_pdf = chain_pdf
-        joined_pdf = _join_atomsite_to_polyseq(atomsite_pdf, polyseq_pdf)
-        joined_pdf = joined_pdf.loc[joined_pdf['A_label_atom_id'].isin(('CA',))]  # ALPHA-CARBON ONLY
-        # print(f'pdf.shape after removing everything except alpha-carbons={joined_pdf.shape}')
-        if joined_pdf.empty:
+        joined_pdf_chain = _join_atomsite_to_polyseq(atomsite_pdf, polyseq_pdf)
+        joined_pdf_chain = joined_pdf_chain.loc[joined_pdf_chain['A_label_atom_id'].isin(('CA',))]  # ALPHA-CARBON ONLY
+        # print(f'joined_pdf_chain.shape after removing everything except alpha-carbons={joined_pdf_chain.shape}')
+        if joined_pdf_chain.empty:
             continue
-        joined_pdf = _rearrange_cols(joined_pdf)
-        joined_pdf = _cast_number_strings_to_numeric_types(joined_pdf)
-        joined_pdf = _cast_objects_to_stringdtype(joined_pdf)
-        joined_pdf = _sort_by_chain_residues_atoms(joined_pdf)
-        joined_pdf = _replace_low_occupancy_coords_with_nans(joined_pdf)
-        joined_pdf = _process_missing_data(joined_pdf, impute=False)
+        joined_pdf_chain = _rearrange_cols(joined_pdf_chain)
+        joined_pdf_chain = _cast_number_strings_to_numeric_types(joined_pdf_chain)
+        joined_pdf_chain = _cast_objects_to_stringdtype(joined_pdf_chain)
+        joined_pdf_chain = _sort_by_chain_residues_atoms(joined_pdf_chain)
+        joined_pdf_chain = _replace_low_occupancy_coords_with_nans(joined_pdf_chain)
+        joined_pdf_chain = _process_missing_data(joined_pdf_chain, impute=False)
 
-        joined_pdf = joined_pdf[['A_pdbx_PDB_model_num',                    # MODEL NUMBER
-                                 'S_asym_id',                               # CHAIN
-                                 'S_seq_id',                                # RESIDUE POSITION
-                                 'S_mon_id',                                # RESIDUE NAME (3-LETTER)
-                                 'A_id',                                    # ATOM POSITION
-                                 'A_label_atom_id',                         # ATOM NAME
-                                 'A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']]    # COORDINATES
-                                 # 'b_iso_or_equiv']]                       # B-FACTORS (only for crystallographic data, not NMR).
-        parsed_cif_by_chain.append(joined_pdf)
+        joined_pdf_chain = joined_pdf_chain[['A_pdbx_PDB_model_num',                    # MODEL NUMBER
+                                             'S_asym_id',                               # CHAIN
+                                             'S_seq_id',                                # RESIDUE POSITION
+                                             'S_mon_id',                                # RESIDUE NAME (3-LETTER)
+                                             'A_id',                                    # ATOM POSITION
+                                             'A_label_atom_id',                         # ATOM NAME
+                                             'A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']]    # COORDINATES
+                                            # 'b_iso_or_equiv']]                       # B-FACTORS (only for crystallographic data, not NMR).
+        parsed_cif_by_chain.append(joined_pdf_chain)
     return parsed_cif_by_chain
 
 
