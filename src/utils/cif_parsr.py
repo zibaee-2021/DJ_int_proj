@@ -20,7 +20,7 @@ A_Cartn_z,        # COORDINATES           - ATOM Z-COORDINATES                  
 """
 
 import os
-from typing import List
+from typing import List, Tuple
 import numpy as np
 import pandas as pd
 
