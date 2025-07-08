@@ -242,7 +242,14 @@ def parse_cif(pdb_id: str, mmcif_dict: dict) -> Tuple[List[pd.DataFrame], list]:
     for chain_pdf in all_chains_pdfs:
         atomsite_pdf, polyseq_pdf = chain_pdf
         joined_pdf_chain = _join_atomsite_to_polyseq(atomsite_pdf, polyseq_pdf)
-        chain = joined_pdf_chain['S_asym_id'].iloc[0]
+        try:
+            chain = joined_pdf_chain['S_asym_id'].iloc[0]
+        except:
+            print(f"joined_pdf_chain['S_asym_id'].iloc[0] on line 246 is failing for {pdb_id}")
+            print('Leaving this one out.')
+            print(f"joined_pdf_chain={joined_pdf_chain}")
+            continue
+
         joined_pdf_chain = joined_pdf_chain.loc[joined_pdf_chain['A_label_atom_id'].isin(('CA',))]  # ALPHA-CARBON ONLY
         # print(f'joined_pdf_chain.shape after removing everything except alpha-carbons={joined_pdf_chain.shape}')
         if joined_pdf_chain.empty:
@@ -270,5 +277,7 @@ def parse_cif(pdb_id: str, mmcif_dict: dict) -> Tuple[List[pd.DataFrame], list]:
 
 # if __name__ == '__main__':
 #     from Bio.PDB.MMCIF2Dict import MMCIF2Dict
-#     cif_pdfs_per_chain = parse_cif(pdb_id='1co0', mmcif_dict=MMCIF2Dict('../../data/NMR/raw_cifs/homomeric/1co0.cif'))
+#     pdbid = '2N2K'
+#     cif_pdfs_per_chain = parse_cif(pdb_id=pdbid,
+#                                    mmcif_dict=MMCIF2Dict(f'../../data/NMR/raw_cifs/heteromeric/{pdbid}.cif'))
 #     pass
