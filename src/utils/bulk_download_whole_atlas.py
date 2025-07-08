@@ -10,7 +10,7 @@ from pathlib import Path
 
 API_BASE = 'https://www.dsimb.inserm.fr/ATLAS/api'
 DEFAULT_DEST = 'ATLAS_downloads'
-LOCAL_DEST = '../data/ATLAS_downloads'
+LOCAL_DEST = '../../data/ATLAS_downloads'
 SUPPORTED_DATASETS = ['ATLAS', 'chameleon', 'DPF']
 AVAILABLE_ARCHIVES = ['analysis', 'protein', 'total', 'metadata']
 MARKER = '.complete'
