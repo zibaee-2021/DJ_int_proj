@@ -130,7 +130,7 @@ def _split_up_by_chain(atomsite_pdf: pd.DataFrame, polyseq_pdf: pd.DataFrame) ->
     num_of_chains_S = polyseq_pdf['S_asym_id'].nunique()
     if num_of_chains_A != num_of_chains_S:
         print(f'There are {num_of_chains_A} chains in _atom_site, but {num_of_chains_S} chains in '
-              f'_pdbx_poly_seq_scheme. Presumably because there are non-protein chains, (which will be removed later).')
+              f'_pdbx_poly_seq_scheme. Not sure why this would be the case.')
     grouped_atomsite_dfs = [group_df for _, group_df in atomsite_pdf.groupby('A_label_asym_id')]
     grouped_polyseq_dfs = [group_df for _, group_df in polyseq_pdf.groupby('S_asym_id')]
     grouped_tuple = [(grp_as, grp_ps) for grp_as, grp_ps in zip(grouped_atomsite_dfs, grouped_polyseq_dfs)]
