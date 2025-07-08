@@ -2,16 +2,19 @@
 import requests
 
 
-def call_rcsb_for_cif(pdb_id: str) -> requests.Response:
+def call_rcsb_for_cif_or_pdb(pdb_id: str, cif_or_pdb='cif') -> requests.Response:
     """
-    Send GET request to https://files.rcsb.org/download/{pdb_id} with PDB identifier of interest.
+    Send GET request to https://files.rcsb.org/download/{pdb_id} with PDB identifier of interest to retrieve the
+    cif/pdb file of interest.
     :param pdb_id: Alphanumeric 4-character Protein Databank Identifier. e.g. '1OJ6'.
+    :param cif_or_pdb: File extension of file desired. Can only be `cif` or `pdb`.
     :return: Response code 200 and text data for given PDB id, or error code such as 404.
     """
     response = None
     pdb_id = pdb_id.upper()  # MUST BE UPPER-CASE
     pdb_id = pdb_id.removesuffix('.cif')
-    url = f'https://files.rcsb.org/download/{pdb_id}.cif'
+    pdb_id = pdb_id.removesuffix('.pdb')
+    url = f'https://files.rcsb.org/download/{pdb_id}.{cif_or_pdb}'
     try:
         print(f'Sending GET request to {url}')
         response = requests.get(url)
@@ -19,7 +22,7 @@ def call_rcsb_for_cif(pdb_id: str) -> requests.Response:
     except requests.exceptions.RequestException as e:
         print(f'Failed to retrieve data from API: {e}')
     except Exception:
-        print(f"Undefined error while trying to fetch '{pdb_id}' from PDB.")
+        print(f"Undefined error while trying to fetch {cif_or_pdb} file of '{pdb_id}' from PDB.")
     return response
 
 

@@ -6,14 +6,14 @@ from src.utils import cif_parsr as cp
 from src.utils import api_callr as api
 
 
-def get_mmCIFs_for_solution_nmr(_meric: str) -> None:
+def get_struct_files_for_solution_NMR(_meric: str) -> None:
     start = time()
     dst_dir = os.path.join('..', 'data', 'NMR', 'raw_cifs', _meric)
     os.makedirs(dst_dir, exist_ok=True)
     sol_nmr_homo_686_pdbids = api.call_rcsb_for_pdbids_of_solution_nmr_homomeric(number=686)
 
     for pdbid in sol_nmr_homo_686_pdbids:
-        response = api.call_rcsb_for_cif(pdbid)
+        response = api.call_rcsb_for_cif_or_pdb(pdbid, cif_or_pdb='pdb')
         with open(os.path.join(dst_dir, f'{pdbid}.cif'), 'w') as cif_file:
             cif_file.write(response.text)
 
@@ -103,8 +103,8 @@ def generate_list_of_pdbidchains(_meric: str):
 
 
 if __name__ == "__main__":
-    get_mmCIFs_for_solution_nmr(_meric='homomeric')
-    # get_mmCIFs_for_solution_NMR(_meric='heteromeric')
+    get_struct_files_for_solution_NMR(_meric='homomeric')
+    # get_struct_files_for_solution_NMR(_meric='heteromeric')
     # parse_atomic_records(_meric='homomeric')
     # parse_atomic_records(_meric='heteromeric')
     # generate_list_of_pdbidchains(_meric='homomeric')
