@@ -229,7 +229,7 @@ def parse_pdb_alpha_carbs_only(pdbid_chain: str, u):
         ca.write(os.path.join(rpath_CA, f'frame_{i:05d}.pdb'))
 
 
-def parse_cif(pdb_id: str, mmcif_dict: dict) -> List[pd.DataFrame]:
+def parse_cif(pdb_id: str, mmcif_dict: dict) -> Tuple[List[pd.DataFrame], list]:
     print(f'parsing {pdb_id}')
     polyseq_pdf = extract_fields_from_poly_seq(mmcif_dict)
     atomsite_pdf = extract_fields_from_atom_site(mmcif_dict)
@@ -265,10 +265,7 @@ def parse_cif(pdb_id: str, mmcif_dict: dict) -> List[pd.DataFrame]:
                                              'A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']]    # COORDINATES
                                             # 'b_iso_or_equiv']]                       # B-FACTORS (only for crystallographic data, not NMR).
         parsed_cif_by_chain.append(joined_pdf_chain)
-    for pdbid_chain in empty_pdbidchains:
-        with open(os.path.join('..', 'data', 'NMR', 'tokenised_cifs', 'empties.txt'), 'a') as f:
-            f.write(pdbid_chain + '\n')
-    return parsed_cif_by_chain
+    return parsed_cif_by_chain, empty_pdbidchains
 
 
 # if __name__ == '__main__':
