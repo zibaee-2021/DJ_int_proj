@@ -106,9 +106,17 @@ def generate_list_of_pdbidchains(_meric: str):
 
 
 if __name__ == "__main__":
-    write_struct_files_for_solution_NMR(_meric='homomeric', cif_or_pdb='pdb')
-    write_struct_files_for_solution_NMR(_meric='heteromeric', cif_or_pdb='pdb')
+    write_struct_files_for_solution_NMR(_meric='homomeric', cif_or_pdb='pdb')  # 22 mins on new Mac
+    write_struct_files_for_solution_NMR(_meric='heteromeric', cif_or_pdb='pdb')  # 32 mins on new Mac
     # parse_atomic_records(_meric='homomeric')
     # parse_atomic_records(_meric='heteromeric')
     # generate_list_of_pdbidchains(_meric='homomeric')
     # generate_list_of_pdbidchains(_meric='heteromeric')
+
+# Sending GET request to https://files.rcsb.org/download/7ZE0.pdb
+# Failed to retrieve data from API: 404 Client Error: Not Found for url: https://files.rcsb.org/download/7ZE0.pdb
+# Failed to retrieve data from API: 404 Client Error: Not Found for url: https://files.rcsb.org/download/9D9A.pdb
+# Sending GET request to https://files.rcsb.org/download/9D9B.pdb
+# Failed to retrieve data from API: 404 Client Error: Not Found for url: https://files.rcsb.org/download/9D9B.pdb
+# Sending GET request to https://files.rcsb.org/download/9D9C.pdb
+# Failed to retrieve data from API: 404 Client Error: Not Found for url: https://files.rcsb.org/download/9D9C.pdb
