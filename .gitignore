@@ -6,3 +6,4 @@ data/
 *.ssv
 .ipynb_checkpoints/
 notebooks/
+*.ipynb
