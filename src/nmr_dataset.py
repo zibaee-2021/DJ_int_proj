@@ -6,16 +6,20 @@ from src.utils import cif_parsr as cp
 from src.utils import api_callr as api
 
 
-def get_struct_files_for_solution_NMR(_meric: str) -> None:
+def write_struct_files_for_solution_NMR(_meric: str, cif_or_pdb: str) -> None:
     start = time()
-    dst_dir = os.path.join('..', 'data', 'NMR', 'raw_cifs', _meric)
+    dst_dir = os.path.join('..', 'data', 'NMR', f'raw_{cif_or_pdb}s', _meric)
     os.makedirs(dst_dir, exist_ok=True)
-    sol_nmr_homo_686_pdbids = api.call_rcsb_for_pdbids_of_solution_nmr_homomeric(number=686)
+    if _meric == 'homomeric':
+        sol_nmr_pdbids = api.call_rcsb_for_pdbids_of_solution_nmr_homomeric(number=686)
+    else:
+        sol_nmr_pdbids = api.call_rcsb_for_pdbids_of_solution_nmr_heteromeric(number=1038)
 
-    for pdbid in sol_nmr_homo_686_pdbids:
-        response = api.call_rcsb_for_cif_or_pdb(pdbid, cif_or_pdb='pdb')
-        with open(os.path.join(dst_dir, f'{pdbid}.cif'), 'w') as cif_file:
-            cif_file.write(response.text)
+    for pdbid in sol_nmr_pdbids:
+        response = api.call_rcsb_for_cif_or_pdb(pdbid, cif_or_pdb=cif_or_pdb)
+        with open(os.path.join(dst_dir, f'{pdbid}.{cif_or_pdb}'), 'w') as f:
+            f.write(response.text)
+    print(f'Completed {len(sol_nmr_pdbids)} {_meric} PDBs in {round((time() - start) / 60)} minutes')
 
 
 def parse_atomic_records(_meric: str):
@@ -25,7 +29,6 @@ def parse_atomic_records(_meric: str):
     os.makedirs(relpath_token_cifs, exist_ok=True)
 
     relpath_cifs = glob.glob(os.path.join(relpath_raw_cifs_meric, f'*.cif'))
-    no_CA_pdbids = list()
 
     for relpath_cif in relpath_cifs:
         cif_dict = MMCIF2Dict(relpath_cif)
@@ -103,8 +106,8 @@ def generate_list_of_pdbidchains(_meric: str):
 
 
 if __name__ == "__main__":
-    get_struct_files_for_solution_NMR(_meric='homomeric')
-    # get_struct_files_for_solution_NMR(_meric='heteromeric')
+    write_struct_files_for_solution_NMR(_meric='homomeric', cif_or_pdb='pdb')
+    write_struct_files_for_solution_NMR(_meric='heteromeric', cif_or_pdb='pdb')
     # parse_atomic_records(_meric='homomeric')
     # parse_atomic_records(_meric='heteromeric')
     # generate_list_of_pdbidchains(_meric='homomeric')
