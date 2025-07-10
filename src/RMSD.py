@@ -1,8 +1,9 @@
-from Bio import PDB
+import os
 import json
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from Bio import PDB
 from Bio.SVDSuperimposer import SVDSuperimposer
 from Bio.Data.IUPACData import protein_letters_3to1
 from scipy.spatial.distance import squareform
@@ -133,10 +134,8 @@ if __name__ == "__main__":
     # build_contour_map(rmsd_mat)
     clusters = cluster_models(rmsd_mat, threshold=2.0)
     json_dict = clusters_to_json_dict(clusters)
-    output_file = f'{pdbid_chain}_conformational_ensembles.json'
+    dst_dir = '../data/NMR/multimodel_PDBid_chains/ensembles'
+    os.makedirs(dst_dir, exist_ok=True)
+    output_file = f'{dst_dir}/{pdbid_chain}_ens.json'
     write_clusters_json(json_dict, output_file)
     print(f'Saved ensembles to {output_file}')
-
-
-
-
