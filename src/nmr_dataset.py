@@ -22,15 +22,16 @@ def write_struct_files_for_solution_NMR(_meric: str, cif_or_pdb: str) -> None:
     print(f'Completed {len(sol_nmr_pdbids)} {_meric} PDBs in {round((time() - start) / 60)} minutes')
 
 
-def parse_atomic_records(_meric: str):
+def parse_atomic_records_from_cifs(_meric: str):
     start = time()
     relpath_raw_cifs_meric = os.path.join('..', 'data', 'NMR', 'raw_cifs', _meric)
     relpath_token_cifs = os.path.join('..', 'data', 'NMR', 'tokenised_cifs', _meric)
     os.makedirs(relpath_token_cifs, exist_ok=True)
 
-    relpath_cifs = glob.glob(os.path.join(relpath_raw_cifs_meric, f'*.cif'))
+    rpath_cifs = glob.glob(os.path.join(relpath_raw_cifs_meric, f'*.cif'))
+    rpath_cifs.sort()
 
-    for relpath_cif in relpath_cifs:
+    for relpath_cif in rpath_cifs:
         cif_dict = MMCIF2Dict(relpath_cif)
         pdbid = os.path.basename(relpath_cif).removesuffix('.cif')
         # pdbid = '2N2K'
@@ -47,7 +48,7 @@ def parse_atomic_records(_meric: str):
             try:
                 chain = pdf_chain['S_asym_id'].iloc[0]
             except:
-                print(f"pdf_chain['S_asym_id'].iloc[0] on line 60 is failing for {pdbid}")
+                print(f"pdf_chain['S_asym_id'].iloc[0] on line 49 is failing for {pdbid}")
                 print(f"pdf_chain={pdf_chain}")
                 print('Leaving this one out.')
                 continue
@@ -57,10 +58,10 @@ def parse_atomic_records(_meric: str):
                                    'A_id', 'A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']]
             pdf_chain.to_csv(path_or_buf=os.path.join(relpath_token_cifs, f'{pdbid}_{chain}.ssv'), sep=' ', index=False)
 
-    print(f'Completed {len(relpath_cifs)} {_meric} PDBs in {round((time() - start) / 60)} minutes')
+    print(f'Completed {len(rpath_cifs)} {_meric} PDBs in {round((time() - start) / 60)} minutes')
 
 
-def generate_list_of_pdbidchains(_meric: str):
+def generate_pdb_lists_from_parsed_ssvs(_meric: str):
     start = time()
     relpath_token_cifs = os.path.join('..', 'data', 'NMR', 'tokenised_cifs', _meric)
     ssv_files = glob.glob(os.path.join(relpath_token_cifs, '*.ssv'))
@@ -105,18 +106,62 @@ def generate_list_of_pdbidchains(_meric: str):
     print(f'Completed in {round(time() - start)} seconds')
 
 
-if __name__ == "__main__":
-    write_struct_files_for_solution_NMR(_meric='homomeric', cif_or_pdb='pdb')  # 22 mins on new Mac
-    write_struct_files_for_solution_NMR(_meric='heteromeric', cif_or_pdb='pdb')  # 32 mins on new Mac
-    # parse_atomic_records(_meric='homomeric')
-    # parse_atomic_records(_meric='heteromeric')
-    # generate_list_of_pdbidchains(_meric='homomeric')
-    # generate_list_of_pdbidchains(_meric='heteromeric')
+def write_pdb_or_cif(pdbid: str, cif_or_pdb: str, dst_dir: str):
+    import os
+    from src.utils import api_callr as api
+    response = api.call_rcsb_for_cif_or_pdb(pdb_id=pdbid, cif_or_pdb=cif_or_pdb)
+    with open(os.path.join(dst_dir, f'{pdbid}.{cif_or_pdb}'), 'w') as f:
+        f.write(response.text)
 
-# Sending GET request to https://files.rcsb.org/download/7ZE0.pdb
+
+
+if __name__ == "__main__":
+    _meric = 'homomeric'
+    write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='pdb')  # 16 mins (new Mac) for 686-4 = 682 PDBs.
+    write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='cif')  # 21 mins (new Mac) for 686 mmCIFs.
+    parse_atomic_records_from_cifs(_meric=_meric)  # 6 mins to parse (new Mac).
+    generate_pdb_lists_from_parsed_ssvs(_meric=_meric)  # 2 seconds to generate PDBid_chain lists (multi & single model)
+
+    _meric = 'heteromeric'
+    write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='pdb')  # 31 mins (new Mac) for 1038 PDBs.
+    write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='cif')  # 32 mins (new Mac) for 1038 mmCIFs.
+    parse_atomic_records_from_cifs(_meric=_meric)  # 8 mins to parse (new Mac).
+    generate_pdb_lists_from_parsed_ssvs(_meric=_meric)  # 4 seconds to generate PDBid_chain lists (multi & single model)
+
+# Notice: 4 legacy PDB could not be read (7ZE0, 9D9A, 9D9B, 9D9C):
 # Failed to retrieve data from API: 404 Client Error: Not Found for url: https://files.rcsb.org/download/7ZE0.pdb
 # Failed to retrieve data from API: 404 Client Error: Not Found for url: https://files.rcsb.org/download/9D9A.pdb
-# Sending GET request to https://files.rcsb.org/download/9D9B.pdb
 # Failed to retrieve data from API: 404 Client Error: Not Found for url: https://files.rcsb.org/download/9D9B.pdb
-# Sending GET request to https://files.rcsb.org/download/9D9C.pdb
 # Failed to retrieve data from API: 404 Client Error: Not Found for url: https://files.rcsb.org/download/9D9C.pdb
+
+    # cif_or_pdb = 'cif'
+    # dst_dir = os.path.join('..', 'data', 'NMR', f'raw_{cif_or_pdb}s', 'homomeric')
+    # os.makedirs(dst_dir, exist_ok=True)
+    # write_pdb_or_cif('7ZE0', cif_or_pdb, dst_dir)
+    # write_pdb_or_cif('9D9A', cif_or_pdb, dst_dir)
+    # write_pdb_or_cif('9D9B', cif_or_pdb, dst_dir)
+    # write_pdb_or_cif('9D9C', cif_or_pdb, dst_dir)
+
+# Possible errors during parsing:
+# parsing 6F3K
+# pdf_chain['S_asym_id'].iloc[0] on line 49 is failing for 6F3K
+# pdf_chain=Empty DataFrame
+# Columns: [A_pdbx_PDB_model_num, S_asym_id, S_seq_id, S_mon_id, A_id, A_label_atom_id, A_Cartn_x, A_Cartn_y, A_Cartn_z]
+# Index: []
+# Leaving this one out.
+
+# parsing 2N2K
+# pdf_chain['S_asym_id'].iloc[0] on line 49 is failing for 2N2K
+# pdf_chain=Empty DataFrame
+# Columns: [A_pdbx_PDB_model_num, S_asym_id, S_seq_id, S_mon_id, A_id, A_label_atom_id, A_Cartn_x, A_Cartn_y, A_Cartn_z]
+# Index: []
+# Leaving this one out.
+
+# The following PDBs included chains with non-natural amino acids, so `_atom_site` which will be filtered to
+# remove HETATM will have fewer chains than the corresponding `_pdbx_poly_seq_scheme`:
+# parsing 2KMJ. 1 chains in _atom_site, 3 chains in _pdbx_poly_seq_scheme.
+# parsing 1S4A. 0 chains in _atom_site, 2 chains in _pdbx_poly_seq_scheme.
+# parsing 1S1O. 0 chains in _atom_site, 2 chains in _pdbx_poly_seq_scheme.
+#
+# parsing 7B3K. 1 chains in _atom_site, 2 chains in _pdbx_poly_seq_scheme.
+# parsing 7B3J. 1 chains in _atom_site, 2 chains in _pdbx_poly_seq_scheme.
