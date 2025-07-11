@@ -19,7 +19,7 @@ def write_struct_files_for_solution_NMR(_meric: str, cif_or_pdb: str) -> None:
         response = api.call_rcsb_for_cif_or_pdb(pdbid, cif_or_pdb=cif_or_pdb)
         with open(os.path.join(dst_dir, f'{pdbid}.{cif_or_pdb}'), 'w') as f:
             f.write(response.text)
-    print(f'Completed {len(sol_nmr_pdbids)} {_meric} PDBs in {round((time() - start) / 60)} minutes')
+    print(f'Completed {len(sol_nmr_pdbids)} {_meric} {cif_or_pdb}s in {round((time() - start) / 60)} minutes')
 
 
 def parse_atomic_records_from_cifs(_meric: str):
@@ -58,7 +58,7 @@ def parse_atomic_records_from_cifs(_meric: str):
                                    'A_id', 'A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']]
             pdf_chain.to_csv(path_or_buf=os.path.join(relpath_token_cifs, f'{pdbid}_{chain}.ssv'), sep=' ', index=False)
 
-    print(f'Completed {len(rpath_cifs)} {_meric} PDBs in {round((time() - start) / 60)} minutes')
+    print(f'Completed {len(rpath_cifs)} {_meric} CIFs in {round((time() - start) / 60)} minutes')
 
 
 def generate_pdb_lists_from_parsed_ssvs(_meric: str):
@@ -117,15 +117,15 @@ def write_pdb_or_cif(pdbid: str, cif_or_pdb: str, dst_dir: str):
 
 if __name__ == "__main__":
     _meric = 'homomeric'
-    write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='pdb')  # 16 mins (new Mac) for 686-4 = 682 PDBs.
-    write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='cif')  # 21 mins (new Mac) for 686 mmCIFs.
-    parse_atomic_records_from_cifs(_meric=_meric)  # 6 mins to parse (new Mac).
-    generate_pdb_lists_from_parsed_ssvs(_meric=_meric)  # 2 seconds to generate PDBid_chain lists (multi & single model)
+    write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='pdb')  # 16 mins (new Mac) for 686-4 = 682 PDBs. (21 mins Rocky)
+    write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='cif')  # 21 mins (new Mac) for 686 mmCIFs. (21 mins Rocky)
+    parse_atomic_records_from_cifs(_meric=_meric)  # 6 mins to parse (new Mac). (13 mins Rocky)
+    generate_pdb_lists_from_parsed_ssvs(_meric=_meric)  # 2 secs to generate PDBid_chain lists (multi & single model) (4 secs Rocky)
 
     _meric = 'heteromeric'
-    write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='pdb')  # 31 mins (new Mac) for 1038 PDBs.
-    write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='cif')  # 32 mins (new Mac) for 1038 mmCIFs.
-    parse_atomic_records_from_cifs(_meric=_meric)  # 8 mins to parse (new Mac).
+    write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='pdb')  # 31 mins (new Mac) for 1038 PDBs.  (31 mins Rocky)
+    write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='cif')  # 32 mins (new Mac) for 1038 mmCIFs. (32 mins Rocky)
+    parse_atomic_records_from_cifs(_meric=_meric)  # 8 mins to parse (new Mac). (17 mins Rocky)
     generate_pdb_lists_from_parsed_ssvs(_meric=_meric)  # 4 seconds to generate PDBid_chain lists (multi & single model)
 
 # Notice: 4 legacy PDB could not be read (7ZE0, 9D9A, 9D9B, 9D9C):
