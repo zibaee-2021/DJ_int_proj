@@ -30,10 +30,10 @@ def align_alpha_carbons(model1, model2):
     return si
 
 
-def compute_rmsd_matrix(pdbid_chain):
+def compute_rmsd_matrix(pdbid_chain: str, het_hom: str):
     parser = PDB.MMCIFParser(QUIET=True)
     pdbid, chain = pdbid_chain.split('_')
-    structure = parser.get_structure("", f'../data/NMR/raw_cifs/heteromeric/{pdbid}.cif')
+    structure = parser.get_structure("", f'../data/NMR/raw_cifs/{het_hom}/{pdbid}.cif')
 
     models = list(structure)
     n_models = len(models)
@@ -124,11 +124,12 @@ def write_clusters_json(json_dict, output_path):
 
 
 if __name__ == "__main__":
-    with open('../data/NMR/multimodel_PDBid_chains/het_multimod_2104_pdbid_chains.txt', 'r') as f:
+    _meric = 'heteromeric'
+    with open(f'../data/NMR/multimodel_PDBid_chains/{_meric[:3]}_multimod_2104_pdbid_chains.txt', 'r') as f:
         pdbid_chains = f.readlines()
 
     pdbid_chain = '1A0N_A'
-    rmsd_mat, n_models = compute_rmsd_matrix(pdbid_chain)
+    rmsd_mat, n_models = compute_rmsd_matrix(pdbid_chain, het_hom=_meric)
     # linkage_matrix = build_dendrogram(rmsd_mat, n_models)
     # build_heatmap(rmsd_mat, linkage_matrix)
     # build_contour_map(rmsd_mat)
