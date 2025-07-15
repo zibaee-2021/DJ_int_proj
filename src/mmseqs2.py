@@ -41,6 +41,7 @@ def run_mmseqs_all_vs_all(rp_fasta_f, pdbid: str):
       - results.m8 (tabular results)
       - Pandas DataFrame of alignments
     """
+    het_hom = rp_fasta_f.split('/')[4]
     rp_mmseqs_dir = relpath_mmseqs_dir(het_hom=het_hom)
     rp_dir2delete = os.path.join(rp_mmseqs_dir, 'dir2delete')
     shutil.rmtree(rp_dir2delete, ignore_errors=True)
@@ -88,7 +89,7 @@ def run_mmseqs_all_vs_all(rp_fasta_f, pdbid: str):
     return df
 
 
-def filter_results(pdf):
+def filter_results(pdbid: str, het_hom: str, pdf):
     pdf = pdf[pdf['query'] != pdf['target']]
 
     rp_mmseqs_dir = relpath_mmseqs_dir(het_hom)
@@ -96,7 +97,7 @@ def filter_results(pdf):
     if not pdf.empty:
         pdf_csv_results_dir = os.path.join(rp_mmseqs_dir, 'results')
         os.makedirs(pdf_csv_results_dir, exist_ok=True)
-        df_results.to_csv(os.path.join(pdf_csv_results_dir, f'{pdbid}.csv'), index=False)
+        pdf.to_csv(os.path.join(pdf_csv_results_dir, f'{pdbid}.csv'), index=False)
     else:
         print(f'No results for {pdbid}. Adding id to list file.')
         rp_zero_idty_lst = os.path.join(rp_mmseqs_dir, 'PDBid_no_idty.lst')
@@ -117,14 +118,17 @@ def filter_results(pdf):
 
 if __name__ == '__main__':
     het_hom = 'heteromeric'
-    pdbid = '1A0N'
+    # pdbid = '1A0N'
+    # pdbid_chains_dict ={'1A0N': ['A', 'B']}
+    pdbid = '1AOU'
+    pdbid_chains_dict = {'1AOU': ['A', 'B']}
     rp_cif = os.path.join('..', 'data', 'NMR', 'raw_cifs', het_hom, f'{pdbid}.cif')
     parser = MMCIFParser(QUIET=True)
     bio_struct = parser.get_structure('', rp_cif)
-    rp_fasta_file = write_fasta(het_hom, pdbid, pdbid_chains_dict={'1A0N': ['A', 'B']}, bio_struct=bio_struct)
+    rp_fasta_file = write_fasta(het_hom, pdbid, pdbid_chains_dict, bio_struct)
     df_results = run_mmseqs_all_vs_all(rp_fasta_f=rp_fasta_file, pdbid=pdbid)
     print(df_results)
-    filter_results(df_results)
+    filter_results(pdbid, het_hom, df_results)
     # df_results = df_results[df_results['query'] != df_results['target']]
     #
     # _rp_mmseqs_dir = relpath_mmseqs_dir(het_hom)
