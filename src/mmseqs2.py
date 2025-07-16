@@ -25,11 +25,12 @@ def aa_3to1(three_char_seq: List[Tuple[int, str]]) -> str:
     return ''.join(fasta_seq)
 
 
+def rp_rawcifs_dir(het_hom: str) -> str:
+    return os.path.join('..', 'data', 'NMR', 'raw_cifs', het_hom)
 
-def relpath_mmseqs_dir(het_hom: str) -> str:
-    rp_mmseqs_dir = os.path.join('..', 'data', 'NMR', 'mmseqs', het_hom)
-    return rp_mmseqs_dir
 
+def rp_mmseqs_dir(het_hom: str) -> str:
+    return os.path.join('..', 'data', 'NMR', 'mmseqs', het_hom)
 
 
 def write_fasta(het_hom: str, pdbid: str, pdbid_chains_dict: dict) -> str:
@@ -77,8 +78,7 @@ def run_mmseqs_all_vs_all(rp_fasta_f, pdbid: str):
       - Pandas DataFrame of alignments
     """
     het_hom = rp_fasta_f.split('/')[4]
-    rp_mmseqs_dir = relpath_mmseqs_dir(het_hom=het_hom)
-    rp_dir2delete = os.path.join(rp_mmseqs_dir, 'dir2delete')
+    rp_dir2delete = os.path.join(rp_mmseqs_dir(het_hom), 'dir2delete')
     shutil.rmtree(rp_dir2delete, ignore_errors=True)
 
     os.makedirs(rp_dir2delete, exist_ok=True)
@@ -126,16 +126,14 @@ def run_mmseqs_all_vs_all(rp_fasta_f, pdbid: str):
 
 def filter_results(pdbid: str, het_hom: str, pdf):
     pdf = pdf[pdf['query'] != pdf['target']]
-
-    rp_mmseqs_dir = relpath_mmseqs_dir(het_hom)
-
+    rp_mmseqs_dir_ = rp_mmseqs_dir(het_hom)
     if not pdf.empty:
-        pdf_csv_results_dir = os.path.join(rp_mmseqs_dir, 'results')
+        pdf_csv_results_dir = os.path.join(rp_mmseqs_dir_, 'results')
         os.makedirs(pdf_csv_results_dir, exist_ok=True)
         pdf.to_csv(os.path.join(pdf_csv_results_dir, f'{pdbid}.csv'), index=False)
     else:
         print(f'No results for {pdbid}. Adding id to list file.')
-        rp_zero_idty_lst = os.path.join(rp_mmseqs_dir, 'PDBid_no_idty.lst')
+        rp_zero_idty_lst = os.path.join(rp_mmseqs_dir_, 'PDBid_no_idty.lst')
 
         if os.path.exists(rp_zero_idty_lst):
             with open(rp_zero_idty_lst, 'r') as f:
