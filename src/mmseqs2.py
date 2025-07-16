@@ -15,12 +15,6 @@ def aa_3to1(three_char_seq: List[Tuple[int, str]]) -> str:
                'GLY': 'G', 'HIS': 'H', 'ILE': 'I', 'LYS': 'K', 'LEU': 'L',
                'MET': 'M', 'ASN': 'N', 'PRO': 'P', 'GLN': 'Q', 'ARG': 'R',
                'SER': 'S', 'THR': 'T', 'VAL': 'V', 'TRP': 'W', 'TYR': 'Y', 'PTR': 'Y'}
-
-
-    for seq_id, res in three_char_seq:
-        print(res)
-        res1 = aa_3to1_dict[res]
-        print(res1)
     fasta_seq = [aa_3to1_dict[res] for seq_id, res in three_char_seq]
     return ''.join(fasta_seq)
 
@@ -58,8 +52,6 @@ def write_fasta(het_hom: str, pdbid: str, pdbid_chains_dict: dict) -> str:
             continue
         else:
             chain_sequences.append(f'>{pdbid}_{cif_chain}')
-            if cif_chain == 'B':
-                print('CHAIN B')
             chain_sequences.append(aa_3to1(chain_seqs_dict[cif_chain]))
 
     rp_fasta_dir = os.path.join(rp_mmseqs_dir(het_hom), 'fasta')
