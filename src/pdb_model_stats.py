@@ -62,7 +62,7 @@ def generate_stats(rp_pdbid_chains: str=None, use_mmcif=True):
         total_chain_count = len(list(next(bio_struct.get_models()).get_chains()))
         year = bio_struct.header['deposition_date'][:4]
 
-        rp_fasta_file = mmseqs2.write_fasta(het_hom, _pdbid, pdbid_chains_dict, bio_struct)
+        rp_fasta_file = mmseqs2.write_fasta(het_hom, _pdbid, pdbid_chains_dict)
         result_pdf = mmseqs2.run_mmseqs_all_vs_all(rp_fasta_file, _pdbid)
         filtered_pdf = mmseqs2.filter_results(_pdbid, het_hom, result_pdf)
 

@@ -1,10 +1,29 @@
 import os, subprocess
 import shutil
+from typing import List, Tuple
 import pandas as pd
 from Bio.PDB import MMCIFParser, PDBParser, PPBuilder
+from Bio.PDB.MMCIF2Dict import MMCIF2Dict
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from Bio import SeqIO
+from parso.python.tree import WithStmt
+
+# NOTICE: I CONVERT 'PTR' (PHOSPHOTYROSINE) TO 'Y' RATHER THAN LEAVING IT OUT:
+def aa_3to1(three_char_seq: List[Tuple[int, str]]) -> str:
+    aa_3to1_dict = {'ALA': 'A', 'CYS': 'C', 'ASP': 'D', 'GLU': 'E', 'PHE': 'F',
+               'GLY': 'G', 'HIS': 'H', 'ILE': 'I', 'LYS': 'K', 'LEU': 'L',
+               'MET': 'M', 'ASN': 'N', 'PRO': 'P', 'GLN': 'Q', 'ARG': 'R',
+               'SER': 'S', 'THR': 'T', 'VAL': 'V', 'TRP': 'W', 'TYR': 'Y', 'PTR': 'Y'}
+
+
+    for seq_id, res in three_char_seq:
+        print(res)
+        res1 = aa_3to1_dict[res]
+        print(res1)
+    fasta_seq = [aa_3to1_dict[res] for seq_id, res in three_char_seq]
+    return ''.join(fasta_seq)
+
 
 
 def relpath_mmseqs_dir(het_hom: str) -> str:
@@ -12,25 +31,41 @@ def relpath_mmseqs_dir(het_hom: str) -> str:
     return rp_mmseqs_dir
 
 
-def write_fasta(het_hom: str, pdbid: str, pdbid_chains_dict: dict, bio_struct) -> str:
-    rp_mmseqs_dir = relpath_mmseqs_dir(het_hom=het_hom)
-    rp_fasta_dir = os.path.join(rp_mmseqs_dir, 'fasta')
-    os.makedirs(rp_fasta_dir, exist_ok=True)
 
-    model = bio_struct[0] # Using first model only
-    ppb = PPBuilder()
-    chain_sequences, records = {}, []
-    for chain in model:
-        if chain.id not in pdbid_chains_dict[pdbid]:
+def write_fasta(het_hom: str, pdbid: str, pdbid_chains_dict: dict) -> str:
+    cif = MMCIF2Dict(os.path.join(rp_rawcifs_dir(het_hom), f'{pdbid}.cif'))
+    seq_ids = cif['_pdbx_poly_seq_scheme.seq_id']
+    mon_ids = cif['_pdbx_poly_seq_scheme.mon_id']
+    asym_ids = cif['_pdbx_poly_seq_scheme.asym_id']
+    cif_chains = list(set(asym_ids))
+    cif_chains.sort()
+    chains_from_parsed = pdbid_chains_dict[pdbid]
+    chain_seqs_dict = {}
+    # Apparently, it's not unheard of for the mon_id to be out of order, so including seq_id to sort by:
+    for mon_id, asym_id, seq_id in zip(mon_ids, asym_ids, seq_ids):
+        if asym_id not in chain_seqs_dict:
+            chain_seqs_dict[asym_id] = []
+        chain_seqs_dict[asym_id].append((int(seq_id), mon_id))
+    for asym_id in chain_seqs_dict:
+        chain_seqs_dict[asym_id].sort()
+
+
+    chain_sequences = []
+    for cif_chain in cif_chains:
+        # Don't use chains (from raw cifs) that are not in chains included in the parsed protein-only list:
+        if cif_chain not in chains_from_parsed:
             continue
         else:
-            peptides = ppb.build_peptides(chain)
-            seq = ''.join(str(pp.get_sequence()) for pp in peptides)
-            chain_sequences[chain.id] = seq
-            record = SeqRecord(Seq(seq), id=f'{pdbid}_{chain.id}', description='')
-            records.append(record)
-    rp_fasta_file = os.path.join(rp_fasta_dir, f'{pdbid}_seqs.fasta')
-    SeqIO.write(records, rp_fasta_file, 'fasta')
+            chain_sequences.append(f'>{pdbid}_{cif_chain}')
+            if cif_chain == 'B':
+                print('CHAIN B')
+            chain_sequences.append(aa_3to1(chain_seqs_dict[cif_chain]))
+
+    rp_fasta_dir = os.path.join(rp_mmseqs_dir(het_hom), 'fasta')
+    os.makedirs(rp_fasta_dir, exist_ok=True)
+    rp_fasta_file = os.path.join(rp_fasta_dir, f'{pdbid}.fasta')
+    with open(rp_fasta_file, 'w') as f:
+        f.write('\n'.join(chain_sequences) + '\n')
     return rp_fasta_file
 
 
@@ -117,39 +152,44 @@ def filter_results(pdbid: str, het_hom: str, pdf):
 
 
 if __name__ == '__main__':
-    het_hom = 'heteromeric'
-    # pdbid = '1A0N'
-    # pdbid_chains_dict ={'1A0N': ['A', 'B']}
-    pdbid = '1AOU'
-    pdbid_chains_dict = {'1AOU': ['A', 'B']}
-    rp_cif = os.path.join('..', 'data', 'NMR', 'raw_cifs', het_hom, f'{pdbid}.cif')
-    parser = MMCIFParser(QUIET=True)
-    bio_struct = parser.get_structure('', rp_cif)
-    rp_fasta_file = write_fasta(het_hom, pdbid, pdbid_chains_dict, bio_struct)
-    df_results = run_mmseqs_all_vs_all(rp_fasta_f=rp_fasta_file, pdbid=pdbid)
-    print(df_results)
-    filter_results(pdbid, het_hom, df_results)
+    _het_hom = 'heteromeric'
+    # _pdbid = '1A0N'
+    # _pdbid_chains_dict ={_pdbid: ['A', 'B']}
+    _pdbid = '1AOU'
+    _pdbid_chains_dict = {_pdbid: ['A', 'B']}
+    _rp_fasta_file = write_fasta(_het_hom, _pdbid, _pdbid_chains_dict)
+    pass
+    # df_results = run_mmseqs_all_vs_all(rp_fasta_f=__rp_fasta_file, pdbid=_pdbid)
+    # print(df_results)
+    # filter_results(_pdbid, _het_hom, df_results)
     # df_results = df_results[df_results['query'] != df_results['target']]
     #
-    # _rp_mmseqs_dir = relpath_mmseqs_dir(het_hom)
+    # _rp_mmseqs_dir = relpath_mmseqs_dir(_het_hom)
     # if not df_results.empty:
     #     _pdf_csv_results_dir = os.path.join(_rp_mmseqs_dir, 'results')
     #     os.makedirs(_pdf_csv_results_dir, exist_ok=True)
-    #     df_results.to_csv(os.path.join(_pdf_csv_results_dir, f'{pdbid}.csv'), index=False)
+    #     df_results.to_csv(os.path.join(_pdf_csv_results_dir, f'{_pdbid}.csv'), index=False)
     # else:
-    #     print(f'No results for {pdbid}. Adding id to list file.')
+    #     print(f'No results for {_pdbid}. Adding id to list file.')
     #     _rp_zero_idty_lst = os.path.join(_rp_mmseqs_dir, 'PDBid_no_idty.lst')
     #
     #     if os.path.exists(_rp_zero_idty_lst):
     #         with open(_rp_zero_idty_lst, 'r') as f:
     #             _pdbids_no_idty = f.readlines()
-    #         _pdbids_no_idty = [_pdbid.removesuffix('\n') for _pdbid in _pdbids_no_idty]
-    #         _pdbids_no_idty.append(pdbid)
+    #         _pdbids_no_idty = [__pdbid.removesuffix('\n') for __pdbid in _pdbids_no_idty]
+    #         _pdbids_no_idty.append(_pdbid)
     #         _pdbids_no_idty.sort()
     #         with open(_rp_zero_idty_lst, 'w') as f:
     #             f.write('\n'.join(_pdbids_no_idty) + '\n')
     #     else:
     #         with open(_rp_zero_idty_lst, 'w') as f:
-    #             f.write(f'{pdbid}\n')
+    #             f.write(f'{_pdbid}\n')
 
-    pass
+
+    # NOTE: Using Biopython results in use of a chain name attribute of _atom_site which seems problematic.
+    # Specifically _auth_asym_id instead of _label_asym_id (the latter is what I used in my project).
+    # So the following 4 lines were removed from write_fasta(). Instead I use MMCIF2DICT.
+    # parser = MMCIFParser(QUIET=True)
+    # bio_struct = parser.get_structure('', rp_cif)
+    # model = bio_struct[0]
+    # for chain in model: ...
