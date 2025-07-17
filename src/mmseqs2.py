@@ -1,6 +1,7 @@
-import os, subprocess
+import os, subprocess, glob
 import shutil
 from typing import List, Tuple
+from collections import defaultdict
 import pandas as pd
 from Bio.PDB import MMCIFParser, PDBParser, PPBuilder
 from Bio.PDB.MMCIF2Dict import MMCIF2Dict
@@ -9,56 +10,139 @@ from Bio.SeqRecord import SeqRecord
 from Bio import SeqIO
 from parso.python.tree import WithStmt
 
-# NOTICE: I CONVERT 'PTR' (PHOSPHOTYROSINE) TO 'Y' RATHER THAN LEAVING IT OUT:
-def aa_3to1(three_char_seq: List[Tuple[int, str]]) -> str:
-    aa_3to1_dict = {'ALA': 'A', 'CYS': 'C', 'ASP': 'D', 'GLU': 'E', 'PHE': 'F',
-               'GLY': 'G', 'HIS': 'H', 'ILE': 'I', 'LYS': 'K', 'LEU': 'L',
-               'MET': 'M', 'ASN': 'N', 'PRO': 'P', 'GLN': 'Q', 'ARG': 'R',
-               'SER': 'S', 'THR': 'T', 'VAL': 'V', 'TRP': 'W', 'TYR': 'Y', 'PTR': 'Y'}
-    fasta_seq = [aa_3to1_dict[res] for seq_id, res in three_char_seq]
+import pdb_model_stats as pms
+
+# NOTE I HAVE ANOTHER DICT FOR SOME HETATM WHICH ARE POST-TRANSLATIONALLY-MODIFIED RESIDUES.
+# E.G. I CONVERT 'PTR' (PHOSPHOTYROSINE) TO 'Y' RATHER THAN LEAVING IT OUT:
+# "Pyroglutamic acid is almost always derived from N-terminal glutamine."
+# ON THE OTHER HAND, THERE ARE RESIDUES THAT ARE MAN-MADE SYNTHETIC RESIDUES.
+# I HAVE A DICT FOR THESE AS WELL MAPPING TO NATURAL RESIDUES, BUT FOR NOW I AM OPTING TO EXCLUDE THE WHOLE CHAIN.
+def aa3to1_unused(pdbid: str, chain: str, three_char_seq: List[Tuple[int, str]]):
+    aa_3to1 = {
+        'ALA': 'A', 'CYS': 'C', 'ASP': 'D', 'GLU': 'E', 'PHE': 'F', 'GLY': 'G', 'HIS': 'H', 'ILE': 'I', 'LYS': 'K',
+        'LEU': 'L', 'MET': 'M', 'ASN': 'N', 'PRO': 'P', 'GLN': 'Q', 'ARG': 'R', 'SER': 'S', 'THR': 'T', 'VAL': 'V',
+        'TRP': 'W', 'TYR': 'Y'}
+
+    aa_3to1_natural_ptm = {
+        'ASQ': 'S',  # Acetylserine
+        'CGU': 'E',  # Gamma-carboxyglutamate
+        'CIR': 'R',  # Citrulline
+        'CSO': 'C',  # S-hydroxycysteine
+        'CSX': 'C',  # Cysteine S-oxide
+        'FME': 'M',  # N-formylmethionine
+        'HIC': 'H',  # 4-methylhistidine
+        'HYP': 'P',  # Hydroxyproline
+        'KCX': 'K',  # N-epsilon-carboxylysine
+        'MLY': 'K',  # Alternate for methyllysine
+        'MLZ': 'K',  # N6-methyllysine
+        'MSE': 'M',  # Selenomethionine
+        'PCA': 'Q',  # Pyroglutamic acid
+        'PTR': 'Y',  # Phosphotyrosine
+        'PYR': 'Q',  # Alternate code for pyroglutamic acid
+        'SEP': 'S',  # Phosphoserine
+        'TPO': 'T',  # Phosphothreonine
+    }
+
+    aa_3to1_manmade = {
+        'DAL': 'A',  # D-alanine
+        'DAR': 'R',  # D-arginine
+        'DCY': 'C',  # D-cysteine
+        'DGL': 'E',  # D-glutamic acid
+        'DGN': 'Q',  # D-glutamine
+        'DHI': 'H',  # D-histidine
+        'DIL': 'I',  # D-isoleucine
+        'DLE': 'L',  # D-leucine
+        'DLY': 'K',  # D-lysine
+        'DPH': 'F',  # D-phenylalanine
+        'DSN': 'S',  # D-serine
+        'DTH': 'T',  # D-threonine
+        'DTY': 'Y',  # D-tyrosine
+        'DVA': 'V',  # D-valine
+    }
+
+    fasta_seq = []
+    for i, (_, res) in enumerate(three_char_seq):
+        if res not in aa_3to1:
+            # raise KeyError(f'{res} not found in list of three-letter codes. PDBid={pdbid}, Chain={cif_chain}')
+            print(f'{pdbid}_{chain}: {res} not one of the 20 natural residues.')
+            if res not in aa_3to1_natural_ptm:
+                print(f'{pdbid}_{chain}: {res} also not in my list of 17 post-translationally modified residues.')
+                if res not in aa_3to1_manmade: # not natural and not PTM - so remove:
+                    print(f'{pdbid}_{chain}: {res} also not in my list of 14 synthetic residues. '
+                          f'Therefore this pdbid_chain will be removed, as I have no idea what it is !')
+                    return None
+                else:
+                    print(f'{pdbid}_{chain}: {res} is in my list of 14 synthetic residues.')
+                    print(f'Therefore this pdbid_chain will be removed, as it contains synthetic residues.')
+                    return None
+            else: # natural PTM residue:
+                aa1char = aa_3to1_natural_ptm[res]
+                print(f'{pdbid}_{chain}: {res} is in PTM residues list and is being mapped to {aa1char}')
+                if (i + 1) % 80 == 0:
+                    fasta_seq.append(aa1char + '\n')
+                else:
+                    fasta_seq.append(aa1char)
+        else:  # natural residue:
+            if (i + 1) % 80 == 0:
+                fasta_seq.append(aa_3to1[res] + '\n')
+            else:
+                fasta_seq.append(aa_3to1[res])
+
     return ''.join(fasta_seq)
+
+
+def map_aa3to1(aa3seq: list, pdbid: str, chain: str) -> str:
+    aa3to1 = {
+        'ALA': 'A', 'CYS': 'C', 'ASP': 'D', 'GLU': 'E', 'PHE': 'F', 'GLY': 'G', 'HIS': 'H', 'ILE': 'I', 'LYS': 'K',
+        'LEU': 'L', 'MET': 'M', 'ASN': 'N', 'PRO': 'P', 'GLN': 'Q', 'ARG': 'R', 'SER': 'S', 'THR': 'T', 'VAL': 'V',
+        'TRP': 'W', 'TYR': 'Y'}
+    fasta_seq = []
+    for aa3 in aa3seq:
+        if aa3 not in aa3to1:
+            raise KeyError(f'{aa3} not found in list of three-letter codes. PDBid={pdbid}, Chain={chain}. '
+                           f'So is it not one of the 20 natural residues ??')
+        else:
+            if fasta_seq and len(fasta_seq) % 80 == 0:
+                fasta_seq.append(aa3to1[aa3] + '\n')
+            else:
+                fasta_seq.append(aa3to1[aa3])
+    return ''.join(fasta_seq)
+
 
 
 def rp_rawcifs_dir(het_hom: str) -> str:
     return os.path.join('..', 'data', 'NMR', 'raw_cifs', het_hom)
 
 
+def rp_tokcifs_dir(het_hom: str) -> str:
+    return os.path.join('..', 'data', 'NMR', 'tokenised_cifs', het_hom)
+
+
 def rp_mmseqs_dir(het_hom: str) -> str:
     return os.path.join('..', 'data', 'NMR', 'mmseqs', het_hom)
 
 
-def write_fasta(het_hom: str, pdbid: str, pdbid_chains_dict: dict) -> str:
-    cif = MMCIF2Dict(os.path.join(rp_rawcifs_dir(het_hom), f'{pdbid}.cif'))
-    seq_ids = cif['_pdbx_poly_seq_scheme.seq_id']
-    mon_ids = cif['_pdbx_poly_seq_scheme.mon_id']
-    asym_ids = cif['_pdbx_poly_seq_scheme.asym_id']
-    cif_chains = list(set(asym_ids))
-    cif_chains.sort()
-    chains_from_parsed = pdbid_chains_dict[pdbid]
-    chain_seqs_dict = {}
-    # Apparently, it's not unheard of for the mon_id to be out of order, so including seq_id to sort by:
-    for mon_id, asym_id, seq_id in zip(mon_ids, asym_ids, seq_ids):
-        if asym_id not in chain_seqs_dict:
-            chain_seqs_dict[asym_id] = []
-        chain_seqs_dict[asym_id].append((int(seq_id), mon_id))
-    for asym_id in chain_seqs_dict:
-        chain_seqs_dict[asym_id].sort()
+def rp_mmseqs_fasta_dir(het_hom: str) -> str:
+    return os.path.join(rp_mmseqs_dir(het_hom), 'fasta')
 
 
-    chain_sequences = []
-    for cif_chain in cif_chains:
-        # Don't use chains (from raw cifs) that are not in chains included in the parsed protein-only list:
-        if cif_chain not in chains_from_parsed:
-            continue
-        else:
-            chain_sequences.append(f'>{pdbid}_{cif_chain}')
-            chain_sequences.append(aa_3to1(chain_seqs_dict[cif_chain]))
+def write_fasta(het_hom: str, pdbid: str, chains: list) -> str:
+    toks_dir = rp_tokcifs_dir(het_hom)
+    fasta_seq = []
+    for chain in chains:
+        pdbid_chain_pdf = pd.read_csv(os.path.join(toks_dir, f'{pdbid}_{chain}.ssv'), sep=' ')
+        models = pdbid_chain_pdf['A_pdbx_PDB_model_num'].unique().tolist()
+        pdf_one_model = pdbid_chain_pdf[pdbid_chain_pdf['A_pdbx_PDB_model_num'] == models[0]]
+        aa3seq = pdf_one_model['S_mon_id'].tolist()
+        aa1seq = map_aa3to1(aa3seq, pdbid, chain)
+        fasta_seq.append(f'>{pdbid}_{chain}')
+        fasta_seq.append(aa1seq)
 
-    rp_fasta_dir = os.path.join(rp_mmseqs_dir(het_hom), 'fasta')
-    os.makedirs(rp_fasta_dir, exist_ok=True)
-    rp_fasta_file = os.path.join(rp_fasta_dir, f'{pdbid}.fasta')
+    rp_fasta_file = os.path.join(rp_mmseqs_fasta_dir(het_hom), f'{pdbid}.fasta')
+
     with open(rp_fasta_file, 'w') as f:
-        f.write('\n'.join(chain_sequences) + '\n')
+        f.writelines('\n'.join(fasta_seq) + '\n')
+
     return rp_fasta_file
 
 
@@ -116,13 +200,13 @@ def run_mmseqs_all_vs_all(rp_fasta_f, pdbid: str):
     return df
 
 
-def filter_results(pdbid: str, het_hom: str, pdf):
+def filter_and_write_results(pdbid: str, het_hom: str, pdf):
     pdf = pdf[pdf['query'] != pdf['target']]
     rp_mmseqs_dir_ = rp_mmseqs_dir(het_hom)
     if not pdf.empty:
-        pdf_csv_results_dir = os.path.join(rp_mmseqs_dir_, 'results')
-        os.makedirs(pdf_csv_results_dir, exist_ok=True)
-        pdf.to_csv(os.path.join(pdf_csv_results_dir, f'{pdbid}.csv'), index=False)
+        results_dir = os.path.join(rp_mmseqs_dir_, 'results')
+        os.makedirs(results_dir, exist_ok=True)
+        pdf.to_csv(os.path.join(results_dir, f'{pdbid}.csv'), index=False)
     else:
         print(f'No results for {pdbid}. Adding id to list file.')
         rp_zero_idty_lst = os.path.join(rp_mmseqs_dir_, 'PDBid_no_idty.lst')
@@ -142,13 +226,53 @@ def filter_results(pdbid: str, het_hom: str, pdf):
 
 
 if __name__ == '__main__':
-    _het_hom = 'heteromeric'
-    # _pdbid = '1A0N'
-    # _pdbid_chains_dict ={_pdbid: ['A', 'B']}
-    _pdbid = '1AOU'
-    _pdbid_chains_dict = {_pdbid: ['A', 'B']}
-    _rp_fasta_file = write_fasta(_het_hom, _pdbid, _pdbid_chains_dict)
-    pass
+    write_fasta(het_hom='heteromeric', pdbid='1A0N', chains=['A', 'B'])
+    # het_dir = os.path.join('..', 'data', 'NMR', 'mmseqs', 'heteromeric')
+    # lst_f = os.path.join(het_dir, 'PDBid_no_idty.lst')
+    # if os.path.exists(lst_f):
+    #     os.remove(lst_f)
+    #     print(f'{os.path.basename(lst_f)} deleted')
+    # else:
+    #     print(f'{os.path.basename(lst_f)} not found')
+    #
+    # fasta_dir = os.path.join(het_dir, 'fasta')
+    # if os.path.isdir(fasta_dir):
+    #     shutil.rmtree(fasta_dir)
+    #     print(f'{os.path.basename(fasta_dir)} deleted.')
+    # else:
+    #     print(f'{os.path.basename(fasta_dir)} does not exist.')
+    #
+    # rp_pdbid_chains = os.path.join('..', 'data', 'NMR', 'multimodel_lists', 'het_multimod_2104_pdbid_chains.txt')
+    # het_hom = os.path.basename(rp_pdbid_chains)[:3]
+    # het_hom = 'heteromeric' if het_hom == 'het' else 'homomeric'
+    #
+    # pdbid_chains_dict = pms.pdbid_dict_chain(rp_pdbid_chains)
+    # # 2104 heteromeric pdbid_chains --> 932 heteromeric pdbids.
+    # pdbids = list(pdbid_chains_dict.keys())
+    #
+    # print(f'Starting to process {len(pdbids)} PDBids to write to fasta.')
+    # for i, _pdbid in enumerate(pdbids):
+    #     print(f'Processing {i}: {_pdbid}')
+    #     # MMseqs2
+    #     rp_fasta_file = write_fasta(het_hom, _pdbid, pdbid_chains_dict)
+    #     # result_pdf = run_mmseqs_all_vs_all(rp_fasta_file, _pdbid)
+    #     # filtered_pdf = filter_and_write_results(_pdbid, het_hom, result_pdf)
+    #
+    #     # for chain in pdbid_chains_dict[_pdbid]:
+    #     #     if not filtered_pdf.empty:
+    #     #         identity = 'see idnty csv'
+    #     #     else:
+    #     #         identity = '0'
+
+
+
+#     _het_hom = 'heteromeric'
+#     # _pdbid = '1A0N'
+#     # _pdbid_chains_dict ={_pdbid: ['A', 'B']}
+#     _pdbid = '1AOU'
+#     _pdbid_chains_dict = {_pdbid: ['A', 'B']}
+#     _rp_fasta_file = write_fasta(_het_hom, _pdbid, _pdbid_chains_dict)
+#     pass
     # df_results = run_mmseqs_all_vs_all(rp_fasta_f=__rp_fasta_file, pdbid=_pdbid)
     # print(df_results)
     # filter_results(_pdbid, _het_hom, df_results)
