@@ -9,7 +9,8 @@ from Bio.SVDSuperimposer import SVDSuperimposer
 import RMSD
 import mmseqs2
 
-def  _total_chain_count_and_year(het_hom: str, pdbid: str, use_mmcif: bool) -> tuple:
+
+def _total_chain_count_and_year(het_hom: str, pdbid: str, use_mmcif: bool) -> tuple:
     parser = MMCIFParser(QUIET=True)
     if not use_mmcif:
         parser = PDBParser(QUIET=True)
@@ -42,6 +43,7 @@ def _read_multimodel_pdbid_chains(txt_f: str):
     pdbids = list(pdbid_chains_dict.keys())
     return pdbids, pdbid_chains_dict
 
+
 def _calc_rmsds(pdbid_chain: str, rp_token_cif_dir: str) -> tuple:
     # rmsd_mat, n_models = RMSD.compute_rmsd_matrix(pdbid_chain, het_hom)
     # clusters = RMSD.cluster_models(rmsd_mat, threshold=2.0)
@@ -62,6 +64,7 @@ def _calc_rmsds(pdbid_chain: str, rp_token_cif_dir: str) -> tuple:
     rmsds = np.array(rmsds, dtype=np.float16)
     return rmsds, model_nums, pdbidchain_list
 
+
 def _calc_identity_for_stats(het_hom: str, pdbid: str, filt_pdf) -> str:
     if not filt_pdf.empty:
         print(f'There is some heterogeneity of sequence between some chains. '
@@ -73,11 +76,24 @@ def _calc_identity_for_stats(het_hom: str, pdbid: str, filt_pdf) -> str:
     return identity
 
 
-def _calc_mmseq(het_hom: str, pdbid: str, chains: list):
-    rp_fasta_file = mmseqs2.write_fasta(het_hom, pdbid, chains)
-    result_pdf = mmseqs2.run_mmseqs_all_vs_all(rp_fasta_file, pdbid)
-    filtered_pdf = mmseqs2.filter_and_write_results(pdbid, het_hom, result_pdf)
+def _calc_mmseqs2(het_hom: str, pid: str, chains: list):
+    # rp_fasta_file = mmseqs2.write_fasta(het_hom, pid, chains)
+    # rp_fasta_file = mmseqs2.combine_all_fastas_in_1_file(het_hom)
+    # result_pdf = mmseqs2.run_mmseqs2_all_vs_all(rp_fasta_file)
+
+    # rp_dst_combo_fastas_f = os.path.join(mmseqs2._rp_mmseqs_comb_fastas_dir(het_hom), 'het_all_932_PDBids.fasta')
+    # if het_hom == 'homomeric':
+    #     rp_dst_combo_fastas_f = os.path.join(mmseqs2._rp_mmseqs_comb_fastas_dir(het_hom), 'hom_all_609_PDBids.fasta')
+
+    # result_pdf = mmseqs2.run_easysearch_mmseqs2_allvsall(rp_dst_combo_fastas_f)
+    # result_pdf = mmseqs2.run_easysearch_mmseqs2_allvsall(rp_fasta_file)
+    # filtered_pdf = mmseqs2.filter_and_write_results(het_hom, pid, result_pdf)
+
+    result_pdf = mmseqs2.run_mmseqs2_across_all_pdbids_combined()
+    filtered_pdf = mmseqs2.filter_and_write_results(het_hom='', pdbid='all_1541_hethom', pdf=result_pdf)
+
     return filtered_pdf
+
 
 def generate_stats_het(het_hom: str, pdbid_chains_txt: str, use_mmcif=True):
     """
@@ -105,10 +121,10 @@ def generate_stats_het(het_hom: str, pdbid_chains_txt: str, use_mmcif=True):
 
     for pid, chains in pdbid_chains_dict.items():
         total_chain_count, year = _total_chain_count_and_year(het_hom, pid, use_mmcif)
-        filtered_pdf = _calc_mmseq(het_hom, pid, chains)
+        mmseqs_pdf = _calc_mmseqs2(het_hom, pid, chains)
 
         for chain in chains:
-            identity = _calc_identity_for_stats(het_hom, pid, filtered_pdf)
+            identity = _calc_identity_for_stats(het_hom, pid, mmseqs_pdf)
             rmsds, model_nums, pdbidchain_list = _calc_rmsds(f'{pid}_{chain}', rp_token_cif_dir)
             max_rmsd, min_rmsd = np.max(rmsds), np.min(rmsds)
             rmsd_pdf = pd.DataFrame({'pdbid_chain': pdbidchain_list, 'model_num':model_nums, 'rmsd': rmsds})
@@ -163,8 +179,16 @@ def protein_lengths(ca_count):
 
 
 if __name__ == '__main__':
+
+    # _calc_mmseqs2(het_hom='heteromeric', pid='0_all_het', chains=[])
+    # _calc_mmseqs2(het_hom='homomeric', pid='0_all_hom', chains=[])
+    _calc_mmseqs2(het_hom='', pid='', chains=[])
+
+    # _calc_mmseqs2(het_hom='heteromeric', pdbid='1AI0',
+    #               chains=['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'])
     # rpath_pdbid_chains = (f'../data/NMR/multimodel_lists/het_multimod_2104_pdbid_chains.txt')
-    stats_pdf = generate_stats_het(het_hom='heteromeric', pdbid_chains_txt='het_multimod_2104_pdbid_chains.txt')
+    # stats_pdf = generate_stats_het(het_hom='heteromeric', pdbid_chains_txt='het_multimod_2104_pdbid_chains.txt')
+    # pass
 
 
     # # Columns to blank out when duplicated:
@@ -181,9 +205,6 @@ if __name__ == '__main__':
     # csv_dst_dir = f'../data/NMR/stats/{_meric}'
     # os.makedirs(csv_dst_dir, exist_ok=True)
     # pdf.to_csv(f'{csv_dst_dir}/from_{len(cifs)}_cifs.csv', index=False)
-
-    pass
-
 
     # TODO generate 2d plots (akin to bar graphs) of datasets for:
     #   - protein lengths (CA count)
