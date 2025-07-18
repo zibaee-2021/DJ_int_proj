@@ -47,7 +47,7 @@ def _read_multimodel_pdbid_chains(txt_f: str):
 def _calc_rmsds(pdbid_chain: str, rp_token_cif_dir: str) -> tuple:
     # rmsd_mat, n_models = RMSD.compute_rmsd_matrix(pdbid_chain, het_hom)
     # clusters = RMSD.cluster_models(rmsd_mat, threshold=2.0)
-    ref_structure = RMSD.mean_structure(pdbid_chain)
+    ref_structure = RMSD.mean_stddev_struct(pdbid_chain)
     np_ref_model_coords = ref_structure[['mean_x', 'mean_y', 'mean_z']].values
     rp_pdbid_chain_ssv = os.path.join(rp_token_cif_dir, f'{pdbid_chain}.ssv')
     pdbid_chain_pdf = pd.read_csv(rp_pdbid_chain_ssv, sep=' ')

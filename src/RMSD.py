@@ -37,7 +37,7 @@ def align_alpha_carbons(model1, model2):
 def compute_rmsd_matrix(pdbid_chain: str, het_hom: str):
     parser = PDB.MMCIFParser(QUIET=True)
     pdbid, chain = pdbid_chain.split('_')
-    structure = parser.get_structure("", f'../data/NMR/raw_cifs/{het_hom}/{pdbid}.cif')
+    structure = parser.get_structure('', f'../data/NMR/raw_cifs/{het_hom}/{pdbid}.cif')
 
     models = list(structure)
     n_models = len(models)
@@ -144,7 +144,7 @@ def rmsd_reference(np_model1_coords, np_model2_coords) -> float:
 
 # NOTE I DO NOT SUPERIMPOSE COORDINATES OF DIFFERENT MODELS ONTO THE RANDOMLY CHOSEN REFERENCE MODEL,
 # PRIOR TO COMPUTING MEAN & STD DEV. IT MIGHT BE BENEFICIAL TO DO THIS BUT IN THIS PRELIMINARY STAGE, I'VE NOT DONE SO.
-def mean_structure(pdbid_chain: str):
+def mean_stddev_struct(pdbid_chain: str):
     rp_pdbid_chain = f'../data/NMR/tokenised_cifs/heteromeric/{pdbid_chain}'
     pdf = pd.read_csv(f'{rp_pdbid_chain}.ssv', sep=' ')
     # pdf = pdf.sort_values(by=["A_pdbx_PDB_model_num", "A_id"])
@@ -202,9 +202,10 @@ if __name__ == '__main__':
     with open(f'../data/NMR/multimodel_lists/{_meric[:3]}_multimod_2104_pdbid_chains.txt', 'r') as f:
         pdbid_chains = f.readlines()
 
-    pdbid_chain = '1A0N_A'
+    # pdbid_chain = '1A0N_A'
 
-    rmsd_mat, n_models = compute_rmsd_matrix(pdbid_chain, het_hom=_meric)
+    # rmsd_mat, n_models = compute_rmsd_matrix(pdbid_chain, het_hom=_meric)
+
     # # linkage_matrix = build_dendrogram(rmsd_mat, n_models)
     # # build_heatmap(rmsd_mat, linkage_matrix)
     # # build_contour_map(rmsd_mat)
@@ -219,4 +220,4 @@ if __name__ == '__main__':
     # # write_clusters_json(json_dict, output_file)
     # # print(f'Saved ensembles to {output_file}')
 
-    df = mean_structure(pdbid_chain)
+    # df = mean_stddev_struct(pdbid_chain)
