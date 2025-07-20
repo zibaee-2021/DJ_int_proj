@@ -63,7 +63,7 @@ def _rp_mmseqs_comb_fastas_dir(het_hom) -> str:
 
 
 def _rp_mmseqs_hethom_comb_fasta_dir() -> str:
-    return os.path.join(_rp_nmr_dir(), 'mmseqs', 'hethom_fasta_dir')
+    return os.path.join(_rp_nmr_dir(), 'mmseqs', 'hethom', 'fasta')
 
 
 def combine_het_hom_fastas_to_1_file():
