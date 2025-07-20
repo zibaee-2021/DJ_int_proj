@@ -86,10 +86,7 @@ if __name__ == '__main__':
                 interesting_results.append((i, j, tm))
 
     # Save interesting pairs as .npy
-    rpath_tm_pairs = os.path.join(
-        '..', '..', 'data', 'ATLAS_parsed', pdbid_chain, 'low_tm_pairs.npy'
-    )
+    rpath_tm_pairs = os.path.join('..', '..', 'data', 'ATLAS_parsed', pdbid_chain, 'low_tm_pairs.npy')
     np.save(rpath_tm_pairs, np.array(interesting_results, dtype=object))
     print(f"Saved {len(interesting_results)} pairs with TM-score < 0.8 to {rpath_tm_pairs}.")
-
     print(f'Completed in {round((time() - start)/60)} minutes.')
