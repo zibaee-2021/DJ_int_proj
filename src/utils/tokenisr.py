@@ -328,17 +328,6 @@ def make_new_bckbone_or_sdchain_col(pdfs: List[pd.DataFrame], pdb_id: str=None) 
     return result_pdfs
 
 
-def keep_only_the_given_chain(pdfs: List[pd.DataFrame], chain: str, pdb_id: str=None) -> List[pd.DataFrame]:
-    if pdb_id:
-        print(f'PDBid={pdb_id}: only keep the specified chain={chain}.')
-    result_pdfs = list()
-    for pdf in pdfs:
-        if pdf['S_asym_id'].isin([chain]).any():
-            result_pdfs.append(pdf)
-            return result_pdfs
-    return result_pdfs
-
-
 def __split_pdbid_chain(pdbid_chain):
     match = re.match(r"^(.*)_([A-Za-z])$", pdbid_chain)
     if match:
