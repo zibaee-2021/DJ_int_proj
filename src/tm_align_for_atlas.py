@@ -13,7 +13,7 @@ from functools import partial
 import platform
 
 op_sys = platform.system()  # 'Linux', 'Darwin' (Darwin = macOS), or 'Windows'
-TMALIGN_BIN = os.path.join('.', op_sys, 'TMalign')
+TMALIGN_BIN = os.path.join('utils', op_sys, 'TMalign')
 
 
 def compute_tm(pair, pdb_files):
@@ -42,8 +42,8 @@ if __name__ == '__main__':
 
     start = time()
     pdbid_chain = '1cvr_A'
-    PDB_DIR = os.path.join('..', '..', 'data', 'ATLAS_parsed', pdbid_chain, 'CA_only')
-    # PDB_DIR = os.path.join('..', '..', 'data', 'ATLAS_parsed', pdbid_chain, 'test')
+    PDB_DIR = os.path.join('', 'data', 'ATLAS_parsed', pdbid_chain, 'CA_only')
+    # PDB_DIR = os.path.join('..', 'data', 'ATLAS_parsed', pdbid_chain, 'test')
 
     pdb_files = sorted([
         os.path.join(PDB_DIR, f)
@@ -86,7 +86,7 @@ if __name__ == '__main__':
                 interesting_results.append((i, j, tm))
 
     # Save interesting pairs as .npy
-    rpath_tm_pairs = os.path.join('..', '..', 'data', 'ATLAS_parsed', pdbid_chain, 'low_tm_pairs.npy')
+    rpath_tm_pairs = os.path.join('', 'data', 'ATLAS_parsed', pdbid_chain, 'low_tm_pairs.npy')
     np.save(rpath_tm_pairs, np.array(interesting_results, dtype=object))
     print(f"Saved {len(interesting_results)} pairs with TM-score < 0.8 to {rpath_tm_pairs}.")
     print(f'Completed in {round((time() - start)/60)} minutes.')

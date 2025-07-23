@@ -5,12 +5,12 @@ NOTE: THIS SCRIPT IS FROM https://www.dsimb.inserm.fr/ATLAS/data/download/downlo
 Bulk download script for ATLAS, Chameleon, and DPF MD datasets.
 Supports fetching any combination of analysis, protein, total, or metadata archives per PDB chain.
 """
-import sys, argparse, logging, time, shutil, zipfile, subprocess
+import os, sys, argparse, logging, time, shutil, zipfile, subprocess
 from pathlib import Path
 
 API_BASE = 'https://www.dsimb.inserm.fr/ATLAS/api'
 DEFAULT_DEST = 'ATLAS_downloads'
-LOCAL_DEST = '../../data/ATLAS_downloads'
+LOCAL_DEST = os.path.join('', 'data', 'ATLAS_downloads')
 SUPPORTED_DATASETS = ['ATLAS', 'chameleon', 'DPF']
 AVAILABLE_ARCHIVES = ['analysis', 'protein', 'total', 'metadata']
 MARKER = '.complete'
@@ -114,8 +114,7 @@ def download_archive(dataset: str, pdb_chain: str, archive_type: str, dest: Path
     # Clean any incomplete previous run
     clean_incomplete(out_folder)
     out_folder.mkdir(parents=True, exist_ok=True)
-
-    endpoint = f'{API_BASE}/{dataset}/{archive_type}/{pdb_chain}'
+    endpoint = os.path.join(API_BASE, dataset, archive_type, pdb_chain)
 
     try:
         if archive_type == 'metadata':
