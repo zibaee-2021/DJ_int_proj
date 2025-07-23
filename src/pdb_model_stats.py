@@ -90,8 +90,9 @@ def _calc_mmseqs2(het_hom: str, pid: str, chains: list):
     # filtered_pdf = mmseqs2.filter_and_write_results(het_hom, pid, result_pdf)
 
     result_pdf = mmseqs2.run_mmseqs2_across_all_pdbids_combined()
-    filtered_pdf = mmseqs2.filter_and_write_results(het_hom='', pdbid='all_1541_hethom', pdf=result_pdf)
-
+    # TODO The following wont print out the no-identity PDBid list because the result pdf will never be empty, so
+    # this needs to be done more systematically
+    filtered_pdf = mmseqs2.filter_and_write_results(het_hom='hethom', pdbid='all_1541_hethom', pdf=result_pdf)
     return filtered_pdf
 
 
@@ -116,7 +117,7 @@ def generate_stats_het(het_hom: str, pdbid_chains_txt: str, use_mmcif=True):
     """
     start = time()
     stats = []
-    rp_token_cif_dir = os.path.join('..', 'data', 'NMR', 'tokenised_cifs', het_hom)
+    rp_token_cif_dir = os.path.join('..', 'data', 'NMR', 'parsed_cifs', het_hom)
     pdbids, pdbid_chains_dict = _read_multimodel_pdbid_chains(txt_f=pdbid_chains_txt)
 
     for pid, chains in pdbid_chains_dict.items():
