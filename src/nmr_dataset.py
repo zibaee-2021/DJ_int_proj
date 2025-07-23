@@ -25,7 +25,7 @@ def write_struct_files_for_solution_NMR(_meric: str, cif_or_pdb: str) -> None:
 def parse_atomic_records_from_cifs(_meric: str):
     start = time()
     relpath_raw_cifs_meric = os.path.join('..', 'data', 'NMR', 'raw_cifs', _meric)
-    relpath_token_cifs = os.path.join('..', 'data', 'NMR', 'tokenised_cifs', _meric)
+    relpath_token_cifs = os.path.join('..', 'data', 'NMR', 'parsed_cifs', _meric)
     os.makedirs(relpath_token_cifs, exist_ok=True)
 
     rpath_cifs = glob.glob(os.path.join(relpath_raw_cifs_meric, f'*.cif'))

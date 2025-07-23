@@ -47,7 +47,7 @@ def _rp_rawcifs_dir(het_hom: str) -> str:
 
 
 def _rp_tokcifs_dir(het_hom) -> str:
-    return os.path.join(_rp_nmr_dir(), 'tokenised_cifs', het_hom)
+    return os.path.join(_rp_nmr_dir(), 'parsed_cifs', het_hom)
 
 
 def _rp_mmseqs_dir(het_hom) -> str:
