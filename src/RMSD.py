@@ -125,7 +125,7 @@ def write_clusters_json(json_dict, output_path):
         json.dump(json_dict, f, indent=4)
 
 
-def cluster_save_to_json(rmsd_mat):
+def cluster_save_to_json(rmsd_mat, pdbid_chain):
     clusters = cluster_models(rmsd_mat, threshold=2.0)
     json_dict = clusters_to_json_dict(clusters)
     mm_ensbls = '../data/NMR/multimodel_ensembles'
@@ -145,7 +145,7 @@ def rmsd_reference(np_model1_coords, np_model2_coords) -> float:
 # NOTE I DO NOT SUPERIMPOSE COORDINATES OF DIFFERENT MODELS ONTO THE RANDOMLY CHOSEN REFERENCE MODEL,
 # PRIOR TO COMPUTING MEAN & STD DEV. IT MIGHT BE BENEFICIAL TO DO THIS BUT IN THIS PRELIMINARY STAGE, I'VE NOT DONE SO.
 def mean_stddev_struct(pdbid_chain: str):
-    rp_pdbid_chain = f'../data/NMR/tokenised_cifs/heteromeric/{pdbid_chain}'
+    rp_pdbid_chain = os.path.join('..', 'data', 'NMR', 'parsed_cifs', 'heteromeric', pdbid_chain)
     pdf = pd.read_csv(f'{rp_pdbid_chain}.ssv', sep=' ')
     # pdf = pdf.sort_values(by=["A_pdbx_PDB_model_num", "A_id"])
     model_numbers = pdf['A_pdbx_PDB_model_num'].unique()
@@ -210,7 +210,7 @@ if __name__ == '__main__':
     # # build_heatmap(rmsd_mat, linkage_matrix)
     # # build_contour_map(rmsd_mat)
 
-    # cluster_save_to_json(rmsd_mat)
+    # cluster_save_to_json(rmsd_mat, pdbid_chain)
     #
     # # clusters = cluster_models(rmsd_mat, threshold=2.0)
     # # json_dict = clusters_to_json_dict(clusters)
