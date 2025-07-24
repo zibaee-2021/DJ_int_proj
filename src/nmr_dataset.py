@@ -97,7 +97,7 @@ def generate_pdb_lists_from_parsed_ssvs(_meric: str):
         singlemods = headr + ''.join(singlemods)
         f.write(singlemods)
 
-    multimodel_txt = os.path.join(list_dir, f'{_meric[:3]}_multimod_{len(multimodel_pdbids)}_pdbid_chains.txt')
+    multimodel_txt = os.path.join(list_dir, f'{_meric[:3]}_multimod_{len(multimodel_pdbids)}_PidChains.txt')
     with open(multimodel_txt, 'w') as f:
         for fname in multimodel_pdbids:
             f.write(fname.removesuffix('.ssv') + '\n')

@@ -256,11 +256,11 @@ if __name__ == '__main__':
 
     # combine_het_hom_fastas_to_1_file()
     # het_hom = 'heteromeric'
-    # txt_f = 'het_multimod_2104_pdbid_chains.txt'
+    # txt_f = 'het_multimod_2104_PidChains.txt'
     # fasta_f = 'het_all_932_PDBids.fasta'
 
     # het_hom = 'homomeric'
-    # txt_f = 'hom_multimod_1421_pdbid_chains.txt'
+    # txt_f = 'hom_multimod_1421_PidChains.txt'
     # fasta_f = 'hom_all_609_PDBids.fasta'
     # pdbids, pdbid_chains_dict = pms._read_multimodel_pdbid_chains(txt_f)
 
@@ -288,7 +288,7 @@ if __name__ == '__main__':
     # else:
     #     print(f'{os.path.basename(fasta_dir)} does not exist.')
     #
-    # rp_pdbid_chains = os.path.join('..', 'data', 'NMR', 'multimodel_lists', 'het_multimod_2104_pdbid_chains.txt')
+    # rp_pdbid_chains = os.path.join('..', 'data', 'NMR', 'multimodel_lists', 'het_multimod_2104_PidChains.txt')
     # het_hom = os.path.basename(rp_pdbid_chains)[:3]
     # het_hom = 'heteromeric' if het_hom == 'het' else 'homomeric'
     #

@@ -187,8 +187,8 @@ if __name__ == '__main__':
 
     # _calc_mmseqs2(het_hom='heteromeric', pdbid='1AI0',
     #               chains=['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'])
-    # rpath_pdbid_chains = (f'../data/NMR/multimodel_lists/het_multimod_2104_pdbid_chains.txt')
-    # stats_pdf = generate_stats_het(het_hom='heteromeric', pdbid_chains_txt='het_multimod_2104_pdbid_chains.txt')
+    # rpath_pdbid_chains = (f'../data/NMR/multimodel_lists/het_multimod_2104_PidChains.txt')
+    # stats_pdf = generate_stats_het(het_hom='heteromeric', pdbid_chains_txt='het_multimod_2104_PidChains.txt')
     # pass
 
 

@@ -199,7 +199,7 @@ def mean_stddev_struct(pdbid_chain: str):
 if __name__ == '__main__':
     _meric = 'heteromeric'
 
-    with open(f'../data/NMR/multimodel_lists/{_meric[:3]}_multimod_2104_pdbid_chains.txt', 'r') as f:
+    with open(f'../data/NMR/multimodel_lists/{_meric[:3]}_multimod_2104_PidChains.txt', 'r') as f:
         pdbid_chains = f.readlines()
 
     # pdbid_chain = '1A0N_A'
