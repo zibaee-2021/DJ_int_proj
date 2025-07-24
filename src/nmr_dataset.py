@@ -92,7 +92,8 @@ def generate_pdb_lists_from_parsed_ssvs(_meric: str):
 
     singlemodel_txt = os.path.join(list_dir, f'{_meric[:3]}_singlemod_{len(single_model_pdbids)}_PidChains.txt')
     with open(singlemodel_txt, 'w') as f:
-        headr = f'The following {len(single_model_pdbids)} {_meric} PDBid_chains had only 1 model (solution NMR) in the RCSB dataset:\n'
+        headr = (f'The following {len(single_model_pdbids)} {_meric} '
+                 f'PDBid_chains had only 1 model (solution NMR) in the RCSB dataset:\n')
         singlemods = list()
         for i, fname in enumerate(single_model_pdbids):
             j = i + 1
@@ -106,7 +107,7 @@ def generate_pdb_lists_from_parsed_ssvs(_meric: str):
         for fname in multimodel_pdbids:
             f.write(fname.removesuffix('.ssv') + '\n')
 
-    print(f'\nSaved {len(multimodel_pdbids)} {_meric} pdbid_chains with >1 unique model to text file.')
+    print(f'\nSaved {len(multimodel_pdbids)} {_meric} pdbid_chains with > 1 unique model to text file.')
     print(f'Completed in {round(time() - start)} seconds')
 
 
