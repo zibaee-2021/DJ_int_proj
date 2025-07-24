@@ -111,7 +111,10 @@ def generate_stats_het(het_hom: str, pdbid_chains_txt: str, use_mmcif=True):
         - number of models per PDBid_chain.
         - number of alpha carbons per PDBid_chain.
 
-    4. Calculate sequence identity between every chain for each PDBid from list, by MMseqs2.
+    4. Calculate sequence identity by MMseqs2 between:
+
+        - every chain of each PDBid from list.
+        - every PDBid_chain with every other.
 
     5. Calculate RMSD for each model against the average of those models.
     """
