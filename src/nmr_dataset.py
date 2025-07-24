@@ -86,7 +86,7 @@ def generate_pdb_lists_from_parsed_ssvs(_meric: str):
     list_dir = os.path.join('..', 'data', 'NMR', 'multimodel_lists')
     os.makedirs(list_dir, exist_ok=True)
 
-    singlemodel_txt = os.path.join(list_dir, f'{_meric[:3]}_singlemod_{len(single_model_pdbids)}_pdbid_chains.txt')
+    singlemodel_txt = os.path.join(list_dir, f'{_meric[:3]}_singlemod_{len(single_model_pdbids)}_PidChains.txt')
     with open(singlemodel_txt, 'w') as f:
         headr = f'The following {len(single_model_pdbids)} {_meric} PDBid_chains had only 1 model (solution NMR) in the RCSB dataset:\n'
         singlemods = list()
