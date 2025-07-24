@@ -30,17 +30,14 @@ def parse_atomic_records_from_cifs(_meric: str, write_results=True):
 
     rpath_cifs = glob.glob(os.path.join(rp_raw_cifs_meric, f'*.cif'))
     rpath_cifs.sort()
+    empty_pdbidchains_all = []
 
     for rp_cif in rpath_cifs:
         cif_dict = MMCIF2Dict(rp_cif)
         pdbid = os.path.basename(rp_cif).removesuffix('.cif')
         # pdbid = '2N2K'
         cif_pdfs_per_chain, empty_pdbidchains = cp.parse_cif(pdb_id=pdbid, mmcif_dict=cif_dict)  # same function from MSc project, but alpha-carbons only.
-        empty_pdbidchains.sort()
-
-        for pdbid_chain in empty_pdbidchains:
-            with open(os.path.join('..', 'data', 'NMR', 'tokenised_cifs', f'noCA_pdbidchains_{_meric[:3]}.txt'), 'a') as f:
-                f.write(pdbid_chain + '\n')
+        empty_pdbidchains_all.extend(empty_pdbidchains)
 
         with open(os.path.join('..', 'data', 'enumeration', 'residues.json'), 'r') as json_f:
             residues_enumerated = json.load(json_f)
