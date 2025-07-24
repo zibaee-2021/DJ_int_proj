@@ -47,7 +47,7 @@ def _process_missing_data(pdf_with_missing_data: pd.DataFrame, pdbid_chain: str,
 
 
 def _replace_low_occupancy_coords_with_nans(pdf: pd.DataFrame, pdbid_chain: str) -> pd.DataFrame:
-    if pdf['A_occupancy'] <= 0.5:
+    if (pdf['A_occupancy'] <= 0.5).any():
         print(f'A_occupancy column contains value(s) <= 0.5 for {pdbid_chain}.')
     pdf['A_Cartn_x'] = np.where(pdf['A_occupancy'] <= 0.5, np.nan, pdf['A_Cartn_x'])
     pdf['A_Cartn_y'] = np.where(pdf['A_occupancy'] <= 0.5, np.nan, pdf['A_Cartn_y'])
