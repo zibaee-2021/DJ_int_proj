@@ -28,12 +28,12 @@ def parse_atomic_records_from_cifs(_meric: str, write_results=True):
     relpath_token_cifs = os.path.join('..', 'data', 'NMR', 'parsed_cifs', _meric)
     os.makedirs(relpath_token_cifs, exist_ok=True)
 
-    rpath_cifs = glob.glob(os.path.join(relpath_raw_cifs_meric, f'*.cif'))
+    rpath_cifs = glob.glob(os.path.join(rp_raw_cifs_meric, f'*.cif'))
     rpath_cifs.sort()
 
-    for relpath_cif in rpath_cifs:
-        cif_dict = MMCIF2Dict(relpath_cif)
-        pdbid = os.path.basename(relpath_cif).removesuffix('.cif')
+    for rp_cif in rpath_cifs:
+        cif_dict = MMCIF2Dict(rp_cif)
+        pdbid = os.path.basename(rp_cif).removesuffix('.cif')
         # pdbid = '2N2K'
         cif_pdfs_per_chain, empty_pdbidchains = cp.parse_cif(pdb_id=pdbid, mmcif_dict=cif_dict)  # same function from MSc project, but alpha-carbons only.
         empty_pdbidchains.sort()
@@ -70,8 +70,8 @@ def parse_atomic_records_from_cifs(_meric: str, write_results=True):
 
 def generate_pdb_lists_from_parsed_ssvs(_meric: str):
     start = time()
-    relpath_token_cifs = os.path.join('..', 'data', 'NMR', 'tokenised_cifs', _meric)
-    ssv_files = glob.glob(os.path.join(relpath_token_cifs, '*.ssv'))
+    rp_token_cifs = os.path.join('..', 'data', 'NMR', 'parsed_cifs', _meric)
+    ssv_files = glob.glob(os.path.join(rp_token_cifs, '*.ssv'))
 
     multimodel_pdbids = []
     single_model_pdbids = []
