@@ -127,11 +127,11 @@ if __name__ == "__main__":
     parse_atomic_records_from_cifs(_meric=_meric, write_results=True)  # 6 mins to parse (new Mac). (13 mins Rocky)
     # generate_pdb_lists_from_parsed_ssvs(_meric=_meric)  # 2 secs to generate PDBid_chain lists (multi & single model) (4 secs Rocky)
 
-    _meric = 'heteromeric'
-    write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='pdb')  # 31 mins (new Mac) for 1038 PDBs.  (31 mins Rocky)
-    write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='cif')  # 32 mins (new Mac) for 1038 mmCIFs. (32 mins Rocky)
-    parse_atomic_records_from_cifs(_meric=_meric)  # 8 mins to parse (new Mac). (17 mins Rocky)
-    generate_pdb_lists_from_parsed_ssvs(_meric=_meric)  # 4 seconds to generate PDBid_chain lists (multi & single model)
+    # _meric = 'heteromeric'
+    # write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='pdb')  # 31 mins (new Mac) for 1038 PDBs.  (31 mins Rocky)
+    # write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='cif')  # 32 mins (new Mac) for 1038 mmCIFs. (32 mins Rocky)
+    # parse_atomic_records_from_cifs(_meric=_meric)  # 8 mins to parse (new Mac). (17 mins Rocky)
+    # generate_pdb_lists_from_parsed_ssvs(_meric=_meric)  # 4 seconds to generate PDBid_chain lists (multi & single model)
 
 # Notice: 4 legacy PDB could not be read (7ZE0, 9D9A, 9D9B, 9D9C):
 # Failed to retrieve data from API: 404 Client Error: Not Found for url: https://files.rcsb.org/download/7ZE0.pdb
