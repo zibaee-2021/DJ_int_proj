@@ -25,8 +25,8 @@ def write_struct_files_for_solution_NMR(_meric: str, cif_or_pdb: str) -> None:
 def parse_atomic_records_from_cifs(_meric: str, write_results=True):
     start = time()
     rp_raw_cifs_meric = os.path.join('..', 'data', 'NMR', 'raw_cifs', _meric)
-    rp_token_cifs = os.path.join('..', 'data', 'NMR', 'parsed_cifs', _meric)
-    os.makedirs(rp_token_cifs, exist_ok=True)
+    rp_parsed_cifs_dst_dir = os.path.join('..', 'data', 'NMR', 'parsed_cifs', _meric)
+    os.makedirs(rp_parsed_cifs_dst_dir, exist_ok=True)
 
     rpath_cifs = glob.glob(os.path.join(rp_raw_cifs_meric, f'*.cif'))
     rpath_cifs.sort()
@@ -35,34 +35,29 @@ def parse_atomic_records_from_cifs(_meric: str, write_results=True):
     for rp_cif in rpath_cifs:
         cif_dict = MMCIF2Dict(rp_cif)
         pdbid = os.path.basename(rp_cif).removesuffix('.cif')
-        # pdbid = '2N2K'
-        cif_pdfs_per_chain, empty_pdbidchains = cp.parse_cif(pdb_id=pdbid, mmcif_dict=cif_dict)  # same function from MSc project, but alpha-carbons only.
+        cif_pdfs_per_chain, empty_pdbidchains = cp.parse_cif(pdb_id=pdbid, mmcif_dict=cif_dict)
         empty_pdbidchains_all.extend(empty_pdbidchains)
 
-        with open(os.path.join('..', 'data', 'enumeration', 'residues.json'), 'r') as json_f:
-            residues_enumerated = json.load(json_f)
+        # with open(os.path.join('..', 'data', 'enumeration', 'residues.json'), 'r') as json_f:
+        #     residues_enumerated = json.load(json_f)
         for pdf_chain in cif_pdfs_per_chain:
-            try:
-                chain = pdf_chain['S_asym_id'].iloc[0]
-            except:
-                print(f"pdf_chain['S_asym_id'].iloc[0] on line 49 is failing for {pdbid}")
-                print(f"pdf_chain={pdf_chain}")
-                print('Leaving this one out.')
-                continue
+            chain = pdf_chain['S_asym_id'].iloc[0]
             pdf_chain = pdf_chain.copy()
-            pdf_chain.loc[:, 'aa_label_num'] = pdf_chain['S_mon_id'].map(residues_enumerated).astype('Int64')
-            pdf_chain = pdf_chain[['A_pdbx_PDB_model_num', 'S_seq_id', 'S_mon_id', 'aa_label_num',
+            # pdf_chain.loc[:, 'aa_label_num'] = pdf_chain['S_mon_id'].map(residues_enumerated).astype('Int64')
+            # pdf_chain = pdf_chain[['A_pdbx_PDB_model_num', 'S_seq_id', 'S_mon_id', 'aa_label_num',
+            pdf_chain = pdf_chain[['A_pdbx_PDB_model_num', 'S_seq_id', 'S_mon_id',
                                    'A_id', 'A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']]
             if write_results:
-                pdf_chain.to_csv(path_or_buf=os.path.join(rp_token_cifs, f'{pdbid}_{chain}.ssv'), sep=' ', index=False)
+                pdf_chain.to_csv(path_or_buf=os.path.join(rp_parsed_cifs_dst_dir, f'{pdbid}_{chain}.ssv'),
+                                 sep=' ', index=False)
 
-    empty_pdbidchains_all.sort()
     if write_results:
+        empty_pdbidchains_all.sort()
         for pdbid_chain in empty_pdbidchains_all:
             with open(os.path.join('..', 'data', 'NMR', 'parsed_cifs', f'{_meric[:3]}_noCA_PidChains.txt'), 'a') as f:
                 f.write(pdbid_chain + '\n')
 
-    print(f'Completed {len(rpath_cifs)} {_meric} CIFs in {round((time() - start) / 60)} minutes')
+    print(f'Completed {len(rpath_cifs)} {_meric} mmCIFs/PDBs in {round((time() - start) / 60)} minutes')
 
 
 def generate_pdb_lists_from_parsed_ssvs(_meric: str):
@@ -122,15 +117,15 @@ def write_pdb_or_cif(pdbid: str, cif_or_pdb: str, dst_dir: str):
 
 if __name__ == "__main__":
     _meric = 'homomeric'
-    # write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='pdb')  # 16 mins (new Mac) for 686-4 = 682 PDBs. (21 mins Rocky)
-    # write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='cif')  # 21 mins (new Mac) for 686 mmCIFs. (21 mins Rocky)
+    # write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='pdb') # 16 mins (new Mac) for 686-4 = 682 PDBs. (21 mins Rocky)
+    # write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='cif') # 21 mins (new Mac) for 686 mmCIFs. (21 mins Rocky)
     parse_atomic_records_from_cifs(_meric=_meric, write_results=True)  # 6 mins to parse (new Mac). (13 mins Rocky)
     # generate_pdb_lists_from_parsed_ssvs(_meric=_meric)  # 2 secs to generate PDBid_chain lists (multi & single model) (4 secs Rocky)
 
     # _meric = 'heteromeric'
-    # write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='pdb')  # 31 mins (new Mac) for 1038 PDBs.  (31 mins Rocky)
-    # write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='cif')  # 32 mins (new Mac) for 1038 mmCIFs. (32 mins Rocky)
-    # parse_atomic_records_from_cifs(_meric=_meric)  # 8 mins to parse (new Mac). (17 mins Rocky)
+    # write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='pdb') # 31 mins (new Mac) for 1038 PDBs.  (31 mins Rocky)
+    # write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='cif') # 32 mins (new Mac) for 1038 mmCIFs. (32 mins Rocky)
+    # parse_atomic_records_from_cifs(_meric=_meric, write_results=True) # 8 mins to parse (new Mac). (17 mins Rocky)
     # generate_pdb_lists_from_parsed_ssvs(_meric=_meric)  # 4 seconds to generate PDBid_chain lists (multi & single model)
 
 # Notice: 4 legacy PDB could not be read (7ZE0, 9D9A, 9D9B, 9D9C):
