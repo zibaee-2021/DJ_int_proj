@@ -43,6 +43,11 @@ def _process_missing_data(pdf_with_missing_data: pd.DataFrame, pdbid_chain: str,
         if pdf_with_missing_data['A_Cartn_x'].isna().any():
             print(f'isna().any() is true for A_Cartn_x column for {pdbid_chain}')
         result_pdf = pdf_with_missing_data.dropna(how='any', axis=0, inplace=False, subset=['A_Cartn_x'])
+    if result_pdf.empty:
+        print(f'The dataframe for {pdbid_chain} is now empty having dropped all rows that had NaNs in the Cartn_x '
+              f'column. This was likely caused by the previous function replacing all low occupancy coordinates'
+              f'with NaNs, which may be due to the use of solid-state NMR or just same error in the creation of this'
+              f'PDB record.')
     return result_pdf
 
 
@@ -55,7 +60,7 @@ def _replace_low_occupancy_coords_with_nans(pdf: pd.DataFrame, pdbid_chain: str)
     return pdf
 
 
-def _sort_by_chain_residues_atoms(pdf: pd.DataFrame) -> pd.DataFrame:
+def _sort_by_model_residues_atoms(pdf: pd.DataFrame) -> pd.DataFrame:
     # AS `pdf` WILL ONLY BE PASSED HERE FOR ONE CHAIN AT A TIME,
     # I ONLY NEED TO SORT ROWS BY MODEL NUMBER, RESIDUE SEQUENCE NUMBERING (SEQ ID) THEN ATOM SEQUENCE NUMBERING (A_ID):
     pdf.reset_index(drop=True, inplace=True)
@@ -114,33 +119,35 @@ def _rearrange_cols(pdf_merged: pd.DataFrame) -> pd.DataFrame:
     ]]
 
 
-def _split_up_by_chain(atomsite_pdf: pd.DataFrame, polyseq_pdf: pd.DataFrame) -> list:
+def _split_up_by_chain(pdb_id: str, atomsite_pdf: pd.DataFrame, polyseq_pdf: pd.DataFrame) -> list:
     """
     :return: List of tuples containing each given pdf for each polypeptide chain,
     e.g. [(`atomsite_pdf_A`, `polyseq_pdf_A`), (`atomsite_pdf_B`, `polyseq_pdf_B`, etc)]
     """
-    chains = atomsite_pdf['A_label_asym_id'].unique()
-    num_of_chains_A = len(chains)
-    num_of_chains_S = polyseq_pdf['S_asym_id'].nunique()
-    if num_of_chains_A != num_of_chains_S:
-        print(f"There are {num_of_chains_A} chains in `_atom_site`, but {num_of_chains_S} chains in "
-              f"`_pdbx_poly_seq_scheme`. Probably a chain with non-natural amino acids (which would have been"
-              f" filtered out by preceding function `_remove_hetatm_rows`.")
+    atomsite_chains = atomsite_pdf['A_label_asym_id'].unique().tolist()
+    polyseq_chains = polyseq_pdf['S_asym_id'].unique().tolist()
+    common_chains = list(set(atomsite_chains) & set(polyseq_chains))
+    atomsite_pdf = atomsite_pdf[atomsite_pdf['A_label_asym_id'].isin(common_chains)]
+    polyseq_pdf = polyseq_pdf[polyseq_pdf['S_asym_id'].isin(common_chains)]
+
+    atomsite_chains = atomsite_pdf['A_label_asym_id'].unique().tolist()
+    atomsite_chains.sort()
+    polyseq_chains = polyseq_pdf['S_asym_id'].unique().tolist()
+    polyseq_chains.sort()
+
+    assert len(atomsite_chains) == len(polyseq_chains), \
+        (f'Discrepancy in number of chains for {pdb_id}'
+         f'\n_split_up_by_chain() receives atomsite which has been parsed to by removing HETATM rows.'
+         f'\n{len(atomsite_chains)} chains in atomsite; {len(polyseq_chains)} chains in polyseq.'
+         f'\natomsite chains={atomsite_chains}. \npolyseq chains={polyseq_chains}.')
+
+    assert atomsite_chains == polyseq_chains, \
+        (f'Discrepancy in the identity of chains: atomsite chains={atomsite_chains}. polyseq chains={polyseq_chains}.')
+
     grouped_atomsite_dfs = [group_df for _, group_df in atomsite_pdf.groupby('A_label_asym_id')]
     grouped_polyseq_dfs = [group_df for _, group_df in polyseq_pdf.groupby('S_asym_id')]
     grouped_tuple = [(grp_as, grp_ps) for grp_as, grp_ps in zip(grouped_atomsite_dfs, grouped_polyseq_dfs)]
-    assert len(chains) == len(grouped_tuple)
     return grouped_tuple
-
-
-def _remove_hetatm(atomsite_pdf: pd.DataFrame) -> pd.DataFrame:
-    atomsite_pdf = atomsite_pdf.drop(atomsite_pdf[atomsite_pdf['A_group_PDB'] == 'HETATM'].index)
-    # OR KEEP ONLY ROWS WITH 'ATOM' GROUP. NOT SURE IF ONE APPROACH IS BETTER THAN THE OTHER:
-    # atom_site_pdf = atom_site_pdf[atom_site_pdf.A_group_PDB == 'ATOM']
-    if atomsite_pdf.empty:
-        print('Having just removed all HETATM rows, the df is now empty. '
-              'This suggests this PDB did not contain any natural amino acids (e.g. Could be all Norleucine)')
-    return atomsite_pdf
 
 
 def extract_fields_from_atom_site(mmcif: dict) -> pd.DataFrame:
@@ -197,57 +204,82 @@ def extract_fields_from_poly_seq(mmcif: dict) -> pd.DataFrame:
 
 
 def parse_cif(pdb_id: str, mmcif_dict: dict) -> Tuple[List[pd.DataFrame], list]:
-    print(f'parsing {pdb_id}')
+    empty_pdbidchains, parsed_cif_by_chain = [], []
+
+    print(f'Parse {pdb_id}')
     polyseq_pdf = extract_fields_from_poly_seq(mmcif_dict)
     atomsite_pdf = extract_fields_from_atom_site(mmcif_dict)
-    atomsite_pdf = _remove_hetatm(atomsite_pdf)
-    # GENERATE A LIST OF TUPLES, EACH TUPLE CONTAINING 2 PDFS: ATOMSITE AND POLYSEQ, FOR A SINGLE CHAIN.
-    all_chains_pdfs = _split_up_by_chain(atomsite_pdf, polyseq_pdf)
-    parsed_cif_by_chain = []
-    empty_pdbidchains = []
-    for chain_pdf in all_chains_pdfs:
-        atomsite_pdf, polyseq_pdf = chain_pdf
-        pdf = pd.merge(left=polyseq_pdf, right=atomsite_pdf,
-                       left_on=['S_seq_id'], right_on=['A_label_seq_id'], how='outer')
-        try:
-            chain = pdf['S_asym_id'].iloc[0]
-        except:
-            print(f"pdf['S_asym_id'].iloc[0] on line 246 is failing for {pdb_id}")
-            print('Leaving this one out.')
-            print(f"pdf={pdf}")
-            continue
+    atomsite_pdf = atomsite_pdf.drop(atomsite_pdf[atomsite_pdf['A_group_PDB'] == 'HETATM'].index)
+    # OR KEEP ONLY ROWS WITH 'ATOM' GROUP. NOT SURE IF ONE APPROACH IS BETTER THAN THE OTHER:
+    # atom_site_pdf = atom_site_pdf[atom_site_pdf.A_group_PDB == 'ATOM']
+    if atomsite_pdf.empty:
+        print('Having just removed all HETATM rows, the atomsite pdf is now empty. '
+              'This suggests this PDB did not contain any natural amino acids (e.g. Could be all Norleucine)')
+        empty_pdbidchains.append(pdb_id)
+        return [], empty_pdbidchains
+    else: # GENERATE A LIST OF TUPLES, EACH TUPLE CONTAINING 2 PDFS: ATOMSITE AND POLYSEQ, FOR SAME CHAIN.
 
-        # ALPHA-CARBON ONLY:
-        # pdf = pdf.loc[pdf['A_label_atom_id'].isin(('CA',))] # Prefer if matching multiple, e.g. `.isin(('CA','CB'))`
-        pdf = pdf[pdf.A_label_atom_id == 'CA']
-        print(f'pdf.shape after removing everything except alpha-carbons={pdf.shape}')
-        pdbid_chain = f'{pdb_id}_{chain}'
-        if pdf.empty:
-            print(f'After removing all non-CA atoms, there are none left. So {pdbid_chain} will not be included.')
-            empty_pdbidchains.append(pdbid_chain)
-            continue
-        pdf = _rearrange_cols(pdf)
-        pdf = _cast_number_strings_to_numeric_types(pdf)
-        pdf = _cast_objects_to_stringdtype(pdf)
-        pdf = _sort_by_chain_residues_atoms(pdf)
-        pdf = _replace_low_occupancy_coords_with_nans(pdf, pdbid_chain)
-        pdf = _process_missing_data(pdf, pdbid_chain, impute=False)
+        all_chains_pdfs = _split_up_by_chain(pdb_id, atomsite_pdf, polyseq_pdf)
 
-        pdf = pdf[['A_pdbx_PDB_model_num',                    # MODEL NUMBER
-                   'S_asym_id',                               # CHAIN
-                   'S_seq_id',                                # RESIDUE POSITION
-                   'S_mon_id',                                # RESIDUE NAME (3-LETTER)
-                   'A_id',                                    # ATOM POSITION
-                   'A_label_atom_id',                         # ATOM NAME
-                   'A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']]    # COORDINATES
-                   # 'b_iso_or_equiv']]                       # B-FACTORS (only for crystallographic data, not NMR).
-        parsed_cif_by_chain.append(pdf)
+        for chain_pdf in all_chains_pdfs:
+            atomsite_pdf_c, polyseq_pdf_c = chain_pdf
+            if atomsite_pdf_c.empty and not polyseq_pdf_c.empty:
+                p_chain = {polyseq_pdf_c['S_asym_id'].iloc[0]}
+                print(f"For this specific chain {p_chain}, {pdb_id}'s atomsite is empty, while polyseq isn't."
+                      f"\nTherefore can't merge these pdfs. "
+                      f"\nAdd {pdb_id}_{p_chain} to empty PDBid_chains list.")
+                empty_pdbidchains.append(f'{pdb_id}_{p_chain}')
+                continue
+            if not atomsite_pdf_c.empty and polyseq_pdf_c.empty:
+                a_chain = {atomsite_pdf_c['A_label_asym_id'].iloc[0]}
+                print(f"For this specific chain {a_chain}, {pdb_id}'s polyseq is empty, while atomsite isn't."
+                      f"\nTherefore can't merge these pdfs. "
+                      f"\nAdd {pdb_id}_{a_chain} to empty PDBid_chains list.")
+                empty_pdbidchains.append(f'{pdb_id}_{a_chain}')
+                continue
+            else:  # neither is empty
+                a_chain = atomsite_pdf_c['A_label_asym_id'].iloc[0]
+                p_chain = polyseq_pdf_c['S_asym_id'].iloc[0]
+                assert a_chain == p_chain,\
+                    f'Chain discrepancy in grouped tuple from _split_up_by_chain() for {pdb_id}. '\
+                    f'\natomsite chain={a_chain} is not the same as the polyseq chain={p_chain}.'
+                # if not failing assert, can merge them:
+                pdf_c = pd.merge(left=polyseq_pdf_c, right=atomsite_pdf_c,
+                                 left_on=['S_seq_id'],
+                                 right_on=['A_label_seq_id'], how='outer')
+
+            chain = pdf_c['S_asym_id'].iloc[0]
+            # ALPHA-CARBON ONLY:
+            pdf_c = pdf_c[pdf_c.A_label_atom_id == 'CA']
+            if pdf_c.shape[0] < 8:
+                print(f'pdf.shape after removing all rows except for alpha-carbons={pdf_c.shape}')
+            pdbid_chain = f'{pdb_id}_{chain}'
+            if pdf_c.empty:
+                print(f'After removing all non-CA atoms, no atoms left. So {pdbid_chain} cannot be included. '
+                      f'\n(Adding to empty PidChains list.)')
+                empty_pdbidchains.append(pdbid_chain)
+                continue
+            pdf_c = _rearrange_cols(pdf_c)
+            pdf_c = _cast_number_strings_to_numeric_types(pdf_c)
+            pdf_c = _cast_objects_to_stringdtype(pdf_c)
+            pdf_c = _sort_by_model_residues_atoms(pdf_c)
+            pdf_c = _replace_low_occupancy_coords_with_nans(pdf_c, pdbid_chain)
+            pdf_c = _process_missing_data(pdf_c, pdbid_chain, impute=False)
+            pdf_c = pdf_c[['A_pdbx_PDB_model_num',                # MODEL NUMBER
+                           'S_asym_id',                               # CHAIN
+                           'S_seq_id',                                # RESIDUE POSITION
+                           'S_mon_id',                                # RESIDUE NAME (3-LETTER)
+                           'A_id',                                    # ATOM POSITION
+                           'A_label_atom_id',                         # ATOM NAME
+                           'A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']]    # COORDINATES
+                         # 'b_iso_or_equiv']]                         # B-FACTORS (only crystallographic data, not NMR)
+            parsed_cif_by_chain.append(pdf_c)
     return parsed_cif_by_chain, empty_pdbidchains
 
 
 if __name__ == '__main__':
     from Bio.PDB.MMCIF2Dict import MMCIF2Dict
-    pdbid = '2N2K'
+    pdbid = '6F3K'
     cif_pdfs_per_chain = parse_cif(pdb_id=pdbid,
-                                   mmcif_dict=MMCIF2Dict(f'../../data/NMR/raw_cifs/heteromeric/{pdbid}.cif'))
+                                   mmcif_dict=MMCIF2Dict(f'../../data/NMR/raw_cifs/homomeric/{pdbid}.cif'))
     pass
