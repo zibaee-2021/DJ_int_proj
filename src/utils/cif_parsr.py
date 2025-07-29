@@ -265,6 +265,9 @@ def parse_cif(pdb_id: str, mmcif_dict: dict) -> Tuple[List[pd.DataFrame], list]:
             pdf_c = _sort_by_model_residues_atoms(pdf_c)
             pdf_c = _replace_low_occupancy_coords_with_nans(pdf_c, pdbid_chain)
             pdf_c = _process_missing_data(pdf_c, pdbid_chain, impute=False)
+            if pdf_c.empty:
+                empty_pdbidchains.append(pdbid_chain)
+                continue
             pdf_c = pdf_c[['A_pdbx_PDB_model_num',                # MODEL NUMBER
                            'S_asym_id',                               # CHAIN
                            'S_seq_id',                                # RESIDUE POSITION
