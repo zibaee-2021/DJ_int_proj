@@ -45,15 +45,15 @@ def _process_missing_data(pdf_with_missing_data: pd.DataFrame, pdbid_chain: str,
         result_pdf = pdf_with_missing_data.dropna(how='any', axis=0, inplace=False, subset=['A_Cartn_x'])
     if result_pdf.empty:
         print(f'The dataframe for {pdbid_chain} is now empty having dropped all rows that had NaNs in the Cartn_x '
-              f'column. This was likely caused by the previous function replacing all low occupancy coordinates'
-              f'with NaNs, which may be due to the use of solid-state NMR or just same error in the creation of this'
-              f'PDB record.')
+              f'column. '
+              f'\nThis was likely caused by the previous function replacing all low occupancy coordinates with NaNs, '
+              f'\nwhich may be due to the use of solid-state NMR or an error in the creation of this PDB record.')
     return result_pdf
 
 
 def _replace_low_occupancy_coords_with_nans(pdf: pd.DataFrame, pdbid_chain: str) -> pd.DataFrame:
     if (pdf['A_occupancy'] <= 0.5).any():
-        print(f'A_occupancy column contains value(s) <= 0.5 for {pdbid_chain}.')
+        print(f'\nA_occupancy column contains value(s) <= 0.5 for {pdbid_chain}.')
     pdf['A_Cartn_x'] = np.where(pdf['A_occupancy'] <= 0.5, np.nan, pdf['A_Cartn_x'])
     pdf['A_Cartn_y'] = np.where(pdf['A_occupancy'] <= 0.5, np.nan, pdf['A_Cartn_y'])
     pdf['A_Cartn_z'] = np.where(pdf['A_occupancy'] <= 0.5, np.nan, pdf['A_Cartn_z'])
@@ -205,16 +205,15 @@ def extract_fields_from_poly_seq(mmcif: dict) -> pd.DataFrame:
 
 def parse_cif(pdb_id: str, mmcif_dict: dict) -> Tuple[List[pd.DataFrame], list]:
     empty_pdbidchains, parsed_cif_by_chain = [], []
-
-    print(f'Parse {pdb_id}')
+    print(f'{pdb_id}', end=' -- ')
     polyseq_pdf = extract_fields_from_poly_seq(mmcif_dict)
     atomsite_pdf = extract_fields_from_atom_site(mmcif_dict)
     atomsite_pdf = atomsite_pdf.drop(atomsite_pdf[atomsite_pdf['A_group_PDB'] == 'HETATM'].index)
     # OR KEEP ONLY ROWS WITH 'ATOM' GROUP. NOT SURE IF ONE APPROACH IS BETTER THAN THE OTHER:
     # atom_site_pdf = atom_site_pdf[atom_site_pdf.A_group_PDB == 'ATOM']
     if atomsite_pdf.empty:
-        print('Having just removed all HETATM rows, the atomsite pdf is now empty. '
-              'This suggests this PDB did not contain any natural amino acids (e.g. Could be all Norleucine)')
+        print(f'\nHaving just removed all HETATM rows, the atomsite pdf is now empty for {pdb_id} . '
+              '\nThis suggests this PDB did not contain any natural amino acids (e.g. Could be all Norleucine)')
         empty_pdbidchains.append(pdb_id)
         return [], empty_pdbidchains
     else: # GENERATE A LIST OF TUPLES, EACH TUPLE CONTAINING 2 PDFS: ATOMSITE AND POLYSEQ, FOR SAME CHAIN.
@@ -225,14 +224,14 @@ def parse_cif(pdb_id: str, mmcif_dict: dict) -> Tuple[List[pd.DataFrame], list]:
             atomsite_pdf_c, polyseq_pdf_c = chain_pdf
             if atomsite_pdf_c.empty and not polyseq_pdf_c.empty:
                 p_chain = {polyseq_pdf_c['S_asym_id'].iloc[0]}
-                print(f"For this specific chain {p_chain}, {pdb_id}'s atomsite is empty, while polyseq isn't."
+                print(f"\nFor this specific chain {p_chain}, {pdb_id}'s atomsite is empty, while polyseq isn't."
                       f"\nTherefore can't merge these pdfs. "
                       f"\nAdd {pdb_id}_{p_chain} to empty PDBid_chains list.")
                 empty_pdbidchains.append(f'{pdb_id}_{p_chain}')
                 continue
             if not atomsite_pdf_c.empty and polyseq_pdf_c.empty:
                 a_chain = {atomsite_pdf_c['A_label_asym_id'].iloc[0]}
-                print(f"For this specific chain {a_chain}, {pdb_id}'s polyseq is empty, while atomsite isn't."
+                print(f"\nFor this specific chain {a_chain}, {pdb_id}'s polyseq is empty, while atomsite isn't."
                       f"\nTherefore can't merge these pdfs. "
                       f"\nAdd {pdb_id}_{a_chain} to empty PDBid_chains list.")
                 empty_pdbidchains.append(f'{pdb_id}_{a_chain}')
@@ -241,7 +240,7 @@ def parse_cif(pdb_id: str, mmcif_dict: dict) -> Tuple[List[pd.DataFrame], list]:
                 a_chain = atomsite_pdf_c['A_label_asym_id'].iloc[0]
                 p_chain = polyseq_pdf_c['S_asym_id'].iloc[0]
                 assert a_chain == p_chain,\
-                    f'Chain discrepancy in grouped tuple from _split_up_by_chain() for {pdb_id}. '\
+                    f'\nChain discrepancy in grouped tuple from _split_up_by_chain() for {pdb_id}. '\
                     f'\natomsite chain={a_chain} is not the same as the polyseq chain={p_chain}.'
                 # if not failing assert, can merge them:
                 pdf_c = pd.merge(left=polyseq_pdf_c, right=atomsite_pdf_c,
@@ -251,12 +250,12 @@ def parse_cif(pdb_id: str, mmcif_dict: dict) -> Tuple[List[pd.DataFrame], list]:
             chain = pdf_c['S_asym_id'].iloc[0]
             # ALPHA-CARBON ONLY:
             pdf_c = pdf_c[pdf_c.A_label_atom_id == 'CA']
-            if pdf_c.shape[0] < 8:
-                print(f'pdf.shape after removing all rows except for alpha-carbons={pdf_c.shape}')
             pdbid_chain = f'{pdb_id}_{chain}'
+            if pdf_c.shape[0] < 8:
+                print(f'\npdf.shape for {pdbid_chain} after removing all non-CA rows = {pdf_c.shape}')
             if pdf_c.empty:
-                print(f'After removing all non-CA atoms, no atoms left. So {pdbid_chain} cannot be included. '
-                      f'\n(Adding to empty PidChains list.)')
+                print(f'\nAfter removing all non-CA atoms for {pdbid_chain}, there are no atoms left. '
+                      f'\nSo {pdbid_chain} cannot be included. (Adding to empty PidChains list.)')
                 empty_pdbidchains.append(pdbid_chain)
                 continue
             pdf_c = _rearrange_cols(pdf_c)
