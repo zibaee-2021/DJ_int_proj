@@ -1,17 +1,27 @@
 import os, glob
 from time import time
+from typing import Tuple
+from collections import Counter
 from collections import defaultdict
 import matplotlib.pyplot as plt
+import seaborn as sns
 import numpy as np
 import pandas as pd
 from Bio.PDB import MMCIFParser, PDBParser, MMCIF2Dict
 from Bio.SVDSuperimposer import SVDSuperimposer
+from Bio import SeqIO
 import RMSD
 import mmseqs2
 
 
 def _total_chain_count_and_year(het_hom: str, pdbid: str, use_mmcif: bool) -> tuple:
-    parser = MMCIFParser(QUIET=True)
+    """
+    # cif_dict = MMCIF2Dict.MMCIF2Dict(rpath_cif)
+    # year = cif_dict.get('_citation.year', ['NA'])[0]
+    # A few of these return "?", so I chose to use 'MMCIFParser().get_structure(cif)' instead,
+    # which often gives same year but sometimes differs by as much as ~3 years.
+    """
+    parser = MMCIFParser(QUIET=True)  # 'QUIET' is for debugging possible oddities that might pop up in PDB records.
     if not use_mmcif:
         parser = PDBParser(QUIET=True)
     rp_raw_cif_dir = os.path.join('..', 'data', 'NMR', 'raw_cifs', het_hom)
@@ -22,47 +32,33 @@ def _total_chain_count_and_year(het_hom: str, pdbid: str, use_mmcif: bool) -> tu
     return total_chain_count, year
 
 
-def pdbid_dict_chain(rp_pdbid_chains: str) -> dict:
+def _pdbid_dict_chain(rp_pdbid_chains: str) -> Tuple[list, dict]:
+    """
+    Takes relative path of txt file that has list of sol NMR PDBid_chains with > 1 model.
+    Makes a dict with unique PDBid as the key, mapped to all its chains, according to the list in the txt file.
+    Returns a list of the PDBid-chains, and a dictionary mapping PDB ids to chains.
+    """
+    # READ IN THE 2104 HETEROMERIC OR 1421 HOMOMERIC PDBid_chains.
     with open(rp_pdbid_chains, 'r') as f:
-        pdbid_chains = [line.rstrip('\n') for line in f]
-    # 2104 heteromeric PDBid_chains
-    pdbid_chains.sort()  # expected to already be sorted (i.e. before writing out), but to avoid relying on other code.
-    pdbid_chains_dict = defaultdict(list)
+        # pdbid_chains = [line.rstrip('\n') for line in f]
+        pdbid_chains = f.read().split()
 
+    # MAKE DICT OF THE 932 HETEROMERIC OR 609 HOMOMERIC PDB ids, MAPPED TO THEIR CORRESPONDING CHAINS.
+    pdbid_chains_dict = defaultdict(list)
+    pdbid_chains.sort()  # expecting already sorted (i.e. before writing out), but to avoid relying on other code.
     for pdbid_chain in pdbid_chains:
         pid, ch = pdbid_chain.split('_')
         pdbid_chains_dict[pid].append(ch)
-    # 932 heteromeric PDBids
-    return dict(pdbid_chains_dict)
+    return pdbid_chains, dict(pdbid_chains_dict)
 
 
-def _read_multimodel_pdbid_chains(txt_f: str):
+def _read_multimodel_pdbid_chains(txt_f: str) -> Tuple[list, dict, list]:
     rp_pdbid_chains = os.path.join('..', 'data', 'NMR', 'multimodel_lists', txt_f)
-    pdbid_chains_dict = pdbid_dict_chain(rp_pdbid_chains)
-    # 2104 heteromeric pdbid_chains --> 932 heteromeric pdbids.
-    pdbids = list(pdbid_chains_dict.keys())
-    return pdbids, pdbid_chains_dict
+    pidChains_list, pidChains_dict = _pdbid_dict_chain(rp_pdbid_chains)
+    pdbids = list(pidChains_dict.keys())
+    return pdbids, pidChains_dict, pidChains_list
 
 
-def _calc_rmsds(pdbid_chain: str, rp_token_cif_dir: str) -> tuple:
-    # rmsd_mat, n_models = RMSD.compute_rmsd_matrix(pdbid_chain, het_hom)
-    # clusters = RMSD.cluster_models(rmsd_mat, threshold=2.0)
-    ref_structure = RMSD.mean_stddev_struct(pdbid_chain)
-    np_ref_model_coords = ref_structure[['mean_x', 'mean_y', 'mean_z']].values
-    rp_pdbid_chain_ssv = os.path.join(rp_token_cif_dir, f'{pdbid_chain}.ssv')
-    pdbid_chain_pdf = pd.read_csv(rp_pdbid_chain_ssv, sep=' ')
-    rmsds, model_nums = [], []
-    pdbidchain_list = [pdbid_chain]
-    for model_num, pdbid_chain_model in pdbid_chain_pdf.groupby('A_pdbx_PDB_model_num'):
-        np_pdbidchain_coords = pdbid_chain_model[['A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']].values
-        rmsd_pdbid_chain = RMSD.rmsd_reference(np_model1_coords=np_ref_model_coords,
-                                               np_model2_coords=np_pdbidchain_coords)
-        model_nums.append(model_num)
-        rmsds.append(rmsd_pdbid_chain)
-        pdbidchain_list.append('')  # so that the resulting stats table has the pdbid just on the first row only.
-    pdbidchain_list = pdbidchain_list[:-1]
-    rmsds = np.array(rmsds, dtype=np.float16)
-    return rmsds, model_nums, pdbidchain_list
 
 
 def _calc_identity_for_stats(het_hom: str, pdbid: str, filt_pdf) -> str:
@@ -76,27 +72,13 @@ def _calc_identity_for_stats(het_hom: str, pdbid: str, filt_pdf) -> str:
     return identity
 
 
-def _calc_mmseqs2(het_hom: str, pid: str, chains: list):
-    # rp_fasta_file = mmseqs2.write_fasta(het_hom, pid, chains)
-    # rp_fasta_file = mmseqs2.combine_all_fastas_in_1_file(het_hom)
-    # result_pdf = mmseqs2.run_mmseqs2_all_vs_all(rp_fasta_file)
-
-    # rp_dst_combo_fastas_f = os.path.join(mmseqs2._rp_mmseqs_comb_fastas_dir(het_hom), 'het_all_932_PDBids.fasta')
-    # if het_hom == 'homomeric':
-    #     rp_dst_combo_fastas_f = os.path.join(mmseqs2._rp_mmseqs_comb_fastas_dir(het_hom), 'hom_all_609_PDBids.fasta')
-
-    # result_pdf = mmseqs2.run_easysearch_mmseqs2_allvsall(rp_dst_combo_fastas_f)
-    # result_pdf = mmseqs2.run_easysearch_mmseqs2_allvsall(rp_fasta_file)
-    # filtered_pdf = mmseqs2.filter_and_write_results(het_hom, pid, result_pdf)
-
-    result_pdf = mmseqs2.run_mmseqs2_across_all_pdbids_combined()
-    # TODO The following wont print out the no-identity PDBid list because the result pdf will never be empty, so
-    # this needs to be done more systematically
-    filtered_pdf = mmseqs2.filter_and_write_results(het_hom='hethom', pdbid='all_1541_hethom', pdf=result_pdf)
-    return filtered_pdf
+def _calc_mmseqs2_single_pdb(het_hom: str, pid: str):
+    rp_fasta_f = os.path.join(mmseqs2.rp_mmseqs_fasta_dir(het_hom), f'{pid}.fasta')
+    result_pdf = mmseqs2.run_mmseqs2_esysrch_cmd_all_vs_all(rp_fasta_f)
+    return result_pdf
 
 
-def generate_stats_het(het_hom: str, pdbid_chains_txt: str, use_mmcif=True):
+def generate_stats(het_hom: str, use_mmcif=True):
     """
     After parsing raw mmCIFs, the resulting PDBid_chains were written to a .lst file, which is used as follows:
 
@@ -120,23 +102,29 @@ def generate_stats_het(het_hom: str, pdbid_chains_txt: str, use_mmcif=True):
     """
     start = time()
     stats = []
-    rp_token_cif_dir = os.path.join('..', 'data', 'NMR', 'parsed_cifs', het_hom)
-    pdbids, pdbid_chains_dict = _read_multimodel_pdbid_chains(txt_f=pdbid_chains_txt)
 
-    for pid, chains in pdbid_chains_dict.items():
+    if het_hom == 'heteromeric':
+        pdbids, pidChains_dict, pidChains_list = _read_multimodel_pdbid_chains('het_multimod_2104_PidChains.txt')
+    if het_hom == 'homomeric':
+        pdbids, pidChains_dict, pidChains_list = _read_multimodel_pdbid_chains('hom_multimod_1421_PidChains.txt')
+
+    rp_parsed_cif_dir = os.path.join('..', 'data', 'NMR', 'parsed_cifs', het_hom)
+
+    for pid, chains in pidChains_dict.items():
         total_chain_count, year = _total_chain_count_and_year(het_hom, pid, use_mmcif)
-        mmseqs_pdf = _calc_mmseqs2(het_hom, pid, chains)
+        mmseqs_pdf = _calc_mmseqs2_single_pdb(het_hom, pid)
 
         for chain in chains:
+            pid_chain = f'{pid}_{chain}'
             identity = _calc_identity_for_stats(het_hom, pid, mmseqs_pdf)
-            rmsds, model_nums, pdbidchain_list = _calc_rmsds(f'{pid}_{chain}', rp_token_cif_dir)
-            max_rmsd, min_rmsd = np.max(rmsds), np.min(rmsds)
-            rmsd_pdf = pd.DataFrame({'pdbid_chain': pdbidchain_list, 'model_num':model_nums, 'rmsd': rmsds})
+            rmsds, model_nums, one_pdbidchain_in_list = RMSD.rmsds_across_models_in_one_pidChain(het_hom, pid_chain, rp_parsed_cif_dir)
+            max_rmsd, min_rmsd = np.max(rmsds), np.min(rmsds)  # this line is just for debugging
+            rmsd_pdf = pd.DataFrame({'pdbid_chain': one_pdbidchain_in_list, 'model_num':model_nums, 'rmsd': rmsds})
             rp_rmsd_dir = os.path.join('..', 'data', 'NMR', 'RMSD', het_hom)
             os.makedirs(rp_rmsd_dir, exist_ok=True)
-            rp_rmsd_csv = os.path.join(rp_rmsd_dir, f'{pid}_{chain}.csv')
+            rp_rmsd_csv = os.path.join(rp_rmsd_dir, f'{pid_chain}.csv')
             rmsd_pdf.to_csv(rp_rmsd_csv, index=False)
-            rp_tok_cif = os.path.join(rp_token_cif_dir, f'{pid}_{chain}.ssv')
+            rp_tok_cif = os.path.join(rp_parsed_cif_dir, f'{pid_chain}.ssv')
             pdbid_chain_pdf = pd.read_csv(rp_tok_cif, sep=' ')
             model_count = len(pdbid_chain_pdf['A_pdbx_PDB_model_num'].unique())
             ca_count = pdbid_chain_pdf.shape[0] / model_count
@@ -147,7 +135,7 @@ def generate_stats_het(het_hom: str, pdbid_chains_txt: str, use_mmcif=True):
                 'year': year,
                 '#model': model_count,
                 '#chains': total_chain_count,
-                '#protChains': len(pdbid_chains_dict[pid]),
+                '#protChains': len(pidChains_dict[pid]),
                 'chain': chain,
                 '#alphaCarbs': ca_count,
                 'identity': identity,
@@ -163,7 +151,8 @@ def generate_stats_het(het_hom: str, pdbid_chains_txt: str, use_mmcif=True):
         pdf_sorted[col_to_cast] = pdf_sorted[col_to_cast].astype('string')
     print(pdf_sorted.dtypes)
     protein_lengths(pdf_sorted[['#alphaCarbs']].values)
-    print(f'Completed 2104 CIFs in {round((time() - start)/60)} mins')
+    num_cifs = int(pidChains_list.split('_')[2])
+    print(f'Completed {num_cifs} CIFs in {round((time() - start) / 60)} mins')
     return pdf_sorted
 
 
@@ -182,16 +171,69 @@ def protein_lengths(ca_count):
     plt.show()
 
 
+def fasta_size_distribution(rp_fasta_f, x_limit_200=False):
+    seq_lengths = [len(record.seq) for record in SeqIO.parse(rp_fasta_f, 'fasta')]
+    length_counts = Counter(seq_lengths)
+
+    sorted_lengths = sorted(length_counts.keys())
+    counts = [length_counts[length] for length in sorted_lengths]
+
+    fig, ax1 = plt.subplots(figsize=(10, 5))
+
+    # Plot exact counts
+    ax1.plot(sorted_lengths, counts, color='black', linewidth=1.5, label='Exact Count')
+    ax1.set_xlabel('Sequence length', fontsize=10)
+    ax1.set_ylabel('Number of sequences', fontsize=10)
+    ax1.tick_params(axis='y', labelsize=9)
+
+    # Aesthetic adjustments for primary axis
+    ax1.set_xticks(np.arange(0, max(sorted_lengths) + 1, 20))
+    ax1.set_xticklabels(np.arange(0, max(sorted_lengths) + 1, 20), rotation=-90, fontsize=8)
+    ax1.spines['top'].set_visible(False)
+    ax1.spines['right'].set_visible(False)
+    ax1.grid(True, linestyle=':', linewidth=0.5, color='lightgray')
+
+    if x_limit_200:
+        ax1.set_xlim(0, 200)
+
+    # Secondary axis for KDE
+    ax2 = ax1.twinx()
+    sns.kdeplot(
+        seq_lengths,
+        ax=ax2,
+        color='blue',
+        linestyle='--',
+        linewidth=1.5,
+        label='KDE',
+        bw_adjust=0.4,
+        cut=0
+    )
+    ax2.set_ylabel('Density (KDE)', fontsize=10)
+    ax2.tick_params(axis='y', labelsize=9)
+    ax2.spines['top'].set_visible(False)
+    ax2.spines['right'].set_visible(False)
+
+    # Title and layout
+    plt.title('Distribution of PDB Sequence Lengths', fontsize=12)
+    fig.tight_layout()
+    plt.show()
+
+
 if __name__ == '__main__':
 
     # _calc_mmseqs2(het_hom='heteromeric', pid='0_all_het', chains=[])
     # _calc_mmseqs2(het_hom='homomeric', pid='0_all_hom', chains=[])
-    _calc_mmseqs2(het_hom='', pid='', chains=[])
+    # _calc_mmseqs2(het_hom='', pid='', chains=[])
 
     # _calc_mmseqs2(het_hom='heteromeric', pdbid='1AI0',
     #               chains=['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'])
-    # rpath_pdbid_chains = (f'../data/NMR/multimodel_lists/het_multimod_2104_PidChains.txt')
-    # stats_pdf = generate_stats_het(het_hom='heteromeric', pdbid_chains_txt='het_multimod_2104_PidChains.txt')
+    rp_fasta_f_ = os.path.join(mmseqs2.rp_mmseqs_fasta_dir(het_hom='hethom_combined'),
+                               'hethom_comb_1541_PDBids.fasta')
+    fasta_size_distribution(rp_fasta_f_, x_limit_200=True)
+
+    # rp_het_fasta_f_ = os.path.join(mmseqs2.rp_mmseqs_comb_fastas_dir(het_hom='heteromeric'), 'het_all_932_PDBids.fasta')
+    # rp_hom_fasta_f_ = os.path.join(mmseqs2.rp_mmseqs_comb_fastas_dir(het_hom='homomeric'), 'hom_all_609_PDBids.fasta')
+    # stats_pdf = generate_stats(rp_het_fasta_f_, rp_hom_fasta_f_)
     # pass
 
 
@@ -216,20 +258,3 @@ if __name__ == '__main__':
     #   - number of models
     #   - date of depoosition
 
-
-    # Note:
-    # cif_dict = MMCIF2Dict.MMCIF2Dict(rpath_cif)
-    # A few of these return '?', so using 'get_structure()' instead,
-    # which broadly same but sometimes differs by as much as 3 years.
-    # year = cif_dict.get('_citation.year', ['NA'])[0]
-    # if year != 'NA' and year != '?':
-    #     print(f'year is given as {year}. Replacing with 0')
-    #     year = int(year)
-    # else:
-    #     year = 0
-
-    # from Bio.PDB.Polypeptide import is_aa
-    # first_model = next(structure.get_models())
-    # for chain in first_model:
-    #     ca_count = sum(1 for atom in chain.get_atoms() if atom.get_name() == 'CA')
-    # num_models = len(list(structure))
