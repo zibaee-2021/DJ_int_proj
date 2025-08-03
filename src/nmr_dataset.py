@@ -8,8 +8,8 @@ from src.utils import api_callr as api
 
 def generate_pdb_lists_from_parsed_ssvs(_meric: str):
     start = time()
-    rp_token_cifs = os.path.join('..', 'data', 'NMR', 'parsed_cifs', _meric)
-    ssv_files = glob.glob(os.path.join(rp_token_cifs, '*.ssv'))
+    rp_parsed_cifs = os.path.join('..', 'data', 'NMR', 'parsed_cifs', _meric)
+    ssv_files = glob.glob(os.path.join(rp_parsed_cifs, '*.ssv'))
 
     multimodel_pdbids = []
     single_model_pdbids = []
