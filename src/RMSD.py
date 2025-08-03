@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import mmseqs2
 from Bio import PDB
 from Bio.SVDSuperimposer import SVDSuperimposer
 from Bio.Data.IUPACData import protein_letters_3to1
@@ -17,6 +18,10 @@ AA = ["ALA", "CYS", "ASP", "GLU", "PHE", "GLY", "HIS", "ILE", "LYS", "LEU",
 
 def three_to_one(resname):
     return protein_letters_3to1[resname.capitalize()]
+
+# BUILDING RELATIVE PATHS:
+def _rp_RMSD_dir(het_hom: str) -> str:
+    return os.path.join('..', 'data', 'NMR', 'RMSD', het_hom)
 
 
 def align_alpha_carbons(model1, model2):
@@ -142,18 +147,76 @@ def rmsd_reference(np_model1_coords, np_model2_coords) -> float:
     rmsd = si.get_rms()
     return rmsd
 
+
+def calc_rmsds_pidchain_pairs(pidChain1: str, pidChain2: str, rp_rmsd_mean_coords_dir: str):
+    # rmsd_mat, n_models = RMSD.compute_rmsd_matrix(pdbid_chain, het_hom)
+    # clusters = RMSD.cluster_models(rmsd_mat, threshold=2.0)
+    print(f'pidChain1={pidChain1}, pidChain2={pidChain2}')
+    rp_pidChain1_ssv = os.path.join(rp_rmsd_mean_coords_dir, f'{pidChain1}.csv')
+    pdbid_chain1_pdf = pd.read_csv(rp_pidChain1_ssv)
+    rp_pidcChain2_ssv = os.path.join(rp_rmsd_mean_coords_dir, f'{pidChain2}.csv')
+    pdbid_chain2_pdf = pd.read_csv(rp_pidcChain2_ssv)
+
+    np_model_coords1 = pdbid_chain1_pdf[['mean_x', 'mean_y', 'mean_z']].values
+    np_model_coords2 = pdbid_chain2_pdf[['mean_x', 'mean_y', 'mean_z']].values
+
+    rmsd_result = rmsd_reference(np_model_coords1, np_model_coords2)
+    return rmsd_result
+
+
+
+def rmsds_across_models_in_one_pidChain(het_hom: str, pidChain: str, rp_parsed_cif_dir: str) -> tuple:
+    # rmsd_mat, n_models = RMSD.compute_rmsd_matrix(pidChain, het_hom)
+    # clusters = RMSD.cluster_models(rmsd_mat, threshold=2.0)
+    ref_structure = mean_stddev_struct(het_hom, pidChain)
+    np_ref_model_coords = ref_structure[['mean_x', 'mean_y', 'mean_z']].values
+    rp_pdbid_chain_ssv = os.path.join(rp_parsed_cif_dir, f'{pidChain}.ssv')
+    pdbid_chain_pdf = pd.read_csv(rp_pdbid_chain_ssv, sep=' ')
+    rmsds, model_nums = [], []
+    one_pdbidchain_in_list = [pidChain]
+    for model_num, pdbid_chain_model in pdbid_chain_pdf.groupby('A_pdbx_PDB_model_num'):
+        np_pdbidchain_coords = pdbid_chain_model[['A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']].values
+        if pidChain == '1MSH_A' and model_num == 30:
+            continue
+        elif pidChain == '2JSC_A' and model_num == 1:
+            continue
+        elif (pidChain == '6UJV_A' or pidChain == '6UJV_B' or
+              pidChain == '6UJV_C' or pidChain == '7CLV_A' or
+              pidChain == '7CLV_B' or pidChain == '8J4I_A' or
+              pidChain == '8J4I_B' or pidChain == '8J4I_C' or
+              pidChain == '8J4I_D' or pidChain == '8J4I_E' or
+              pidChain == '8J4I_F'):
+            continue
+        else:
+            rmsd_pdbid_chain = rmsd_reference(np_model1_coords=np_ref_model_coords,
+                                          np_model2_coords=np_pdbidchain_coords)
+            model_nums.append(model_num)
+            rmsds.append(rmsd_pdbid_chain)
+            one_pdbidchain_in_list.append('')  # so that the resulting stats table has the pdbid just on the first row only.
+    one_pdbidchain_in_list = one_pdbidchain_in_list[:-1]
+    rmsds = np.array(rmsds, dtype=np.float16)
+    return rmsds, model_nums, one_pdbidchain_in_list
+
+
+
 # NOTE I DO NOT SUPERIMPOSE COORDINATES OF DIFFERENT MODELS ONTO THE RANDOMLY CHOSEN REFERENCE MODEL,
 # PRIOR TO COMPUTING MEAN & STD DEV. IT MIGHT BE BENEFICIAL TO DO THIS BUT IN THIS PRELIMINARY STAGE, I'VE NOT DONE SO.
-def mean_stddev_struct(pdbid_chain: str):
-    rp_pdbid_chain = os.path.join('..', 'data', 'NMR', 'parsed_cifs', 'heteromeric', pdbid_chain)
+def mean_stddev_struct(het_hom: str, pidChain: str):
+    print(pidChain)
+    rp_pdbid_chain = os.path.join('..', 'data', 'NMR', 'parsed_cifs', het_hom, pidChain)
     pdf = pd.read_csv(f'{rp_pdbid_chain}.ssv', sep=' ')
     # pdf = pdf.sort_values(by=["A_pdbx_PDB_model_num", "A_id"])
     model_numbers = pdf['A_pdbx_PDB_model_num'].unique()
     coord_list = []
-    ref_A_id = None
+    ref_A_id = None  # _atom_site.id is continous through all models (and chains).
     ref_S_mon_id = None
     ref_S_seq_id = None
-
+    if pidChain == '1MSH_A':
+        model_numbers = model_numbers[:-1]
+        print("Excluding model 30 of 1MSH_A for now because missing 3 residues at C-term.")
+    if pidChain == '2JSC_A':
+        model_numbers = model_numbers[1:]
+        print("Excluding model 1 of 2JSC_A for now because it lacks the first residue.")
     for i, model_num in enumerate(model_numbers):
         model_df = pdf[pdf['A_pdbx_PDB_model_num'] == model_num].copy()
         S_mon_id_values = model_df['S_mon_id'].values
@@ -189,22 +252,19 @@ def mean_stddev_struct(pdbid_chain: str):
     mean_df[cols_to_cast] = mean_df[cols_to_cast].astype(np.float16)  # I assume this loss of precision is ok..
     mean_df = mean_df.reset_index(drop=True)
 
-    rp_rmsd_dir = os.path.join('..', 'data', 'NMR', 'RMSD', 'heteromeric', 'mean_coords')
+    rp_rmsd_dir = os.path.join('..', 'data', 'NMR', 'RMSD', het_hom, 'mean_coords')
     os.makedirs(rp_rmsd_dir, exist_ok=True)
-    rp_rmsd_csv = os.path.join(rp_rmsd_dir, f'{pdbid_chain}.csv')
-    mean_df.to_csv(rp_rmsd_csv, index=False)
+    rp_rmsd_csv = os.path.join(rp_rmsd_dir, f'{pidChain}.csv')
+    if mean_df is not None:
+        mean_df.to_csv(rp_rmsd_csv, index=False)
     return mean_df
 
 
 if __name__ == '__main__':
-    _meric = 'heteromeric'
-
-    with open(f'../data/NMR/multimodel_lists/{_meric[:3]}_multimod_2104_PidChains.txt', 'r') as f:
-        pdbid_chains = f.readlines()
-
-    # pdbid_chain = '1A0N_A'
-
-    # rmsd_mat, n_models = compute_rmsd_matrix(pdbid_chain, het_hom=_meric)
+    # _meric = 'heteromeric'
+    # with open(f'../data/NMR/multimodel_lists/{_meric[:3]}_multimod_2104_PidChains.txt', 'r') as f:
+    #     pdbid_chains = f.readlines()
+    # rmsd_mat, n_models = compute_rmsd_matrix(pdbid_chain='1A0N_A', het_hom=_meric)
 
     # # linkage_matrix = build_dendrogram(rmsd_mat, n_models)
     # # build_heatmap(rmsd_mat, linkage_matrix)
@@ -220,4 +280,63 @@ if __name__ == '__main__':
     # # write_clusters_json(json_dict, output_file)
     # # print(f'Saved ensembles to {output_file}')
 
-    # df = mean_stddev_struct(pdbid_chain)
+    # PATHS OF PDBid_CHAINS:
+    rp_mmseqs_results_dir = mmseqs2.rp_mmseqs_results_dir(het_hom='hethom_combined')
+    rp_homologues_30_20_90 = os.path.join(rp_mmseqs_results_dir, 'homologues_30_20_90.csv')
+    # rp_non_homologues_30_20_90 = os.path.join(rp_mmseqs_results_dir, 'non_homologues_30_20_90.csv')
+
+    # PidChains:
+    homologues_30_20_90_pdf = pd.read_csv(rp_homologues_30_20_90)
+    # non_homologues_30_20_90_pdf = pd.read_csv(rp_non_homologues_30_20_90)
+
+    # homologues_query = homologues_30_20_90_pdf['query'].tolist()
+    # homologues_target = homologues_30_20_90_pdf['target'].tolist()
+    # homologues_all = list(set(homologues_query + homologues_target))
+    # homologues_all.sort()
+    homologues_pairs_row_list = list(zip(homologues_30_20_90_pdf['query'], homologues_30_20_90_pdf['target']))
+
+    # non_homologues_query = non_homologues_30_20_90_pdf['query'].tolist()
+    # non_homologues_target = non_homologues_30_20_90_pdf['target'].tolist()
+    # non_homologues_all = list(set(non_homologues_query + non_homologues_target))
+    # non_homologues_all.sort()
+    #
+    # all_pidChains = list(set(homologues_all + non_homologues_all))
+    # all_pidChains.sort()  # NOTE: AFTER NOTICING THE TOTAL NUMBER OF PDBID_CHAINS IS LOWER THAN IT SHOULD BE,
+    # # I FOUND OUT THE REASON IS THAT MMSEQS2 JUST DOESN'T BOTHER RETURNING ANY RESULTS FOR THOSE BELOW
+    # # SOME INTERNAL THRESHOLD. SO I'M INSTEAD JUST USING THE FULL LISTS FROM THE MULTIMODEL PIDCHAINS LST FILES.
+    # print(f'len(all_pidChains)={len(all_pidChains)}')
+
+    # with open(f'../data/NMR/multimodel_lists/het_multimod_2104_PidChains.txt', 'r') as f:
+    #     het_pidChains = f.read().split()
+    # with open(f'../data/NMR/multimodel_lists/hom_multimod_1421_PidChains.txt', 'r') as f:
+    #     hom_pidChains = f.read().split()
+    #
+    # all_pidChains_from_lists = list(set(het_pidChains + hom_pidChains))
+    # all_pidChains_from_lists.sort()
+    # print(f'len(all_pidChains_from_lists)={len(all_pidChains_from_lists)}')
+
+    # rp_parsed_cif_dir = os.path.join('..', 'data', 'NMR', 'parsed_cifs', 'hethom_combined')
+    #
+    # for pidChain_ in all_pidChains_from_lists:
+    #     rmsds_across_models_in_one_pidChain('hethom_combined', pidChain_, rp_parsed_cif_dir)
+
+    rmsd_results, pidChain1_list, pidChain2_list = [], [], []
+    pidChain_rmsds = []
+    rp_rmsd_mean_coords_dir = os.path.join('..', 'data', 'NMR', 'RMSD', 'hethom_combined', 'mean_coords')
+    for pidChain1_, pidChain2_ in homologues_pairs_row_list:
+        rmsd_result = calc_rmsds_pidchain_pairs(pidChain1_, pidChain2_, rp_rmsd_mean_coords_dir)
+        pidChain1_list.append(pidChain1_)
+        pidChain2_list.append(pidChain2_)
+
+        pidChain_rmsds.append({
+            'PDBid_chain1': pidChain1_,
+            'PDBid_chain2': pidChain2_,
+            'RMSD': rmsd_result,
+        })
+
+    pdf = pd.DataFrame(pidChain_rmsds)
+    pdf_sorted = pdf.sort_values(by=['RMSD'], ascending=[True])
+    rp_rmsd_dir = _rp_RMSD_dir(het_hom='hethom_combined')
+    os.makedirs(rp_rmsd_dir, exist_ok=True )
+    pdf.to_csv(os.path.join(rp_rmsd_dir, 'homologous_30_20_90.csv'), index=False)
+
