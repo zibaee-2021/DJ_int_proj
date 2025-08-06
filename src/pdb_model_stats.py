@@ -18,6 +18,9 @@ import mmseqs2
 def _rp_nmr_dir():
     return os.path.join('..', 'data', 'NMR')
 
+def _rp_stats_dir():
+    return os.path.join(_rp_nmr_dir(), 'stats')
+
 def _rp_mmseqs_dir(sub_dir) -> str:
     return os.path.join(_rp_nmr_dir(), 'mmseqs', sub_dir)
 
@@ -213,15 +216,88 @@ def generate_stats(sub_dir: str, rp_pidchains_lst_f: str, rp_fasta_f: str, run_a
     return pdf_sorted
 
 
-def plot_protein_lengths_binned(ca_counts: list, bin_size: int = 1):
-    ca_counts = np.array(ca_counts)
+def _calc_rmsds_stats(pidchains: list):
+    """
+    TODO Note that rmsds for 6UJV_A, 7CLV_A, 7CLV_B & 8J4I_A are empty.. need to have a closer look at this to see why...
+    """
+    rmsd_stats_per_pidc = []
+    for pid_chain in pidchains:
+        rp_rmsd_per_model_dir = os.path.join(_rp_nmr_dir(), 'RMSD', 'multimod_2713_hetallchains_hom1chain')
+        rp_rmsd_per_model_csv_f = os.path.join(rp_rmsd_per_model_dir, f'{pid_chain}.csv')
+        rmsd_pdf = pd.read_csv(rp_rmsd_per_model_csv_f)
+        rmsds = rmsd_pdf[['rmsd']].values
+        if len(rmsds) > 0:
+            min_rmsd, max_rmsd = np.min(rmsds), np.max(rmsds)
+            mean_rmsd, stdev_rmsd = np.mean(rmsds), np.std(rmsds)
+        else:
+            print(f'rmsds for {pid_chain} is empty: {rmsds}. Cannot calc min/max. Cannot include.')
+            continue
+        rmsd_stats_per_pidc.append({
+            'Pid_chain': pid_chain,
+            'min_rmsd': min_rmsd,
+            'max_rmsd': max_rmsd,
+            'mean_rmsd': mean_rmsd,
+            'stdev_rmsd': stdev_rmsd
+        })
+    rmsdstats_pdf = pd.DataFrame(rmsd_stats_per_pidc)
+    rmsdstats_pdf = rmsdstats_pdf.sort_values(by=['mean_rmsd', 'stdev_rmsd'], ascending=[True, True])
+    return rmsdstats_pdf
+
+
+
+def violin_plot(pdf):
+    plt.figure(figsize=(14, 6))
+    sns.violinplot(data=pdf, x='year', y='total_model_count', inner='quartile', color='skyblue', linewidth=1)
+    sns.swarmplot(data=pdf, x='year', y='total_model_count', size=3, color='black', alpha=0.6)
+    plt.title('Number of model by deposition year', fontsize=14)
+    plt.xlabel('Year', fontsize=12)
+    plt.ylabel('Model count', fontsize=12)
+    plt.xticks(rotation=-90)
+    plt.grid(True, linestyle='--', alpha=0.3)
+    ax = plt.gca()
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    plt.tight_layout()
+    plt.show()
+
+
+def _tabulate_year_chain_model_counts(rp_raw_cif_files: list):
+    rp_raw_cifs_het_dir = os.path.join(_rp_nmr_dir(), f'raw_cifs', 'heteromeric')
+    rp_raw_het_cifs_files = glob.glob(os.path.join(rp_raw_cifs_het_dir, f'*.cif'))
+    het_pids = [os.path.basename(rp_raw_het_cif_f).removesuffix(f'.cif')
+                    for rp_raw_het_cif_f in rp_raw_het_cifs_files]
+    biopy_parser = MMCIFParser(QUIET=True)
+    year_chain_model_counts = []
+    for rp_raw_cif_f in rp_raw_cif_files:
+        bio_struct = biopy_parser.get_structure('', rp_raw_cif_f)
+        total_model_count = len(list(bio_struct.get_models()))
+        total_chain_count = len(list(next(bio_struct.get_models()).get_chains()))
+        year = bio_struct.header['deposition_date'][:4]
+        pid = os.path.basename(rp_raw_cif_f).removesuffix('.cif')
+        print(pid)
+        het_hom = 'het' if pid in het_pids else 'hom'
+
+        year_chain_model_counts.append({
+            'PDBid': pid,
+            'het_hom': het_hom,
+            'year': int(year),
+            'total_model_count': int(total_model_count),
+            'total_chain_count': int(total_chain_count)
+        })
+    ycmc_pdf = pd.DataFrame(year_chain_model_counts)
+    ycmc_pdf = ycmc_pdf.sort_values(by=['year', '#model'], ascending=[True, True])
+    return ycmc_pdf
+
+
+def plot_counts(attribute: str, attr_counts: list, bin_size: int=1, num_pidchains=2713):
+    attr_counts = np.array(attr_counts)
 
     if bin_size == 1:
-        heights = ca_counts
-        x = np.arange(len(ca_counts))
+        heights = attr_counts
+        x = np.arange(len(attr_counts))
     else:
-        n_bins = len(ca_counts) // bin_size
-        trimmed = ca_counts[:n_bins * bin_size]
+        n_bins = len(attr_counts) // bin_size
+        trimmed = attr_counts[:n_bins * bin_size]
         grouped = trimmed.reshape(n_bins, bin_size)
         heights = grouped.mean(axis=1)
         x = np.arange(n_bins)
@@ -230,22 +306,35 @@ def plot_protein_lengths_binned(ca_counts: list, bin_size: int = 1):
     ax.bar(x, heights, color='lightgrey', edgecolor='gainsboro', linewidth=0.5, width=1.0, align='edge')
     ax.set_xlim(left=-5)
 
-    ax.set_xlabel('PDBchains' if bin_size == 1 else f'Binned PDBchains (bin size = {bin_size})', fontsize=10)
-    ax.set_xticklabels(np.arange(0, len(ca_counts) + 1, 20), rotation=-90, fontsize=8)
-    ax.set_ylabel('CA count', fontsize=10)
-    ax.set_title('Number of CA in each PDBchain', fontsize=12)
+    ax.set_xlabel(f'PDBchains (bin size={bin_size})', fontsize=10)
+
+    target_n_ticks = 30
+    tick_interval = max(1, int(math.ceil(len(x) / target_n_ticks / 10.0)) * 10)
+    tick_positions = np.arange(0, len(x) + 1, tick_interval)
+
+    ax.set_xticks(tick_positions)
+    ax.set_xticklabels(tick_positions, rotation=-90, fontsize=8)
+
+    ax.set_ylabel(f'{attribute} count', fontsize=10)
+    ax.set_title(f'Number of {attribute} in each PDBchain, (for {num_pidchains} PDBchains)', fontsize=12)
 
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.spines['left'].set_color('lightgrey')
     ax.spines['bottom'].set_color('lightgrey')
-
-    target_n_ticks = 30
-    tick_interval = max(1, int(math.ceil(len(x) / target_n_ticks / 10.0)) * 10)
-    ax.set_xticks(np.arange(0, len(x) + 1, tick_interval))
-
     fig.tight_layout()
     plt.show()
+
+
+def _calc_model_counts(rp_parsed_cifs_ssvs: list) -> list:
+    model_counts = list()
+    for rp_parsed_cif_ssv in rp_parsed_cifs_ssvs:
+        pdf = pd.read_csv(rp_parsed_cif_ssv, sep=' ')
+        model_count = len(pdf['A_pdbx_PDB_model_num'].unique())
+        if model_count == 1:
+            print(f'Single model PDB: {os.path.basename(rp_parsed_cif_ssv).removesuffix('.ssv')}')
+        model_counts.append(model_count)
+    return sorted(model_counts)
 
 
 def _calc_ca_counts(rp_parsed_cifs_ssvs: list) -> list:
@@ -312,49 +401,98 @@ def plot_fasta_size_distribution(rp_fasta_f, x_limit_220=False):
 
 
 if __name__ == '__main__':
-    # VISUALISATIONS:
-    rp_fasta_f_ = os.path.join(_rp_mmseqs_fasta_dir(sub_dir='multimod_2713_hetallchains_hom1chain'),
-                               'multimod_2713_hetallchains_hom1chain.fasta')
-    # plot_fasta_size_distribution(rp_fasta_f_, x_limit_220=False)
-    rp_parsed_cifs_ssvs_ = sorted(glob.glob(os.path.join(_rp_nmr_dir(), 'parsed_cifs',
-                                                 'multimod_2713_hetallchains_hom1chain', '*.ssv')))
 
     # rp_raw_cifs = sorted(glob.glob(os.path.join(_rp_nmr_dir(), 'raw_cifs', 'hethom_combined', '*.cif')))
-    # for i, bla in enumerate(rp_raw_cifs):
-    #     if os.path.basename(bla).removesuffix('.cif') == '8ONU':
-    #         print(i)
-    # pass
-    # ca_counts_ = _calc_ca_counts(rp_parsed_cifs_ssvs_)
 
-    # ca_counts_dir = os.path.join(_rp_nmr_dir(), 'stats', 'multimod_2713_hetallchains_hom1chain')
+    # # VISUALISATIONS:
+
+    # # 1. FASTA SEQUENCE DISTRIBUTION:
+    # rp_fasta_f_ = os.path.join(_rp_mmseqs_fasta_dir(sub_dir='multimod_2713_hetallchains_hom1chain'),
+    #                            'multimod_2713_hetallchains_hom1chain.fasta')
+    # plot_fasta_size_distribution(rp_fasta_f_, x_limit_220=False)
+
+    # # 2. BAR CHART OF ALPHA-CARBON COUNT FOR EACH PDB:
+    # # 2.A. CALCULATE CA COUNT FROM PARSED CIFS DATA AND WRITE TO STATS/...LST FILE:
+    # rp_parsed_cifs_ssvs_ = sorted(glob.glob(os.path.join(_rp_nmr_dir(), 'parsed_cifs',
+    #                                              'multimod_2713_hetallchains_hom1chain', '*.ssv')))
+    # ca_counts_ = _calc_ca_counts(rp_parsed_cifs_ssvs_)
+    # ca_counts_dir = os.path.join(_rp_stats_dir(), 'multimod_2713_hetallchains_hom1chain')
     # os.makedirs(ca_counts_dir, exist_ok=True)
     # ca_counts_lst_f = os.path.join(ca_counts_dir, 'ca_counts.lst')
-
     # with open(ca_counts_lst_f, 'w') as f:
     #     f.writelines(str(s) + '\n' for s in ca_counts_)
-    # plot_protein_lengths(ca_counts_)
-    # plot_protein_lengths_binned(ca_counts_)
+
+    # # 2.B. READ CA COUNT FROM STATS/...LST FILE AND PLOT CA COUNT:
+    # ca_counts_dir = os.path.join(_rp_stats_dir(), 'multimod_2713_hetallchains_hom1chain')
+    # ca_counts_lst_f = os.path.join(ca_counts_dir, 'ca_counts.lst')
     # with open(ca_counts_lst_f, 'r') as f:
     #     ca_counts_ = f.read().splitlines()
     # ca_counts_ = [int(ca_count_) for ca_count_ in ca_counts_]
     # ca_counts_.sort()
-    # plot_protein_lengths_binned(ca_counts_, bin_size=10)
+    # plot_counts(attribute='CA', attr_counts=ca_counts_, bin_size=10, num_pidchains=2713)
 
-    rp_pidChains_lst_f_ = os.path.join('..', 'data', 'NMR', 'multimodel_lists', 'multimod_2713_hetallchains_hom1chain.lst')
+    # # 3. BAR CHART OF MODEL COUNT FOR EACH PDB:
+    # # 3.A. CALCULATE MODEL COUNT FROM PARSED CIFS DATA AND WRITE TO STATS/...LST FILE:
+    # rp_parsed_cifs_ssvs_ = sorted(glob.glob(os.path.join(_rp_nmr_dir(), 'parsed_cifs',
+    #                                              'multimod_2713_hetallchains_hom1chain', '*.ssv')))
+    # model_counts_ = _calc_model_counts(rp_parsed_cifs_ssvs_)
+    # model_counts_dir = os.path.join(_rp_stats_dir(), 'multimod_2713_hetallchains_hom1chain')
+    # os.makedirs(model_counts_dir, exist_ok=True)
+    # model_counts_lst_f = os.path.join(model_counts_dir, 'model_counts.lst')
+    # with open(model_counts_lst_f, 'w') as f:
+    #     f.writelines(str(s) + '\n' for s in model_counts_)
 
-    stats_pdf = generate_stats(sub_dir='multimod_2713_hetallchains_hom1chain',
-                               rp_pidchains_lst_f=rp_pidChains_lst_f_,
-                               rp_fasta_f= rp_fasta_f_,
-                               run_and_write_mmseqs2=False,
-                               run_and_write_rmsd=False, use_mmcif=True)
-    stats_dst_dir = os.path.join(_rp_nmr_dir(), 'stats', 'multimod_2713_hetallchains_hom1chain')
-    os.makedirs(stats_dst_dir, exist_ok=True)
-    stats_dst_f = os.path.join(stats_dst_dir, 'multimod_2713_hetallchains.csv')
-    stats_pdf.to_csv(stats_dst_f, index=False)
+    # # 3.B. READ MODEL COUNT FROM STATS/...LST FILE AND PLOT MODEL COUNT:
+    # model_counts_dir = os.path.join(_rp_stats_dir(), 'multimod_2713_hetallchains_hom1chain')
+    # model_counts_lst_f = os.path.join(model_counts_dir, 'model_counts.lst')
+    # with open(model_counts_lst_f, 'r') as f:
+    #     model_counts_ = f.read().splitlines()
+    # model_counts_ = [int(model_count_) for model_count_ in model_counts_]
+    # model_counts_.sort()
+    # plot_counts(attribute='model', attr_counts=model_counts_, bin_size=10, num_pidchains=2713)
 
-    # TODO generate 2d plots (akin to bar graphs) of datasets for:
-    #   - protein lengths (CA count)
-    #   - rmsd min and max values
-    #   - number of models
-    #   - date of deposition
+    # # 4. YEAR (DEPOSITION), MODEL COUNT, CHAIN COUNT - FROM ALL DOWNLOADED NMR CIF FILES (NOT THE PDBCHAINS):
+    # # 4.A. EXTRACT YEAR, MODEL COUNT, CHAIN COUNT, FROM PDB FILE AND WRITE TO STATS/...CSV:
+    # rp_raw_cif_files = sorted(glob.glob(os.path.join(_rp_nmr_dir(), 'raw_cifs', 'hethom_combined', '*.cif')))
+    # ycmc_pdf_ = _tabulate_year_chain_model_counts(rp_raw_cif_files)
+    # year_modcounts_dir = os.path.join(_rp_stats_dir(), 'from_1725_raw_cifs')
+    # os.makedirs(year_modcounts_dir, exist_ok=True)
+    # year_modcounts_csv_f = os.path.join(year_modcounts_dir, 'year_chain_model_counts.csv')
+    # ycmc_pdf_.to_csv(year_modcounts_csv_f, index=False)
 
+    # # 4.B. READ CSV FOR EXTRACT YEAR, MODEL COUNT, CHAIN COUNT AND PLOT:
+    # year_modcounts_dir = os.path.join(_rp_stats_dir(), 'from_1725_raw_cifs')
+    # year_modcounts_csv_f = os.path.join(year_modcounts_dir, 'year_chain_model_counts.csv')
+    # ycmc_pdf_ = pd.read_csv(year_modcounts_csv_f)
+    # violin_plot(ycmc_pdf_)
+
+    # # 5. MIN, MAX, MEAN & STDDEV OF RMSD VALUES FOR EACH PDBCHAIN'S MODEL AGAINST THE MEAN COORDS OF ALL MODELS.
+    # # 5.A. CALCULATE VALUES AND WRITE TO STATS/...CSV:
+    rp_pidchains_lst_f_ = os.path.join(_rp_nmr_dir(), 'multimodel_lists',
+                                       'multimod_2713_hetallchains_hom1chain.lst')
+    with open(rp_pidchains_lst_f_, 'r') as f:
+        pidchains_2713 = sorted(f.read().splitlines())
+    rsmds_stats_pdf = _calc_rmsds_stats(pidchains_2713)
+    rp_rsmds_stats_csv_f = os.path.join(_rp_stats_dir(), 'multimod_2713_hetallchains_hom1chain', 'rmsds_stats.csv')
+    rsmds_stats_pdf.to_csv(rp_rsmds_stats_csv_f, index=False)
+
+    # # 5.B. READ CSV FOR MIN, MAX, MEAN & STDDEV RSMD VALUES FOR 2713 PDB-CHAINS:
+    # rp_rsmds_stats_csv_f = os.path.join(_rp_stats_dir(), 'multimod_2713_hetallchains_hom1chain', 'rmsds_stats.csv')
+    # rsmds_stats_pdf = pd.read_csv(rp_rsmds_stats_csv_f)
+    # TODO plot .. how ?
+
+    # # MAIN STATS FUNCTION
+    # # GENERATE STATS PDF AND WRITE TO CSV:
+    # rp_pidchains_lst_f_ = os.path.join('..', 'data', 'NMR', 'multimodel_lists',
+    #                                    'multimod_2713_hetallchains_hom1chain.lst')
+    # rp_fasta_f_ = os.path.join(_rp_mmseqs_fasta_dir(sub_dir='multimod_2713_hetallchains_hom1chain'),
+    #                            'multimod_2713_hetallchains_hom1chain.fasta')
+    # stats_pdf = generate_stats(sub_dir='multimod_2713_hetallchains_hom1chain',
+    #                            rp_pidchains_lst_f=rp_pidchains_lst_f_,
+    #                            rp_fasta_f= rp_fasta_f_,
+    #                            run_and_write_mmseqs2=False,
+    #                            run_and_write_rmsd=False, use_mmcif=True)
+    # rp_stats_dst_dir = os.path.join(_rp_nmr_dir(), 'stats', 'multimod_2713_hetallchains_hom1chain')
+    # os.makedirs(rp_stats_dst_dir, exist_ok=True)
+    # stats_dst_f = os.path.join(rp_stats_dst_dir, 'multimod_2713_hetallchains.csv')
+    # stats_pdf.to_csv(stats_dst_f, index=False)
