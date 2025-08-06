@@ -45,33 +45,33 @@ def _rp_nmr_dir():
     return os.path.join('..', 'data', 'NMR')
 
 
-def _rp_rawcifs_dir(het_hom) -> str:
-    return os.path.join(_rp_nmr_dir(), 'raw_cifs', het_hom)
+def _rp_rawcifs_dir(sub_dir) -> str:
+    return os.path.join(_rp_nmr_dir(), 'raw_cifs', sub_dir)
 
-def rp_raw_pdbs_dir(het_hom) -> str:
-    return os.path.join(_rp_nmr_dir(), 'raw_pdbs', het_hom)
+def rp_raw_pdbs_dir(sub_dir) -> str:
+    return os.path.join(_rp_nmr_dir(), 'raw_pdbs', sub_dir)
 
-def _rp_parsed_cifs_dir(het_hom) -> str:
-    return os.path.join(_rp_nmr_dir(), 'parsed_cifs', het_hom)
-
-
-def rp_mmseqs_dir(het_hom) -> str:
-    return os.path.join(_rp_nmr_dir(), 'mmseqs', het_hom)
+def _rp_parsed_cifs_dir(sub_dir) -> str:
+    return os.path.join(_rp_nmr_dir(), 'parsed_cifs', sub_dir)
 
 
-def rp_mmseqs_fasta_dir(het_hom) -> str:
-    return os.path.join(rp_mmseqs_dir(het_hom), 'fasta')
+def rp_mmseqs_dir(sub_dir) -> str:
+    return os.path.join(_rp_nmr_dir(), 'mmseqs', sub_dir)
 
 
-def rp_mmseqs_comb_fastas_dir(het_hom) -> str:
-    return os.path.join(rp_mmseqs_dir(het_hom), 'combined_fastas')
+def rp_mmseqs_fasta_dir(sub_dir) -> str:
+    return os.path.join(rp_mmseqs_dir(sub_dir), 'fasta')
 
 
-def rp_mmseqs_results_dir(het_hom) -> str:
-    return os.path.join(rp_mmseqs_dir(het_hom), 'results')
+def rp_mmseqs_comb_fastas_dir(sub_dir) -> str:
+    return os.path.join(rp_mmseqs_dir(sub_dir), 'combined_fastas')
 
 
-def rm_selfaligns_and_write_results(het_hom: str, pdbid: str, pdf):
+def rp_mmseqs_results_dir(sub_dir) -> str:
+    return os.path.join(rp_mmseqs_dir(sub_dir), 'results')
+
+
+def rm_selfaligns_and_write_results(sub_dir: str, pdbid: str, pdf):
     """
     1. Remove self-alignments.
     2. Write non-empty mmseqs results pdf to csv.
@@ -79,7 +79,7 @@ def rm_selfaligns_and_write_results(het_hom: str, pdbid: str, pdf):
     4. Return pdf which has had self-alignments removed.
     """
     pdf = pdf[pdf['query'] != pdf['target']]
-    rp_mmseqs_dir_ = rp_mmseqs_dir(het_hom)
+    rp_mmseqs_dir_ = rp_mmseqs_dir(sub_dir)
     if not pdf.empty:
         results_dir = os.path.join(rp_mmseqs_dir_, 'results')
         os.makedirs(results_dir, exist_ok=True)
@@ -113,9 +113,11 @@ def run_mmseqs2_esysrch_cmd_all_vs_all(rp_fasta_f: str):
     Outputs:
       - results.m8 (tabular results)
       - Pandas DataFrame of alignments
+
+    Note: Alignment results that fall below some internal threshold in MMseqs2 are just not returned at all.
     """
     fname = os.path.basename(rp_fasta_f).removesuffix('.fasta')
-    rp_dir2delete = os.path.join(rp_mmseqs_dir(het_hom=rp_fasta_f.split('/')[4]), 'dir2delete')
+    rp_dir2delete = os.path.join(rp_mmseqs_dir(sub_dir=rp_fasta_f.split('/')[4]), 'dir2delete')
     shutil.rmtree(rp_dir2delete, ignore_errors=True)
 
     os.makedirs(rp_dir2delete, exist_ok=True)
@@ -140,7 +142,7 @@ def run_mmseqs2_esysrch_cmd_all_vs_all(rp_fasta_f: str):
 
     pdf = pd.read_csv(output_m8, sep='\t', header=None,
                       names=['query', 'target', 'evalue', 'pident', 'alnlen', 'qcov', 'tcov'])
-    return pdf
+    return pdf  # shape=(60589, 7)
 
 
 # def run_mmseqs2_createdb_cmd_all_vs_all(rp_fasta_f):
@@ -216,6 +218,28 @@ def _view_pw_alignment_results(title: str, pdf_msq2):
     plt.show()
 
 
+def dedupe_rm_self_aligns(pdf):
+    pdf = pdf[pdf['query'] != pdf['target']]  # (60589,7) --> (58008,7)
+    # Create new col of pdbchain in query and target pair, to sort, to de-dupe:
+    pdf['pair'] = pdf.apply(lambda row: tuple(sorted([row['query'], row['target']])), axis=1) # (58008,7) --> (58008,8)
+    pdf = pdf.drop_duplicates(subset='pair').drop(columns='pair') # (58008,8) --> (33074,7)
+    return pdf
+
+def find_homologues_30_20_90(mmseq2_pdf, pid_chain: str):
+    homologues_pdf = mmseq2_pdf[
+        (mmseq2_pdf['evalue'] < 1e-3) &  # e-value threshold: < 0.001 (i.e. more significant matches)
+        (mmseq2_pdf['pident'] >= 30.0) &  # sequence identity: >= 30%
+        (mmseq2_pdf['alnlen'] >= 20) &  # alignment length: >= 20 residues
+        (mmseq2_pdf['qcov'] >= 0.9) &  # query coverage: >=90%
+        (mmseq2_pdf['tcov'] >= 0.9)  # target coverage: >= 90%
+        ]
+    rows_pidchain = homologues_pdf.loc[homologues_pdf['query'] == pid_chain]
+    homologues = rows_pidchain['target'].tolist()
+    rows_pidchain = homologues_pdf.loc[homologues_pdf['target'] == pid_chain]
+    homologues = homologues + rows_pidchain['query'].tolist()
+    return homologues
+
+
 def calc_and_write_results_mmseqs2_all_vs_all(rp_fasta_f: str):
     """
     Note MMSeqs2 does not return results for alignments that are below a certain threshold.
@@ -238,7 +262,7 @@ def calc_and_write_results_mmseqs2_all_vs_all(rp_fasta_f: str):
     print(f'non_homologues_pdf.shape={non_homologues_pdf.shape}')
     _view_pw_alignment_results(title='non_homologues_30_20_90', pdf_msq2=non_homologues_pdf)
 
-    dst_dir = rp_mmseqs_results_dir(het_hom='hethom_combined')
+    dst_dir = rp_mmseqs_results_dir(sub_dir='hethom_combined')
     homologues_pdf.to_csv(os.path.join(dst_dir, 'homologues_30_20_90.csv'), index=False)  # shape=(39265, 7)
     non_homologues_pdf.to_csv(os.path.join(dst_dir, 'non_homologues_30_20_90.csv'), index=False)  # shape=(52068, 7)
     # The number of non_homologues is lower than the actual number because the alignments results returned
@@ -249,7 +273,7 @@ def calc_and_write_results_mmseqs2_all_vs_all(rp_fasta_f: str):
 # FUNCTIONS FOR WRITING FASTA FILES:
 def combine_all_het_and_hom_fastas_to_one_file():
     # destination dir and fasta file:
-    rp_dst_hethom_comb_fasta_dir = rp_mmseqs_fasta_dir(het_hom='hethom_combined')
+    rp_dst_hethom_comb_fasta_dir = rp_mmseqs_fasta_dir(sub_dir='hethom_combined')
     os.makedirs(rp_dst_hethom_comb_fasta_dir, exist_ok=True)
     rp_dst_combo_fastas_f = os.path.join(rp_dst_hethom_comb_fasta_dir, 'hethom_comb_1541_PDBids.fasta')
 
@@ -309,8 +333,10 @@ def write_fasta(het_hom: str, pdbid: str, chains: list) -> str:
 
 
 if __name__ == '__main__':
-
-    rp_fasta_f_ = os.path.join(rp_mmseqs_fasta_dir(het_hom='hethom_combined'), 'hethom_comb_1541_PDBids.fasta')
+    rp_1A03 = '../data/NMR/mmseqs/homomeric/results/1A03.csv'
+    pdf = pd.read_csv(rp_1A03)
+    pdf = dedupe_rm_self_aligns(pdf)
+    rp_fasta_f_ = os.path.join(rp_mmseqs_fasta_dir(sub_dir='hethom_combined'), 'hethom_comb_1541_PDBids.fasta')
     # result_pdf = run_mmseqs2_esysrch_cmd_all_vs_all(rp_fasta_f_)
     calc_and_write_results_mmseqs2_all_vs_all(rp_fasta_f_)
 
