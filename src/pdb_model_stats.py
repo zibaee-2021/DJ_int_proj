@@ -201,7 +201,6 @@ def generate_stats(sub_dir: str, rp_pidchains_lst_f: str, rp_fasta_f: str, run_a
                 # 'similarity': 100  # TODO
             })
     pdf = pd.DataFrame(stats)
-
     pdf_sorted = pdf.sort_values(by=['year', '#model'], ascending=[True, True])
     print(pdf_sorted.dtypes)
     for col_to_cast in ['PDBid', 'chain']:
