@@ -142,9 +142,14 @@ def generate_stats(sub_dir: str, rp_pidchains_lst_f: str, rp_fasta_f: str, run_a
     rp_rmsd_mean_coords_dir = os.path.join(_rp_nmr_dir(), 'RMSD', sub_dir, 'mean_coords')
 
     for i, (pid, chains) in enumerate(pidchains_dict.items()):
-        if i < 1507:
-            continue
-
+        if use_mmcif:
+            assert pid in raw_pids, f'{pid}.cif not round in raw_cifs.'
+        else:
+            if pid not in ['9D9B', '7ZE0', '9D9C', '9D9A']:  # (These 4 are not found in 'legacy' PDB files on RCSB)
+                assert pid in raw_pids, f'{pid}.pdb not round in raw_pdbs.'
+            else:
+                print(f'{pid}.pdb is not available in legacy PDB for downloading from RCSB. So, cannot include it.')
+                continue
         rp_raw_struct_f = os.path.join(rp_raw_struct_dir, f'{pid}.{pdbcif}')
 
         total_chain_count, year = _total_chain_count_and_year(rp_raw_struct_f, parser)
