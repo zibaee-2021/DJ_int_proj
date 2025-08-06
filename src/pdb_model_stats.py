@@ -109,7 +109,6 @@ def generate_stats(sub_dir: str, rp_pidchains_lst_f: str, rp_fasta_f: str, run_a
     """
     start = time()
     stats = []
-    mmseqs_pdf = None
     fname = os.path.basename(rp_fasta_f).removesuffix('.fasta')
     rp_mmseqs2_results_dir = os.path.join(_rp_mmseqs_dir(sub_dir), 'results')
     os.makedirs(rp_mmseqs2_results_dir, exist_ok=True)
@@ -122,26 +121,28 @@ def generate_stats(sub_dir: str, rp_pidchains_lst_f: str, rp_fasta_f: str, run_a
     else:
         pdbcif = 'pdb'
         parser = PDBParser(QUIET=True)
+
+    # Next 7 lines for assigning het/hom (~line 185) for stats pdf, and for assertion raw file available (~line 146):
     rp_raw_struct_het_dir = os.path.join(_rp_nmr_dir(), f'raw_{pdbcif}s', 'heteromeric')
     rp_raw_struct_hom_dir = os.path.join(_rp_nmr_dir(), f'raw_{pdbcif}s', 'homomeric')
     rp_raw_het_struct_files = glob.glob(os.path.join(rp_raw_struct_het_dir, f'*.{pdbcif}'))
     rp_raw_hom_struct_files = glob.glob(os.path.join(rp_raw_struct_hom_dir, f'*.{pdbcif}'))
     rp_raw_struct_files = rp_raw_het_struct_files + rp_raw_hom_struct_files
     raw_pids = [os.path.basename(rp_raw_struct_f).removesuffix(f'.{pdbcif}') for rp_raw_struct_f in rp_raw_struct_files]
-    raw_het_pids = [os.path.basename(rp_raw_het_struct_f).removesuffix(f'.{pdbcif}') for rp_raw_het_struct_f in rp_raw_het_struct_files]
+    raw_het_pids = [os.path.basename(rp_raw_het_struct_f).removesuffix(f'.{pdbcif}')
+                    for rp_raw_het_struct_f in rp_raw_het_struct_files]
 
+    # GENERATE NEW MMSEQS2 ALIGNMENT SCORES OR READ PRE-WRITTEN VALUES:
     if run_and_write_mmseqs2:
         mmseq2_pdf = mmseqs2.run_mmseqs2_esysrch_cmd_all_vs_all(rp_fasta_f)
         mmseq2_pdf = mmseqs2.dedupe_rm_self_aligns(mmseq2_pdf)
         mmseq2_pdf.to_csv(rp_mmseqs2_csv_f, index=False)  # shape=(33074, 7)
-    else:  # This relies on it having been run, filtered and written out separately beforehand, so can just read in:
+    else:
         mmseq2_pdf = pd.read_csv(rp_mmseqs2_csv_f)  # shape=(33074, 7)
 
     pdbids, pidchains_dict, pidchains_list = _read_multimodel_pdbid_chains(rp_pidchains_lst_f)
-
-    rp_parsed_cif_dir = os.path.join(_rp_nmr_dir(), 'parsed_cifs', sub_dir)
     rp_raw_struct_dir = os.path.join(_rp_nmr_dir(), f'raw_{pdbcif}s', 'hethom_combined')
-
+    rp_parsed_cif_dir = os.path.join(_rp_nmr_dir(), 'parsed_cifs', sub_dir)
     rp_rmsd_mean_coords_dir = os.path.join(_rp_nmr_dir(), 'RMSD', sub_dir, 'mean_coords')
 
     for i, (pid, chains) in enumerate(pidchains_dict.items()):
@@ -161,6 +162,7 @@ def generate_stats(sub_dir: str, rp_pidchains_lst_f: str, rp_fasta_f: str, run_a
             pid_chain = f'{pid}_{chain}'
             rp_parsed_cifs_ssv = os.path.join(rp_parsed_cif_dir, f'{pid}_{chain}.ssv')
             rp_mean_coords_csv = os.path.join(rp_rmsd_mean_coords_dir, f'{pid}_{chain}.csv')
+            # GENERATE NEW RMSD SCORES OR READ PRE-WRITTEN VALUES:
             if run_and_write_rmsd:
                 rmsds, model_nums, pdc4pdf = RMSD.calc_rmsds_of_models(rp_parsed_cifs_ssv, rp_mean_coords_csv)
                 rmsd_pdf = pd.DataFrame({'pdbid_chain': pdc4pdf, 'model_num': model_nums, 'rmsd': rmsds})
@@ -182,12 +184,6 @@ def generate_stats(sub_dir: str, rp_pidchains_lst_f: str, rp_fasta_f: str, run_a
             model_count = len(pdbid_chain_pdf['A_pdbx_PDB_model_num'].unique())
             ca_count = int(pdbid_chain_pdf.shape[0] / model_count)
             homologues = mmseqs2.find_homologues_30_20_90(mmseq2_pdf, pid_chain)
-
-            if use_mmcif:
-                assert pid in raw_pids, f'{pid}.cif not round in raw_cifs.'
-            else:
-                if pid not in ['9D9B', '7ZE0', '9D9C', '9D9A']: # (These 4 are not found in 'legacy' PDB files on RCSB)
-                    assert pid in raw_pids, f'{pid}.pdb not round in raw_pdbs.'
 
             het_hom = 'het' if pid in raw_het_pids else 'hom'
             stats.append({
