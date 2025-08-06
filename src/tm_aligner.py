@@ -2,8 +2,10 @@
 
 # PATHS ARE EXPECTING THIS TO BE CALLED FROM DJ_Intern_Code/notebooks
 
-import os
+import os, glob
+from pathlib import Path
 from time import time
+from typing import Tuple
 from tqdm import tqdm
 import subprocess
 import itertools
@@ -13,6 +15,33 @@ from multiprocessing import Pool, cpu_count
 from functools import partial
 import mmseqs2
 import platform
+import MDAnalysis as mda
+import numpy as np
+from MDAnalysis.coordinates import PDB
+"""
+TM-score and meaning:
+
+1.0 = perfect structural match (identical structures)
+< 0.2 ≈ random similarity
+> 0.5 = typically indicates same fold
+> 0.8 = often considered nearly identical structures (small conformational shifts only)
+"""
+
+def _read_all_pdbs_from_txt(txt_f: str) -> list:
+    rp_pidchains_lst_f = os.path.join('..', 'data', 'NMR', 'multimodel_lists', txt_f)
+    if 'singlemod' == txt_f.split('_')[1]:
+        with open(rp_pidchains_lst_f, 'r') as f:
+            next(f)  # ignore first line
+            pidchains = f.read().split()
+    else:
+        with open(rp_pidchains_lst_f, 'r') as f:
+            pidchains = f.read().split('\n')
+            pidchains = pidchains[:-1]
+    rp_pdb_files = []
+    PDB_dir = os.path.join('..', 'data', 'NMR', 'pdb_chains', 'hethom_combined')
+    for pidchain in pidchains:
+        rp_pdb_files.append(os.path.join(PDB_dir, f'{pidchain}.pdb'))
+    return rp_pdb_files
 
 op_sys = platform.system()  # 'Linux', 'Darwin' (Darwin = macOS), or 'Windows'
 TMALIGN_BIN = os.path.join('utils', op_sys, 'TMalign')
@@ -37,9 +66,15 @@ def compute_tm(pdb1, pdb2):
 
 
 def compute_tm_from_mp_pool(pair, pdb_files):
-    i, j = pair
-    f1 = pdb_files[i]
-    f2 = pdb_files[j]
+    f1_idx, f2_idx = pair
+    f1 = pdb_files[f1_idx]
+    f2 = pdb_files[f2_idx]
+    f1_pdbname = os.path.basename(f1).removesuffix('.pdb')
+    f2_pdbname = os.path.basename(f2).removesuffix('.pdb')
+
+    assert Path(TMALIGN_BIN).exists(), f'{TMALIGN_BIN} does not exist'
+    assert os.path.isfile(f1), f'{f1} not found'
+    assert os.path.isfile(f2), f'{f2} not found'
     try:
         result = subprocess.run(
             [TMALIGN_BIN, f1, f2],
@@ -52,72 +87,101 @@ def compute_tm_from_mp_pool(pair, pdb_files):
         for line in output.splitlines():
             if line.startswith('TM-score='):
                 tm = float(line.split('=')[1].split()[0])
-                return i, j, tm
+                print(f'\nTM-score={tm} for {f1_pdbname}:{f2_pdbname}')
+                return f1_pdbname, f2_pdbname, tm
     except Exception as e:
         print(f'Error computing TM-score for {f1} vs {f2}: {e}')
-        return i, j, np.nan
+        return f1_idx, f2_idx, np.nan
 
+
+def write_mean_coords_to_pdb(rp_pdb_f):
+    """
+    Note: the PDB it writes out:
+     - starts with 'MODEL 1' even though its an average of all the models.
+     - lacks 'MASTER' at end and 'TER' at terminus.
+    I assume it is still a valid PDB as it seems unlikely to me that this is an error by MDAnalysis.
+    """
+    u = mda.Universe(rp_pdb_f)
+    n_atoms = len(u.atoms)
+    coords_per_model = []  # store coords per model
+    for _ in u.trajectory:  # iterate through each model
+        coords_per_model.append(u.atoms.positions.copy())
+    coords_array = np.array(coords_per_model)  # shape=(n_models, n_atoms, 3)
+    mean_coords = coords_array.mean(axis=0)  # mean coords over all models
+    u.atoms.positions = mean_coords  # set mean coords into "Universe"
+    with mda.Writer(os.path.basename(rp_pdb_f), n_atoms) as W:
+        W.write(u.atoms)
 
 if __name__ == '__main__':
 
     start = time()
+    # rp_multimod_pdb = '../data/NMR/raw_pdbs/hethom_combined/1A0N.pdb'
+    # write_mean_coords_to_pdb(rp_multimod_pdb)
+    # rp_singlemod_pdb = '../data/NMR/raw_pdbs/hethom_combined/1FU5.pdb'
+    # write_mean_coords_to_pdb(rp_singlemod_pdb)
 
-    mmseqs2_results_dir =mmseqs2.rp_mmseqs_results_dir(het_hom='hethom_combined')
-    homologues = pd.read_csv(os.path.join(mmseqs2_results_dir, 'homologues_30_20_90.csv'))
-    non_homologues = pd.read_csv(os.path.join(mmseqs2_results_dir, 'non_homologues_30_20_90.csv'))
-    prefix = os.path.join('..', 'data', 'NMR', 'raw_pdbs', 'hethom_combined')
-    suffix = '.pdb'
-
-    df["pdb1_path"] = prefix + df["pdb1"] + suffix
-    df["pdb2_path"] = prefix + df["pdb2"] + suffix
-    pass
+    # mmseqs2_results_dir =mmseqs2.rp_mmseqs_results_dir(het_hom='hethom_combined')
+    # homologues = pd.read_csv(os.path.join(mmseqs2_results_dir, 'homologues_30_20_90.csv'))
+    # non_homologues = pd.read_csv(os.path.join(mmseqs2_results_dir, 'non_homologues_30_20_90.csv'))
+    # prefix = os.path.join('..', 'data', 'NMR', 'raw_pdbs', 'hethom_combined')
+    # suffix = '.pdb'
 
     # pdbid_chain = '1cvr_A'
     # PDB_DIR = os.path.join('', 'data', 'ATLAS_parsed', pdbid_chain, 'CA_only')
     # # PDB_DIR = os.path.join('..', 'data', 'ATLAS_parsed', pdbid_chain, 'test')
-    #
-    # pdb_files_ = sorted([
-    #     os.path.join(PDB_DIR, f)
-    #     for f in os.listdir(PDB_DIR)
-    #     if f.endswith('.pdb')
-    # ])
-    #
     # pdb_files_100_spread = [pdb_f for idx, pdb_f in enumerate(pdb_files_) if idx % 100 == 0]
     # assert(len(pdb_files_100_spread) == 101)
-    #
-    # # N = len(pdb_files_)
-    # N = len(pdb_files_100_spread)
-    # print(f'Found {N} PDB files.')
-    #
-    # # Generate all unique pairs (i < j)
-    # pairs = list(itertools.combinations(range(N), 2))
-    # print(f'Total pairs to compute: {len(pairs)}')
-    #
-    # # Number of worker processes
-    # n_workers = max(cpu_count() - 1, 1)
-    # print(f'Using {n_workers} parallel workers.')
-    #
-    # # Bind the extra argument
-    # # _compute_tm = partial(compute_tm, pdb_files=pdb_files_)
-    # _compute_tm = partial(compute_tm_from_mp_pool, pdb_files=pdb_files_100_spread)
-    #
-    # # List to store only interesting results
-    # interesting_results = []
-    #
-    # with Pool(processes=n_workers) as pool:
-    #     for result_ in tqdm(
-    #         pool.imap_unordered(_compute_tm, pairs, chunksize=10),
-    #         total=len(pairs),
-    #         desc="Processing TM-scores"
-    #     ):
-    #         i_, j_, tm_ = result_
-    #         if np.isnan(tm_):
-    #             continue
-    #         if tm_ <= 0.8:
-    #             interesting_results.append((i_, j_, tm_))
-    #
+
     # # Save interesting pairs as .npy
     # rpath_tm_pairs = os.path.join('', 'data', 'ATLAS_parsed', pdbid_chain, 'low_tm_pairs.npy')
     # np.save(rpath_tm_pairs, np.array(interesting_results, dtype=object))
     # print(f"Saved {len(interesting_results)} pairs with TM-score < 0.8 to {rpath_tm_pairs}.")
+    # print(f'Completed in {round((time() - start) / 60)} minutes.')
+
+
+    het_multimod_2104_pidChains = _read_all_pdbs_from_txt('het_multimod_2104_PidChains.txt')
+    het_singlemod_288_pidChains = _read_all_pdbs_from_txt('het_singlemod_288_PidChains.txt')
+    hom_multimod_1421_pidChains = _read_all_pdbs_from_txt('hom_multimod_1421_PidChains.txt')
+    het_singlemod_180_pidChains = _read_all_pdbs_from_txt('hom_singlemod_180_PidChains.txt')
+
+    # pdb_files_ = sorted((het_multimod_2104_pidChains + het_singlemod_288_pidChains +
+    #               hom_multimod_1421_pidChains + het_singlemod_180_pidChains))
+    pdb_files_ = sorted(glob.glob(os.path.join('..', 'data', 'NMR', 'raw_pdbs', 'hethom_combined', 'mean_coords', '*.pdb')))
+    N = len(pdb_files_)
+    print(f'Found {N} PDB files.') # Found 3556 PDB files.
+
+    # Generate all unique pairs (i < j)
+    pairs = list(itertools.combinations(range(N), 2))
+    print(f'Total pairs to compute: {len(pairs)}')  # Total pairs to compute: 6320790
+
+    # Number of worker processes
+    n_workers = max(cpu_count() - 1, 1)
+    print(f'Using {n_workers} parallel workers.')  # Using 9 parallel workers.
+
+    # Bind the extra argument
+    # _compute_tm = partial(compute_tm, pdb_files=pdb_files_)
+    _compute_tm = partial(compute_tm_from_mp_pool, pdb_files=pdb_files_)
+
+    # List to store only interesting results
+    results = {'query': [], 'target': [], 'TMscore': []}
+
+    with Pool(processes=n_workers) as pool:
+        for result_ in tqdm(
+                pool.imap_unordered(_compute_tm, pairs, chunksize=10),
+                total=len(pairs), desc="Processing TM-scores"
+        ):
+            pdb1, pdb2, tms = result_
+            if np.isnan(tms):
+                continue
+            # if tm_ <= 0.8:
+            results['query'].append(pdb1)
+            results['target'].append(pdb2)
+            results['TMscore'].append(tms)
+    res_pdf = pd.DataFrame(results)
+    res_pdf.to_csv(os.path.join('..', 'data', 'TM-scores.csv'), index=False)
+
+    # Save interesting pairs as .npy
+    rp_dst_tmalign_dir = os.path.join('..', 'data', 'NMR', 'TMAlign', '')
+    os.makedirs(rp_dst_tmalign_dir, exist_ok=True)
+    rp_tm_pairs = os.path.join(rp_dst_tmalign_dir, 'low_tm_pairs.npy')
     print(f'Completed in {round((time() - start) / 60)} minutes.')
