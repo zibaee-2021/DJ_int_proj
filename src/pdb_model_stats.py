@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import pandas as pd
-from Bio.PDB import MMCIFParser, PDBParser, MMCIF2Dict
+from Bio.PDB import MMCIFParser, PDBParser
 from Bio.SVDSuperimposer import SVDSuperimposer
 from Bio import SeqIO
 import RMSD
