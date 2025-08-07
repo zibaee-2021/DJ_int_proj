@@ -42,7 +42,7 @@ def _total_chain_count_and_year(rp_raw_struct_f: str, biopython_parser) -> Tuple
     return total_chain_count, int(year)
 
 
-def _pdbid_dict_chain(pdbid_chains: list) -> Tuple[list, dict]:
+def pdbid_dict_chain(pdbid_chains: list) -> dict:
     """
     Takes relative path of txt file that has list of sol NMR PDBid_chains with > 1 model.
     Makes a dict with unique PDBid as the key, mapped to all its chains, according to the list in the txt file.
@@ -53,7 +53,7 @@ def _pdbid_dict_chain(pdbid_chains: list) -> Tuple[list, dict]:
     for pdbid_chain in pdbid_chains:
         pid, ch = pdbid_chain.split('_')
         pdbid_chains_dict[pid].append(ch)
-    return pdbid_chains, dict(pdbid_chains_dict)
+    return dict(pdbid_chains_dict)
 
 
 def _read_multimodel_pdbid_chains(rp_pidChains: str) -> Tuple[list, dict, list]:
@@ -67,9 +67,9 @@ def _read_multimodel_pdbid_chains(rp_pidChains: str) -> Tuple[list, dict, list]:
             pdbid_chains = f.read().splitlines()
 
     pdbid_chains.sort()
-    pidChains_list, pidChains_dict = _pdbid_dict_chain(pdbid_chains)
-    pdbids = list(pidChains_dict.keys())
-    return pdbids, pidChains_dict, pidChains_list
+    pidchains_dict = pdbid_dict_chain(pdbid_chains)
+    pdbids = list(pidchains_dict.keys())
+    return pdbids, pidchains_dict, pdbid_chains
 
 
 def _calc_identity_for_stats(het_hom: str, pdbid: str, filt_pdf) -> str:
@@ -408,7 +408,7 @@ if __name__ == '__main__':
 
     # # 2. BAR CHART OF ALPHA-CARBON COUNT FOR EACH PDB:
     # # 2.A. CALCULATE CA COUNT FROM PARSED CIFS DATA AND WRITE TO STATS/...LST FILE:
-    # rp_parsed_cifs_ssvs_ = sorted(glob.glob(os.path.join(_rp_nmr_dir(), 'parsed_cifs',
+    # rp_parsed_cifs_ssvs_ = sorted(glob.glob(os.path.join(_rp_parsed_cifs_dir(),
     #                                              'multimod_2713_hetallchains_hom1chain', '*.ssv')))
     # ca_counts_ = _calc_ca_counts(rp_parsed_cifs_ssvs_)
     # ca_counts_dir = os.path.join(_rp_stats_dir(), 'multimod_2713_hetallchains_hom1chain')
@@ -428,7 +428,7 @@ if __name__ == '__main__':
 
     # # 3. BAR CHART OF MODEL COUNT FOR EACH PDB:
     # # 3.A. CALCULATE MODEL COUNT FROM PARSED CIFS DATA AND WRITE TO STATS/...LST FILE:
-    # rp_parsed_cifs_ssvs_ = sorted(glob.glob(os.path.join(_rp_nmr_dir(), 'parsed_cifs',
+    # rp_parsed_cifs_ssvs_ = sorted(glob.glob(os.path.join(_rp_parsed_cifs_dir(),
     #                                              'multimod_2713_hetallchains_hom1chain', '*.ssv')))
     # model_counts_ = _calc_model_counts(rp_parsed_cifs_ssvs_)
     # model_counts_dir = os.path.join(_rp_stats_dir(), 'multimod_2713_hetallchains_hom1chain')
