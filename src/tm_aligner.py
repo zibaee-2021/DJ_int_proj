@@ -54,7 +54,13 @@ def _read_all_pdbs_from_txt(txt_f: str) -> list:
 op_sys = platform.system()  # 'Linux', 'Darwin' (Darwin = macOS), or 'Windows'
 TMALIGN_BIN = os.path.join('utils', op_sys, 'TMalign')
 
-def compute_tm(pdb1, pdb2):
+def compute_tm(rp_pdb1, rp_pdb2):
+    """
+    Note: TM-score, unlike my RMSD calculation, does not take in arrays of coordinates.
+    Instead, it expects (valid) PDB files.
+    Compute TM-score between two pdb files.
+    """
+
     try:
         result = subprocess.run(
             [TMALIGN_BIN, pdb1, pdb2],
