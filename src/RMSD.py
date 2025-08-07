@@ -152,6 +152,18 @@ def cluster_save_to_json(rmsd_mat, pdbid_chain):
 def calculate_rmsd(coords1, coords2) -> float:
     """
     Calculate RMSD between the two given coordinates (as numpy arrays).
+    Uses SVDSuperimposer(). This calculates optimal least-squares superposition (Kabsch algorithm), which is the
+    Euclidean RMSD between matched atom pairs. The units of the calculated RMSD value are the same as the units of the
+    input coordinates, i.e. Angstroms.
+    Lower RMSDs indicate high structural similarity.
+
+    WARNING: The following was from CGT4o:
+    < 1 Angs = essentially identical, only minor coordinate fluctuations.
+    1-2 Angs = very similar, typically same fold, possibly different side-chain conformations.
+    2-4 Angs = Similar global fold; might differ in loops or flexible regions.
+    4-6 Angs = Moderate similarity; possibly different topologies or domain orientations.
+    > 6 Angs = Likely different structures; may be different folds entirely.
+    > 10 Angs = Almost certainly structurally unrelated.
     """
     si = SVDSuperimposer()
     si.set(coords1, coords2)
