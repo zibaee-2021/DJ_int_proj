@@ -149,6 +149,80 @@ def _write_PDB_HETATMout_CAonly(rp_pdf_f: str, rp_dst_parsed_pdbs_dir: str) -> N
 if __name__ == '__main__':
 
     start = time()
+    # # 1. IN PREP FOR RUNNING TM-ALIGN ON ALL MULTIMODEL PDBCHAIN FILES, PARSE, CALC MEAN COORDS & WRITE TO PDB FILES:
+    # # 1.1. PARSE ALL MULTIMODEL PDBCHAINS (ACCORDING TO MULTIMODEL PDBCHAINS LIST) & WRITE TO PDB FILES:
+    rp_dst_parsed_pdbs_dir_ = os.path.join(_rp_nmr_dir(), 'pdb_chains', 'parsed', 'multimod_hetallchains_hom1chain')
+    os.makedirs(rp_dst_parsed_pdbs_dir_, exist_ok=True)
+
+    with open(os.path.join(_rp_nmr_dir(), 'multimodel_lists', 'multimod_2713_hetallchains_hom1chain.lst'), 'r') as f:
+        pidchains = f.read().splitlines()
+    pidchains.sort()
+    print(len(pidchains))  # should be 2713
+
+    rp_pdb_dir = os.path.join(_rp_nmr_dir(), 'pdb_chains', 'hethom_combined')
+    os.makedirs(rp_pdb_dir, exist_ok=True)
+
+    for pidchain in pidchains:
+        rp_pdb_f_ = os.path.join(rp_pdb_dir, f'{pidchain}.pdb')
+        _write_PDB_HETATMout_CAonly(rp_pdb_f_, rp_dst_parsed_pdbs_dir_)
+
+    # # 1.2. CALCULATE MEAN COORDINATES OF ALL PARSED PDBCHAIN FILES AND WRITE OUT TO PDB FILES:
+    rp_parsed_pdbchain_dir = os.path.join(_rp_nmr_dir(), 'pdb_chains', 'parsed', 'multimod_hetallchains_hom1chain')
+    rp_dst_mean_coords_pdb_dir = os.path.join(rp_parsed_pdbchain_dir, 'mean_coords')
+
+    rp_parsed_pdbchains_files = sorted(glob.glob(os.path.join(rp_parsed_pdbchain_dir, '*.pdb')))
+    print(len(rp_parsed_pdbchains_files))  # should be 2713
+    for rp_pdb_f_ in rp_parsed_pdbchains_files:
+        _write_mean_coords_to_pdb(rp_pdb_f_)
+
+    # # 2. CALCULATE TM-SCORES OF ALL VS ALL FOR PARSED PDBCHAINS (USING MEAN COORDS PDB FILES):
+    # rp_mean_coords_pdb_dir = os.path.join(_rp_nmr_dir(), 'pdb_chains', 'parsed', 'multimod_hetallchains_hom1chain',
+    #                                       'mean_coords')
+    # rp_parsed_mean_coords_pdbchains_files = sorted(glob.glob(os.path.join(rp_mean_coords_pdb_dir, '*.pdb')))
+    #
+    # N = len(rp_parsed_mean_coords_pdbchains_files)
+    # print(f'Found {N} PDB/PDBchain files in parsed/... /mean_coords dir.') # Should be 2713
+    #
+    # # Generate all unique integer pair combinations (i < j) for above number of PDB files:
+    # pairs = list(itertools.combinations(range(N), 2))
+    # print(f'Total pairs to compute: {len(pairs)}')  # Total pairs to compute: 6320790
+    #
+    # # Number of worker processes
+    # n_workers = max(cpu_count() - 1, 1)
+    # print(f'Using {n_workers} parallel workers.')  # Using 9 parallel workers.
+    #
+    # # Bind the extra argument
+    # # _compute_tm = partial(compute_tm, pdb_files=pdb_files_)
+    # _compute_tm = partial(compute_tm_from_mp_pool, rp_all_pdb_files=rp_all_pdb_files)
+    #
+    # # List to store only interesting results
+    # results = {'query': [], 'target': [], 'TMscore': []}
+    #
+    # with Pool(processes=n_workers) as pool:
+    #     for result_ in tqdm(
+    #             pool.imap_unordered(_compute_tm, pairs, chunksize=10),
+    #             total=len(pairs), desc="Processing TM-scores"
+    #     ):
+    #         pdb1, pdb2, tms = result_
+    #         if np.isnan(tms):
+    #             continue
+    #         # if tm_ <= 0.8:
+    #         results['query'].append(pdb1)
+    #         results['target'].append(pdb2)
+    #         results['TMscore'].append(tms)
+    # res_pdf = pd.DataFrame(results)
+    # res_pdf.to_csv(os.path.join('..', 'data', 'TM-scores.csv'), index=False)
+    #
+    # # Save interesting pairs as .npy
+    # rp_dst_tmalign_dir = _rp_tmscores_dir()
+    # os.makedirs(rp_dst_tmalign_dir, exist_ok=True)
+    # rp_tm_pairs = os.path.join(rp_dst_tmalign_dir, 'all_vs_all_TMS.npy')
+    # print(f'Completed in {round((time() - start) / 60)} minutes.')
+
+
+
+
+
     # rp_multimod_pdb = '../data/NMR/raw_pdbs/hethom_combined/1A0N.pdb'
     # write_mean_coords_to_pdb(rp_multimod_pdb)
     # rp_singlemod_pdb = '../data/NMR/raw_pdbs/hethom_combined/1FU5.pdb'
