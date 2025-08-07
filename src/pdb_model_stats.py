@@ -287,7 +287,6 @@ def _calc_rmsds_stats(pidchains: list):
     return rmsdstats_pdf
 
 
-
 def violin_plot(pdf):
     plt.figure(figsize=(14, 6))
     sns.violinplot(data=pdf, x='year', y='total_model_count', inner='quartile', color='skyblue', linewidth=1)
