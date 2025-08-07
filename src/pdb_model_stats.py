@@ -512,13 +512,13 @@ if __name__ == '__main__':
 
     # # 5. MIN, MAX, MEAN & STDDEV OF RMSD VALUES FOR EACH PDBCHAIN'S MODEL AGAINST THE MEAN COORDS OF ALL MODELS.
     # # 5.A. CALCULATE VALUES AND WRITE TO STATS/...CSV:
-    rp_pidchains_lst_f_ = os.path.join(_rp_nmr_dir(), 'multimodel_lists',
-                                       'multimod_2713_hetallchains_hom1chain.lst')
-    with open(rp_pidchains_lst_f_, 'r') as f:
-        pidchains_2713 = sorted(f.read().splitlines())
-    rsmds_stats_pdf = _calc_rmsds_stats(pidchains_2713)
-    rp_rsmds_stats_csv_f = os.path.join(_rp_stats_dir(), 'multimod_2713_hetallchains_hom1chain', 'rmsds_stats.csv')
-    rsmds_stats_pdf.to_csv(rp_rsmds_stats_csv_f, index=False)
+    # rp_pidchains_lst_f_ = os.path.join(_rp_nmr_dir(), 'multimodel_lists',
+    #                                    'multimod_2713_hetallchains_hom1chain.lst')
+    # with open(rp_pidchains_lst_f_, 'r') as f:
+    #     pidchains_2713 = sorted(f.read().splitlines())
+    # rsmds_stats_pdf = _calc_rmsds_stats(pidchains_2713)
+    # rp_rsmds_stats_csv_f = os.path.join(_rp_stats_dir(), 'multimod_2713_hetallchains_hom1chain', 'rmsds_stats.csv')
+    # rsmds_stats_pdf.to_csv(rp_rsmds_stats_csv_f, index=False)
 
     # # 5.B. READ CSV FOR MIN, MAX, MEAN & STDDEV RSMD VALUES FOR 2713 PDB-CHAINS:
     # rp_rsmds_stats_csv_f = os.path.join(_rp_stats_dir(), 'multimod_2713_hetallchains_hom1chain', 'rmsds_stats.csv')
