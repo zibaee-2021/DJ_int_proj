@@ -216,6 +216,42 @@ def generate_stats(sub_dir: str, rp_pidchains_lst_f: str, rp_fasta_f: str, run_a
     return pdf_sorted
 
 
+def plot_rmsds_and_stdev(pdf):
+    # Sort by mean_rmsd (optional: for more readable axis)
+    pdf = pdf.sort_values('mean_rmsd').reset_index(drop=True)
+
+    x = range(len(pdf))
+    y = pdf['mean_rmsd']
+    yerr = pdf['stdev_rmsd']
+    ymin = pdf['min_rmsd']
+    ymax = pdf['max_rmsd']
+    labels = pdf['Pid_chain']
+
+    fig, ax = plt.subplots(figsize=(14, 6))
+
+    # Draw vertical lines from min to max rmsd
+    ax.vlines(x, ymin, ymax, color='lightgrey', alpha=0.7, linewidth=1)
+
+    # Overlay mean RMSD points with SEM error bars
+    ax.errorbar(x, y, yerr=yerr, fmt='o', color='steelblue', markersize=3, capsize=2, linewidth=1)
+
+    # Clean up axis
+    ax.set_xlabel('PDB Chain', fontsize=10)
+    ax.set_ylabel('RMSD', fontsize=10)
+    ax.set_title('RMSD per PDB Chain (mean ± SEM, min/max range)', fontsize=12)
+    ax.set_xlim(-1, len(pdf))  # pad edges
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.grid(True, linestyle='--', alpha=0.3)
+
+    # Optional: thin x-ticks for readability
+    ax.set_xticks(x[::200])  # show every 200th label only
+    ax.set_xticklabels(labels[::200], rotation=-90, fontsize=6)
+
+    plt.tight_layout()
+    plt.show()
+
+
 def _calc_rmsds_stats(pidchains: list):
     """
     TODO Note that rmsds for 6UJV_A, 7CLV_A, 7CLV_B & 8J4I_A are empty.. need to have a closer look at this to see why...
@@ -483,7 +519,8 @@ if __name__ == '__main__':
     # # 5.B. READ CSV FOR MIN, MAX, MEAN & STDDEV RSMD VALUES FOR 2713 PDB-CHAINS:
     # rp_rsmds_stats_csv_f = os.path.join(_rp_stats_dir(), 'multimod_2713_hetallchains_hom1chain', 'rmsds_stats.csv')
     # rsmds_stats_pdf = pd.read_csv(rp_rsmds_stats_csv_f)
-    # TODO plot .. how ?
+    # plot_rmsds_and_stdev(rsmds_stats_pdf)
+    # pass
 
     # # MAIN STATS FUNCTION
     # # GENERATE STATS PDF AND WRITE TO CSV: (Takes 18 mins to complete 2713 PDB-chains.)
