@@ -21,6 +21,9 @@ def _rp_nmr_dir():
 def _rp_stats_dir():
     return os.path.join(_rp_nmr_dir(), 'stats')
 
+def _rp_parsed_cifs_dir():
+    return os.path.join(_rp_nmr_dir(), 'parsed_cifs')
+
 def _rp_mmseqs_dir(sub_dir) -> str:
     return os.path.join(_rp_nmr_dir(), 'mmseqs', sub_dir)
 
@@ -142,7 +145,7 @@ def generate_stats(sub_dir: str, rp_pidchains_lst_f: str, rp_fasta_f: str, run_a
 
     pdbids, pidchains_dict, pidchains_list = _read_multimodel_pdbid_chains(rp_pidchains_lst_f)
     rp_raw_struct_dir = os.path.join(_rp_nmr_dir(), f'raw_{pdbcif}s', 'hethom_combined')
-    rp_parsed_cif_dir = os.path.join(_rp_nmr_dir(), 'parsed_cifs', sub_dir)
+    rp_parsed_cif_dir = os.path.join(_rp_parsed_cifs_dir(), sub_dir)
     rp_rmsd_mean_coords_dir = os.path.join(_rp_nmr_dir(), 'RMSD', sub_dir, 'mean_coords')
 
     for i, (pid, chains) in enumerate(pidchains_dict.items()):
@@ -221,6 +224,10 @@ def _calc_rmsds_stats(pidchains: list):
         rp_rmsd_per_model_csv_f = os.path.join(rp_rmsd_per_model_dir, f'{pid_chain}.csv')
         rmsd_pdf = pd.read_csv(rp_rmsd_per_model_csv_f)
         rmsds = rmsd_pdf[['rmsd']].values
+        rp_parsed_cifs_dir = os.path.join(_rp_parsed_cifs_dir(), 'multimod_2713_hetallchains_hom1chain')
+        pdf = pd.read_csv(os.path.join(rp_parsed_cifs_dir, f'{pid_chain}.ssv'), sep=' ')
+        model_count = len(pdf['A_pdbx_PDB_model_num'].unique())
+
         if len(rmsds) > 0:
             min_rmsd, max_rmsd = np.min(rmsds), np.max(rmsds)
             mean_rmsd, stdev_rmsd = np.mean(rmsds), np.std(rmsds)
