@@ -63,7 +63,7 @@ def compute_tm(rp_pdb1, rp_pdb2):
 
     try:
         result = subprocess.run(
-            [TMALIGN_BIN, pdb1, pdb2],
+            [TMALIGN_BIN, rp_pdb1, rp_pdb2],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
@@ -75,14 +75,19 @@ def compute_tm(rp_pdb1, rp_pdb2):
                 tm = float(line.split('=')[1].split()[0])
                 return tm
     except Exception as e:
-        print(f'Error computing TM-score for {pdb1} vs {pdb2}: {e}')
+        print(f'Error computing TM-score for {rp_pdb1} vs {rp_pdb2}: {e}')
         return np.nan
 
 
-def compute_tm_from_mp_pool(pair, pdb_files):
-    f1_idx, f2_idx = pair
-    f1 = pdb_files[f1_idx]
-    f2 = pdb_files[f2_idx]
+def compute_tm_from_mp_pool(idx_pair, rp_all_pdb_files):
+    """
+    Takes a pair of integers, used as indexes to the list of PDB files (given as the relative path strings to the
+    appropriate PDB/PDBchain files (which are expected to be single model, or a single mean of all models).)
+    Compute TM-score between each pair of PDB/PDBchain files.
+    """
+    f1_idx, f2_idx = idx_pair
+    f1 = rp_all_pdb_files[f1_idx]
+    f2 = rp_all_pdb_files[f2_idx]
     f1_pdbname = os.path.basename(f1).removesuffix('.pdb')
     f2_pdbname = os.path.basename(f2).removesuffix('.pdb')
 
