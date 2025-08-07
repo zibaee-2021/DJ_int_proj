@@ -134,6 +134,18 @@ def _write_mean_coords_to_pdb(rp_pdb_f: str) -> None:
     with mda.Writer(os.path.basename(rp_pdb_f), n_atoms) as W:
         W.write(u.atoms)
 
+
+def _write_PDB_HETATMout_CAonly(rp_pdf_f: str, rp_dst_parsed_pdbs_dir: str) -> None:
+    pidc = os.path.basename(rp_pdf_f).removeprefix('.pdb')
+    print(pidc)
+    u = mda.Universe(rp_pdf_f)  # can also be .cif
+    ca_atoms = u.select_atoms('protein and name CA') # standard residues (no HETATM) and alpha-carbons only.
+
+    rp_parsed_pdb_f = os.path.join(rp_dst_parsed_pdbs_dir, f'{pidc}')
+    with mda.Writer(rp_parsed_pdb_f, ca_atoms.n_atoms) as writer:
+        writer.write(ca_atoms)
+
+
 if __name__ == '__main__':
 
     start = time()
