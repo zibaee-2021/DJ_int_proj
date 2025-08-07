@@ -304,6 +304,7 @@ def violin_plot(pdf):
 
 
 def _tabulate_year_chain_model_counts(rp_raw_cif_files: list):
+    start = time()
     rp_raw_cifs_het_dir = os.path.join(_rp_nmr_dir(), f'raw_cifs', 'heteromeric')
     rp_raw_het_cifs_files = glob.glob(os.path.join(rp_raw_cifs_het_dir, f'*.cif'))
     het_pids = [os.path.basename(rp_raw_het_cif_f).removesuffix(f'.cif')
@@ -327,7 +328,8 @@ def _tabulate_year_chain_model_counts(rp_raw_cif_files: list):
             'total_chain_count': int(total_chain_count)
         })
     ycmc_pdf = pd.DataFrame(year_chain_model_counts)
-    ycmc_pdf = ycmc_pdf.sort_values(by=['year', '#model'], ascending=[True, True])
+    ycmc_pdf = ycmc_pdf.sort_values(by=['year', 'total_model_count'], ascending=[True, True])
+    print(f'Completed {len(rp_raw_cif_files)} PDBs in {round((time() - start) / 60)} mins')
     return ycmc_pdf
 
 
