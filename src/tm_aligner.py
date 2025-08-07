@@ -113,12 +113,15 @@ def compute_tm_from_mp_pool(idx_pair, rp_all_pdb_files):
         return f1_idx, f2_idx, np.nan
 
 
-def write_mean_coords_to_pdb(rp_pdb_f):
+def _write_mean_coords_to_pdb(rp_pdb_f: str) -> None:
     """
+    Using MDAnalysis to calculate mean coords of given PDB/PDBchain file and write out to PDB/PDBchain file.
     Note: the PDB it writes out:
      - starts with 'MODEL 1' even though its an average of all the models.
      - lacks 'MASTER' at end and 'TER' at terminus.
     I assume it is still a valid PDB as it seems unlikely to me that this is an error by MDAnalysis.
+    # TODO: Might need to either calculate the means and write each PDB/PDBchain manually myself,
+    # TODO: OR just edit these files to add the 'MASTER' and 'TER' to each PDB/PDBchain file.
     """
     u = mda.Universe(rp_pdb_f)
     n_atoms = len(u.atoms)
