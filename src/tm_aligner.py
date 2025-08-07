@@ -5,7 +5,6 @@
 import os, glob
 from pathlib import Path
 from time import time
-from typing import Tuple
 from tqdm import tqdm
 import subprocess
 import itertools
@@ -13,10 +12,8 @@ import pandas as pd
 import numpy as np
 from multiprocessing import Pool, cpu_count
 from functools import partial
-import mmseqs2
 import platform
 import MDAnalysis as mda
-import numpy as np
 from MDAnalysis.coordinates import PDB
 """
 TM-score and meaning:
