@@ -164,6 +164,7 @@ def generate_stats(sub_dir: str, rp_pidchains_lst_f: str, rp_fasta_f: str, run_a
 
         for chain in chains:
             pid_chain = f'{pid}_{chain}'
+            print(pid_chain)
             rp_parsed_cifs_ssv = os.path.join(rp_parsed_cif_dir, f'{pid}_{chain}.ssv')
             rp_mean_coords_csv = os.path.join(rp_rmsd_mean_coords_dir, f'{pid}_{chain}.csv')
             # GENERATE NEW RMSD SCORES OR READ PRE-WRITTEN VALUES:
