@@ -269,6 +269,7 @@ def _calc_rmsds_stats(pidchains: list):
         if len(rmsds) > 0:
             min_rmsd, max_rmsd = np.min(rmsds), np.max(rmsds)
             mean_rmsd, stdev_rmsd = np.mean(rmsds), np.std(rmsds)
+            # sem = stdev_rmsd / np.sqrt(model_count)
         else:
             print(f'rmsds for {pid_chain} is empty: {rmsds}. Cannot calc min/max. Cannot include.')
             continue
@@ -277,7 +278,9 @@ def _calc_rmsds_stats(pidchains: list):
             'min_rmsd': min_rmsd,
             'max_rmsd': max_rmsd,
             'mean_rmsd': mean_rmsd,
-            'stdev_rmsd': stdev_rmsd
+            'stdev_rmsd': stdev_rmsd,
+            'model_count': model_count,
+            # 'sem': sem
         })
     rmsdstats_pdf = pd.DataFrame(rmsd_stats_per_pidc)
     rmsdstats_pdf = rmsdstats_pdf.sort_values(by=['mean_rmsd', 'stdev_rmsd'], ascending=[True, True])
