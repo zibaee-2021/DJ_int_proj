@@ -211,8 +211,8 @@ def generate_stats(sub_dir: str, rp_pidchains_lst_f: str, rp_fasta_f: str, run_a
     for col_to_cast in ['PDBid', 'chain']:
         pdf_sorted[col_to_cast] = pdf_sorted[col_to_cast].astype('string')
     print(pdf_sorted.dtypes)
-    num_pdbs = len(pidchains_list)
-    print(f'Completed {num_pdbs} {pdbcif}s in {round((time() - start) / 60)} mins')
+    num_pidchains = len(pidchains_list)
+    print(f'Completed {num_pidchains} PDBchains in {round((time() - start) / 60)} mins')
     return pdf_sorted
 
 
