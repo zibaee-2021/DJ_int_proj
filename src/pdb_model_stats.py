@@ -89,6 +89,7 @@ def _calc_identity_for_stats(het_hom: str, pdbid: str, filt_pdf) -> str:
 def generate_stats(sub_dir: str, rp_pidchains_lst_f: str, rp_fasta_f: str, run_and_write_mmseqs2=False,
                    run_and_write_rmsd=False, use_mmcif=True):
     """
+    (Takes 18 mins to complete 2713 PDB-chains.)
     After parsing raw mmCIFs, the resulting PDBid_chains were written to a .lst file, which is used as follows:
 
     1. Read raw mmCIFs via Bio.PDB.MMCIFParser for each PDBid in .lst to get:
@@ -484,16 +485,16 @@ if __name__ == '__main__':
     # TODO plot .. how ?
 
     # # MAIN STATS FUNCTION
-    # # GENERATE STATS PDF AND WRITE TO CSV:
-    # rp_pidchains_lst_f_ = os.path.join('..', 'data', 'NMR', 'multimodel_lists',
-    #                                    'multimod_2713_hetallchains_hom1chain.lst')
-    # rp_fasta_f_ = os.path.join(_rp_mmseqs_fasta_dir(sub_dir='multimod_2713_hetallchains_hom1chain'),
-    #                            'multimod_2713_hetallchains_hom1chain.fasta')
-    # stats_pdf = generate_stats(sub_dir='multimod_2713_hetallchains_hom1chain',
-    #                            rp_pidchains_lst_f=rp_pidchains_lst_f_,
-    #                            rp_fasta_f= rp_fasta_f_,
-    #                            run_and_write_mmseqs2=False,
-    #                            run_and_write_rmsd=False, use_mmcif=True)
+    # # GENERATE STATS PDF AND WRITE TO CSV: (Takes 18 mins to complete 2713 PDB-chains.)
+    rp_pidchains_lst_f_ = os.path.join('..', 'data', 'NMR', 'multimodel_lists',
+                                       'multimod_2713_hetallchains_hom1chain.lst')
+    rp_fasta_f_ = os.path.join(_rp_mmseqs_fasta_dir(sub_dir='multimod_2713_hetallchains_hom1chain'),
+                               'multimod_2713_hetallchains_hom1chain.fasta')
+    stats_pdf = generate_stats(sub_dir='multimod_2713_hetallchains_hom1chain',
+                               rp_pidchains_lst_f=rp_pidchains_lst_f_,
+                               rp_fasta_f= rp_fasta_f_,
+                               run_and_write_mmseqs2=False,
+                               run_and_write_rmsd=False, use_mmcif=True)
     # rp_stats_dst_dir = os.path.join(_rp_nmr_dir(), 'stats', 'multimod_2713_hetallchains_hom1chain')
     # os.makedirs(rp_stats_dst_dir, exist_ok=True)
     # stats_dst_f = os.path.join(rp_stats_dst_dir, 'multimod_2713_hetallchains.csv')
