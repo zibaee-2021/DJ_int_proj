@@ -23,6 +23,17 @@ TM-score and meaning:
 > 0.5 = typically indicates same fold
 > 0.8 = often considered nearly identical structures (small conformational shifts only)
 """
+def _rp_nmr_dir():
+    return os.path.join('..', 'data', 'NMR')
+
+
+def _rp_tmscores_dir():
+    return os.path.join(_rp_nmr_dir(), 'TMscores')
+
+
+def _rp_mean_coords_input_dir(sub_dir: str):
+    return os.path.join(_rp_nmr_dir(), 'RMSD', sub_dir, 'mean_coords')
+
 
 def _read_all_pdbs_from_txt(txt_f: str) -> list:
     rp_pidchains_lst_f = os.path.join('..', 'data', 'NMR', 'multimodel_lists', txt_f)
