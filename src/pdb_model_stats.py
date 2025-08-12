@@ -1,4 +1,5 @@
 import os, glob
+import statistics as stats
 from time import time
 from typing import Tuple
 import math
@@ -13,19 +14,22 @@ from Bio.SVDSuperimposer import SVDSuperimposer
 from Bio import SeqIO
 import RMSD
 import mmseqs2
+import tm_aligner
+from src.tm_aligner import rp_tmscores_dir
+
 
 # BUILDING RELATIVE PATHS:
 def _rp_nmr_dir() -> str:
     return os.path.join('..', 'data', 'NMR')
 
-
 def _rp_stats_dir(sub_dir: str) -> str:
     return os.path.join(_rp_nmr_dir(), 'stats', sub_dir)
-
 
 def _rp_rmsd_dir(sub_dir: str) -> str:
     return os.path.join(_rp_nmr_dir(), 'RMSD', sub_dir)
 
+def _rp_pdb_chains_dir(sub_dir: str) -> str:
+    return os.path.join(_rp_nmr_dir(), 'pdb_chains', sub_dir)
 
 def _rp_parsed_cifs_dir(sub_dir: str) -> str:
     return os.path.join(_rp_nmr_dir(), 'parsed_cifs', sub_dir)
@@ -92,8 +96,65 @@ def _calc_identity_for_stats(het_hom: str, pdbid: str, filt_pdf) -> str:
     return identity
 
 
-def generate_stats(sub_dir: str, rp_pidchains_lst_f: str, rp_fasta_f: str, run_and_write_mmseqs2=False,
-                   run_and_write_rmsd=False, use_mmcif=True):
+def _compute_rmsd(run_and_write_rmsd: bool, pidc: str, sub_dir: str):
+    print(pidc)
+    rp_parsed_cif_dir = _rp_parsed_cifs_dir(sub_dir)
+    rp_parsed_cifs_ssv = os.path.join(rp_parsed_cif_dir, f'{pidc}.ssv')
+    rp_rmsd_mean_coords_dir = os.path.join(_rp_rmsd_dir(sub_dir), 'mean_coords')
+    rp_mean_coords_csv = os.path.join(rp_rmsd_mean_coords_dir, f'{pidc}.csv')
+    # GENERATE NEW RMSD SCORES OR READ PRE-WRITTEN VALUES:
+    if run_and_write_rmsd:
+        rmsds, model_nums, pdc4pdf = RMSD.calc_rmsds_of_models(rp_parsed_cifs_ssv, rp_mean_coords_csv)
+        rmsd_pdf = pd.DataFrame({'pidc': pdc4pdf, 'model_num': model_nums, 'rmsd': rmsds})
+        rp_rmsd_dir = os.path.join(_rp_rmsd_dir(sub_dir))
+        os.makedirs(rp_rmsd_dir, exist_ok=True)
+        rp_rmsd_csv = os.path.join(rp_rmsd_dir, f'{pidc}.csv')
+        rmsd_pdf.to_csv(rp_rmsd_csv, index=False)
+    else:  # This relies on it having been run separately beforehand, and we can just read it in now:
+        rp_rmsd_per_model_dir = os.path.join(_rp_rmsd_dir(sub_dir))
+        rp_rmsd_per_model_csv_f = os.path.join(rp_rmsd_per_model_dir, f'{pidc}.csv')
+        rmsd_pdf = pd.read_csv(rp_rmsd_per_model_csv_f)
+    rmsds = rmsd_pdf['rmsd'].values
+    if len(rmsds) > 0:
+        min_rmsd, max_rmsd, mean_rmsd, stdev_rmsd = np.min(rmsds), np.max(rmsds), stats.mean(rmsds), stats.stdev(rmsds)
+        # sem_rmsd = stdev_rmsd / np.sqrt(len(rmsds))
+    else:
+        min_rmsd, max_rmsd, mean_rmsd, stdev_rmsd = np.nan, np.nan, np.nan, np.nan
+    return min_rmsd, max_rmsd, mean_rmsd, stdev_rmsd
+
+def _compute_tms(run_and_write_tms: bool, pidc: str, sub_dir: str) -> tuple:
+    
+    if not run_and_write_tms: # THEN READ IN ALREADY CALCULATED VALUES
+        rp_tmscores_dir = tm_aligner.rp_tmscores_dir(sub_dir)
+        rp_tms_csv_f = os.path.join(rp_tmscores_dir, f'TMS_{pidc}.csv')
+        pidc_tms_pdf = pd.read_csv(rp_tms_csv_f)
+        min_tms = pidc_tms_pdf['min_TMS'].values[0]
+        max_tms = pidc_tms_pdf['max_TMS'].values[0]
+        mean_tms = pidc_tms_pdf['mean_TMS'].values[0]
+        stdev_tms = pidc_tms_pdf['stdev_TMS'].values[0]
+    else:
+        # NOTE: TM-ALIGN RETURNS NONE FOR PROTEINS WITH LESS THAN 3 CA ATOMS (WHICH THESE 11 PDB-CHAINS HAVE):
+        if (pidc == '1GAC_A' or pidc == '1GAC_B' or pidc == '1GAC_C' or pidc == '1GAC_D' or
+                pidc == '1WCO_A' or pidc == '2AIZ_B' or pidc == '2K1Q_B' or pidc == '2M9P_B' or
+                pidc == '2M9Q_B' or pidc == '2MX6_B' or pidc == '3CYS_B'):
+            min_tms, max_tms, mean_tms, stdev_tms = np.nan, np.nan, np.nan, np.nan
+
+        rp_pidc_2713_dir = _rp_pdb_chains_dir('multimod_2713_hetallchains_hom1chain')
+        rp_mean_coords_dir = os.path.join(rp_pidc_2713_dir, 'mean_coords')
+        rp_mean_coords_pdb = os.path.join(rp_mean_coords_dir, f'{pidc}.pdb')
+        rp_permodel_pdb_pidc_dir = os.path.join(rp_pidc_2713_dir, 'per_model', pidc)
+        tm_scores = []
+        rp_permodel_pdbs = sorted(glob.glob(os.path.join(rp_permodel_pdb_pidc_dir, '*.pdb')))
+        for rp_permodel_pdb in rp_permodel_pdbs:
+            tms = tm_aligner.compute_tm(rp_pdb1=rp_permodel_pdb, rp_pdb2=rp_mean_coords_pdb)
+            tm_scores.append(tms)
+        min_tms, max_tms, mean_tms, stdev_tms = min(tm_scores), max(tm_scores), np.mean(tm_scores), np.std(tm_scores)
+    return min_tms, max_tms, mean_tms, stdev_tms
+
+
+
+def generate_stats(sub_dir: str, rp_pidc_lst_f: str, rp_fasta_f: str, run_and_write_mmseqs2=False,
+                   run_and_write_rmsd=False, run_and_write_tms=False, use_mmcif=True) -> tuple:
     """
     (Takes 18 mins to complete 2713 PDB-chains.)
     After parsing raw mmCIFs, the resulting PDBid_chains were written to a .lst file, which is used as follows:
@@ -118,28 +179,40 @@ def generate_stats(sub_dir: str, rp_pidchains_lst_f: str, rp_fasta_f: str, run_a
     6. Calculate TM-score for homologous PDBchains. (Although, all vs all might be done and included anyway).
     """
     start = time()
-    stats = []
+    pid_stats = {'Pid': [], 'chains': [], 'hethom': [], 'year': [], 'protchains_counts': []}
+    pids_list, chains_list, hethoms_list, years_list, protchains_counts_list= [], [], [], [], []
+
+    pidc_stats = {'Pidc': [], 'CA_count': [],
+                  'minRMSD': [], 'maxRMSD': [], 'meanRMSD': [], 'stdevRMSD': [],
+                  'minTMS': [], 'maxTMS': [], 'meanTMS': [], 'stdevTMS': [],
+                  'year': [], 'models_count': [], 'homologues': []}
+    pidc_list, ca_counts_list = [], []
+    min_rmsd_list, max_rmsd_list, mean_rmsd_list, stdev_rmsd_list = [], [], [], []
+    min_tms_list, max_tms_list, mean_tms_list, stdev_tms_list = [], [], [], []
+    years_list, models_counts_list, homologues_list = [], [], []
+
     fname = os.path.basename(rp_fasta_f).removesuffix('.fasta')
     rp_mmseqs2_results_dir = os.path.join(_rp_mmseqs_dir(sub_dir), 'results')
     os.makedirs(rp_mmseqs2_results_dir, exist_ok=True)
     rp_mmseqs2_csv_f = os.path.join(rp_mmseqs2_results_dir, f'{fname}.csv')
 
     if use_mmcif:
-        pdbcif = 'cif'
+        pdb_or_cif = 'cif'
         parser = MMCIFParser(QUIET=True)  # Used in _total_chain_count_and_year() below (~line 150).
         # 'QUIET' is for debugging any problems that might pop up in PDB records.
     else:
-        pdbcif = 'pdb'
+        pdb_or_cif = 'pdb'
         parser = PDBParser(QUIET=True)
 
-    # Next 7 lines for assigning het/hom (~line 185) for stats pdf, and for assertion raw file available (~line 146):
-    rp_raw_struct_het_dir = os.path.join(_rp_nmr_dir(), f'raw_{pdbcif}s', 'heteromeric')
-    rp_raw_struct_hom_dir = os.path.join(_rp_nmr_dir(), f'raw_{pdbcif}s', 'homomeric')
-    rp_raw_het_struct_files = glob.glob(os.path.join(rp_raw_struct_het_dir, f'*.{pdbcif}'))
-    rp_raw_hom_struct_files = glob.glob(os.path.join(rp_raw_struct_hom_dir, f'*.{pdbcif}'))
+    # NOTE: Next 7 lines ARE ONLY FOR assigning het/hom (~line 199) in stats pdf,
+    # and for assertion that each raw file available (~line 159):
+    rp_raw_struct_het_dir = os.path.join(_rp_nmr_dir(), f'raw_{pdb_or_cif}s', 'heteromeric')
+    rp_raw_struct_hom_dir = os.path.join(_rp_nmr_dir(), f'raw_{pdb_or_cif}s', 'homomeric')
+    rp_raw_het_struct_files = glob.glob(os.path.join(rp_raw_struct_het_dir, f'*.{pdb_or_cif}'))
+    rp_raw_hom_struct_files = glob.glob(os.path.join(rp_raw_struct_hom_dir, f'*.{pdb_or_cif}'))
     rp_raw_struct_files = rp_raw_het_struct_files + rp_raw_hom_struct_files
-    raw_pids = [os.path.basename(rp_raw_struct_f).removesuffix(f'.{pdbcif}') for rp_raw_struct_f in rp_raw_struct_files]
-    raw_het_pids = [os.path.basename(rp_raw_het_struct_f).removesuffix(f'.{pdbcif}')
+    raw_pids = [os.path.basename(rp_raw_struct_f).removesuffix(f'.{pdb_or_cif}') for rp_raw_struct_f in rp_raw_struct_files]
+    raw_het_pids = [os.path.basename(rp_raw_het_struct_f).removesuffix(f'.{pdb_or_cif}')
                     for rp_raw_het_struct_f in rp_raw_het_struct_files]
 
     # GENERATE NEW MMSEQS2 ALIGNMENT SCORES OR READ PRE-WRITTEN VALUES:
@@ -150,12 +223,11 @@ def generate_stats(sub_dir: str, rp_pidchains_lst_f: str, rp_fasta_f: str, run_a
     else:
         mmseq2_pdf = pd.read_csv(rp_mmseqs2_csv_f)  # shape=(33074, 7)
 
-    pdbids, pidchains_dict, pidchains_list = _read_multimodel_pdbid_chains(rp_pidchains_lst_f)
-    rp_raw_struct_dir = os.path.join(_rp_nmr_dir(), f'raw_{pdbcif}s', 'hethom_combined')
-    rp_parsed_cif_dir = os.path.join(_rp_parsed_cifs_dir(sub_dir))
-    rp_rmsd_mean_coords_dir = os.path.join(_rp_rmsd_dir(sub_dir), 'mean_coords')
+    pids, pid_chains_dict, pidc_list = _read_multimodel_pdbid_chains(rp_pidc_lst_f)
+    rp_raw_struct_dir = os.path.join(_rp_nmr_dir(), f'raw_{pdb_or_cif}s', 'hethom_combined')
+    rp_parsed_cifs_dir = os.path.join(_rp_parsed_cifs_dir(sub_dir))
 
-    for i, (pid, chains) in enumerate(pidchains_dict.items()):
+    for i, (pid, chains) in enumerate(pid_chains_dict.items()):
         if use_mmcif:
             assert pid in raw_pids, f'{pid}.cif not round in raw_cifs.'
         else:
@@ -164,62 +236,74 @@ def generate_stats(sub_dir: str, rp_pidchains_lst_f: str, rp_fasta_f: str, run_a
             else:
                 print(f'{pid}.pdb is not available in legacy PDB for downloading from RCSB. So, cannot include it.')
                 continue
-        rp_raw_struct_f = os.path.join(rp_raw_struct_dir, f'{pid}.{pdbcif}')
-
+        rp_raw_struct_f = os.path.join(rp_raw_struct_dir, f'{pid}.{pdb_or_cif}')
         total_chain_count, year = _total_chain_count_and_year(rp_raw_struct_f, parser)
+        het_hom = 'het' if pid in raw_het_pids else 'hom'
+        pids_list.append(pid)
+        chains_list.append(chains)
+        hethoms_list.append(het_hom)
+        years_list.append(year)
+        protchains_counts_list.append(total_chain_count)
 
         for chain in chains:
-            pid_chain = f'{pid}_{chain}'
-            print(pid_chain)
-            rp_parsed_cifs_ssv = os.path.join(rp_parsed_cif_dir, f'{pid}_{chain}.ssv')
-            rp_mean_coords_csv = os.path.join(rp_rmsd_mean_coords_dir, f'{pid}_{chain}.csv')
-            # GENERATE NEW RMSD SCORES OR READ PRE-WRITTEN VALUES:
-            if run_and_write_rmsd:
-                rmsds, model_nums, pdc4pdf = RMSD.calc_rmsds_of_models(rp_parsed_cifs_ssv, rp_mean_coords_csv)
-                rmsd_pdf = pd.DataFrame({'pdbid_chain': pdc4pdf, 'model_num': model_nums, 'rmsd': rmsds})
-                rp_rmsd_dir = os.path.join(_rp_rmsd_dir(sub_dir))
-                os.makedirs(rp_rmsd_dir, exist_ok=True)
-                rp_rmsd_csv = os.path.join(rp_rmsd_dir, f'{pid_chain}.csv')
-                rmsd_pdf.to_csv(rp_rmsd_csv, index=False)
-            else: # This relies on it having been run separately beforehand, and we can just read it in now:
-                rp_rmsd_per_model_dir = os.path.join(_rp_rmsd_dir(sub_dir))
-                rp_rmsd_per_model_csv_f = os.path.join(rp_rmsd_per_model_dir, f'{pid_chain}.csv')
-                rmsd_pdf = pd.read_csv(rp_rmsd_per_model_csv_f)
-            rmsds = rmsd_pdf[['rmsd']].values
-            if len(rmsds) > 0:
-                min_rmsd, max_rmsd = np.min(rmsds), np.max(rmsds)
-            else:
-                min_rmsd, max_rmsd = np.nan, np.nan
-            rp_parsed_cif_ssv_f = os.path.join(rp_parsed_cif_dir, f'{pid_chain}.ssv')
-            pdbid_chain_pdf = pd.read_csv(rp_parsed_cif_ssv_f, sep=' ')
-            model_count = len(pdbid_chain_pdf['A_pdbx_PDB_model_num'].unique())
-            ca_count = int(pdbid_chain_pdf.shape[0] / model_count)
-            homologues = mmseqs2.find_homologues_30_20_90(mmseq2_pdf, pid_chain)
+            pidc = f'{pid}_{chain}'
+            pidc_list.append(pidc)
 
-            het_hom = 'het' if pid in raw_het_pids else 'hom'
-            stats.append({
-                'PDBid': pid,
-                'het_hom': het_hom,
-                'year': year,
-                '#model': model_count,
-                '#chains': total_chain_count,
-                '#protChains': len(pidchains_dict[pid]),
-                'chain': chain,
-                '#alphaCarbs': ca_count,
-                'homologues': homologues,
-                'minRMSD': min_rmsd,
-                'maxRMSD': max_rmsd,
-                # 'similarity': 100  # TODO
-            })
-    pdf = pd.DataFrame(stats)
-    pdf_sorted = pdf.sort_values(by=['year', '#model'], ascending=[True, True])
-    print(pdf_sorted.dtypes)
-    for col_to_cast in ['PDBid', 'chain']:
-        pdf_sorted[col_to_cast] = pdf_sorted[col_to_cast].astype('string')
-    print(pdf_sorted.dtypes)
-    num_pidchains = len(pidchains_list)
-    print(f'Completed {num_pidchains} PDBchains in {round((time() - start) / 60)} mins')
-    return pdf_sorted
+            min_rmsd, max_rmsd, mean_rmsd, stdev_rmsd = _compute_rmsd(run_and_write_rmsd, pidc, sub_dir)
+            min_rmsd_list.append(min_rmsd)
+            max_rmsd_list.append(max_rmsd)
+            mean_rmsd_list.append(mean_rmsd)
+            stdev_rmsd_list.append(stdev_rmsd)
+
+            min_tms, max_tms, mean_tms, stdev_tms = _compute_tms(run_and_write_tms, pidc, sub_dir)
+            min_tms_list.append(min_tms)
+            max_tms_list.append(max_tms)
+            mean_tms_list.append(mean_tms)
+            stdev_tms_list.append(stdev_tms)
+
+            # GET MODELS_COUNT, CA_COUNT FROM PARSED CIF SSV:
+            rp_parsed_cif_ssv_f = os.path.join(rp_parsed_cifs_dir, f'{pidc}.ssv')
+            pidc_pdf = pd.read_csv(rp_parsed_cif_ssv_f, sep=' ')
+            models_count = len(pidc_pdf['A_pdbx_PDB_model_num'].unique())
+            models_counts_list.append(models_count)
+            ca_counts_list.append(int(pidc_pdf.shape[0] / models_count))
+
+            # GET LIST OF HOMOLOGOUS PDB-CHAHINS FOR GIVEN PDB-CHAIN:
+            homologues = mmseqs2.find_homologues_30_20_90(mmseq2_pdf, pidc)
+            homologues_list.append(homologues)
+
+        pidc_stats['Pidc'] = pidc_list,
+        pidc_stats['CA_count'] = ca_counts_list,
+        pidc_stats['minRMSD'] = min_rmsd_list,
+        pidc_stats['maxRMSD'] = max_rmsd_list,
+        pidc_stats['meanRMSD'] = mean_rmsd_list,
+        pidc_stats['stdevRMSD'] = stdev_rmsd_list,
+        pidc_stats['minTMS'] = min_tms_list,
+        pidc_stats['maxTMS'] = max_tms_list,
+        pidc_stats['meanTMS'] = mean_tms_list,
+        pidc_stats['stdevTMS'] = stdev_tms_list,
+        pidc_stats['year'] = years_list,
+        pidc_stats['models_count'] = models_counts_list,
+        pidc_stats['homologues'] = homologues_list
+
+    pid_stats['Pid'] = pids_list
+    pid_stats['chains'] = chains_list
+    pid_stats['hethom'] = hethoms_list
+    pid_stats['year'] = years_list
+    pid_stats['protchains_counts'] = protchains_counts_list
+    pid_pdf = pd.DataFrame(pid_stats)
+    pid_pdf = pid_pdf.sort_values(by=['year'], ascending=[True])
+
+    pidc_pdf = pd.DataFrame(pidc_stats)
+    pidc_pdf = pidc_pdf.sort_values(by=['maxRMSD', 'maxTMS'], ascending=[False, True])
+
+    print(pidc_pdf.dtypes)
+    for col_to_cast in ['Pid', 'chain']:
+        pidc_pdf[col_to_cast] = pidc_pdf[col_to_cast].astype('string')
+    print(pidc_pdf.dtypes)
+
+    print(f'Completed {len(pidc_list)} PDB-chains in {round((time() - start) / 60)} mins')
+    return pid_pdf, pidc_pdf
 
 
 def plot_rmsds_and_stdev(pdf):
@@ -269,7 +353,7 @@ def _calc_rmsds_stats(pidchains: list):
         rp_rmsd_per_model_dir = os.path.join(_rp_nmr_dir(), 'RMSD', 'multimod_2713_hetallchains_hom1chain')
         rp_rmsd_per_model_csv_f = os.path.join(rp_rmsd_per_model_dir, f'{pid_chain}.csv')
         rmsd_pdf = pd.read_csv(rp_rmsd_per_model_csv_f)
-        rmsds = rmsd_pdf[['rmsd']].values
+        rmsds = rmsd_pdf['rmsd'].values
         rp_parsed_cifs_dir = os.path.join(_rp_parsed_cifs_dir(), 'multimod_2713_hetallchains_hom1chain')
         pdf = pd.read_csv(os.path.join(rp_parsed_cifs_dir, f'{pid_chain}.ssv'), sep=' ')
         model_count = len(pdf['A_pdbx_PDB_model_num'].unique())
@@ -544,16 +628,17 @@ if __name__ == '__main__':
 
     # # MAIN STATS FUNCTION
     # # GENERATE STATS PDF AND WRITE TO CSV: (Takes 18 mins to complete 2713 PDB-chains.)
-    # rp_pidchains_lst_f_ = os.path.join('..', 'data', 'NMR', 'multimodel_lists',
-    #                                    'multimod_2713_hetallchains_hom1chain.lst')
-    # rp_fasta_f_ = os.path.join(_rp_mmseqs_fasta_dir(sub_dir='multimod_2713_hetallchains_hom1chain'),
-    #                            'multimod_2713_hetallchains_hom1chain.fasta')
-    # stats_pdf = generate_stats(sub_dir='multimod_2713_hetallchains_hom1chain',
-    #                            rp_pidchains_lst_f=rp_pidchains_lst_f_,
-    #                            rp_fasta_f= rp_fasta_f_,
-    #                            run_and_write_mmseqs2=False,
-    #                            run_and_write_rmsd=False, use_mmcif=True)
-    # rp_stats_dst_dir = os.path.join(_rp_nmr_dir(), 'stats', 'multimod_2713_hetallchains_hom1chain')
-    # os.makedirs(rp_stats_dst_dir, exist_ok=True)
-    # stats_dst_f = os.path.join(rp_stats_dst_dir, 'multimod_2713_hetallchains.csv')
-    # stats_pdf.to_csv(stats_dst_f, index=False)
+    rp_pidc_lst_f_ = os.path.join('..', 'data', 'NMR', 'multimodel_lists',
+                                       'multimod_2713_hetallchains_hom1chain.lst')
+    rp_fasta_f_ = os.path.join(_rp_mmseqs_fasta_dir(sub_dir='multimod_2713_hetallchains_hom1chain'),
+                               'multimod_2713_hetallchains_hom1chain.fasta')
+    pid_stats_pdf, pidc_stats_pdf = generate_stats(sub_dir='multimod_2713_hetallchains_hom1chain',
+                               rp_pidc_lst_f=rp_pidc_lst_f_,
+                               rp_fasta_f= rp_fasta_f_,
+                               run_and_write_mmseqs2=False,
+                               run_and_write_rmsd=False, run_and_write_tms=True, use_mmcif=True)
+
+    rp_stats_dst_dir = os.path.join(_rp_nmr_dir(), 'stats', 'multimod_2713_hetallchains_hom1chain')
+    os.makedirs(rp_stats_dst_dir, exist_ok=True)
+    stats_dst_f = os.path.join(rp_stats_dst_dir, 'mm_2713.csv')
+    stats_pdf.to_csv(stats_dst_f, index=False)
