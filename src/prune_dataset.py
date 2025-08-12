@@ -2,13 +2,13 @@
 DEFINITIONS:
 
     "IDENTICAL SEQUENCES":
-        - '100_IDENT_100_COV' = 100 % pident AND (100 % qcov OR 100 % tcov).
+        - 100 % pident AND (100 % qcov OR 100 % tcov).                              ABBREVIATION: '100_IDENT_100_COV'
 
-    "HOMOLOGOUS SEQUENCES":
-        - '30_20_90' = evalue < 1e-3; pident >= 30.0; alnlen >= 20; qcov >= 0.9; tcov >= 0.9.
+    "ARE HOMOLOGOUS":
+        - evalue < 1e-3; pident >= 30.0; alnlen >= 20; qcov >= 0.9; tcov >= 0.9.    ABBREVIATION: '30_20_90'
 
     'IDENTICAL STRUCTURES":
-        - LT1RMSD_1TMS = RMSD < 1.0 OR TM-SCORE == 1.0.
+        - RMSD < 1.0 OR TM-SCORE == 1.0.                                            ABBREVIATION: 'LT1R_1T'
 
 ======================================================================================================================
 DATASET 1.0:
@@ -16,32 +16,27 @@ DATASET 1.0:
     - ALL HETEROMERIC PDB-CHAINS, BUT ONLY ONE (RANDOMLY-SELECTED) CHAIN FROM THE HOMOMERIC PDBS.
     - INCLUDES ONLY MULTIMODEL PDB-CHAINS.
     - INCLUDES ONLY PDB-CHAINS WITH 3 OR MORE RESIDUES.
-    - ** DOES NOT REMOVE IDENTICAL PDB-CHAINS ** (I.E. 100 % pident AND 100% SAME STRUCTURE).
+    - ** DOES NOT REMOVE IDENTICAL PDB-CHAINS ** (I.E. THOSE WITH BOTH IDENTICAL SEQUENCE AND IDENTICAL STRUCTURE).
 
 ======================================================================================================================
 DATASET 1.1:
 
-     - AS DATASET 1.0, PLUS:
+    - AS DATASET 1.0, PLUS:
 
-            - ANY ADDITIONAL MODIFICATIONS AS REQUESTED BY DAVID.
-            - SUBSET OF SINGLE-MODEL PDB-CHAINS WHICH HAVE:
-                - 30_20_90 HOMOLOGOUS TO OTHER PDB-CHAINS, BUT WITH NON-IDENTICAL STRUCTURES.
-                    - WHEN COMPARING STRUCTURES OF SINGLE-MODEL TO MULTI-MODEL, MEAN COORDINATES OF MULTI-MODEL USED.
+        - ANY ADDITIONAL MODIFICATIONS AS REQUESTED BY DAVID.
+        - REMOVE PDB-CHAINS THAT HAVE "IDENTICAL SEQUENCES" AND "IDENTICAL STRUCTURES":
+                - "IDENTICAL STRUCTURES" FOR MULTI-MODEL PDB-CHAINS, TO BE DONE VIA GENERATING
+                  GAUSSIAN DISTRUBUTIONS OF MODEL COORDINATES AND CALCULATING SIMILARITY BY KL DIVERGENCE.
 
 ======================================================================================================================
-DATASET 1.1.1:
+DATASET 1.2:
 
     - AS DATASET 1.1, PLUS:
 
-            - ANY ADDITIONAL MODIFICATIONS AS REQUESTED BY DAVID.
-            - PRUNED TO REMOVE PDB-CHAINS THAT HAVE "IDENTICAL SEQUENCES" AND "IDENTICAL STRUCTURES":
-                    - "IDENTICAL STRUCTURES" FOR MULTI-MODEL PDB-CHAINS, TO BE DONE VIA GENERATING
-                      GAUSSIAN DISTRUBUTIONS OF MODEL COORDINATES AND CALCULATING SIMILARITY BY KL DIVERGENCE.
-
-======================================================================================================================
-DATASET 1.0.1:
-
-    - AS DATASET 1.0, PLUS .. (SAME AS 1.1.1)
+        - ANY ADDITIONAL MODIFICATIONS AS REQUESTED BY DAVID.
+        - SUBSET OF SINGLE-MODEL PDB-CHAINS WHICH:
+            "ARE HOMOLOGOUS" TO OTHER PDB-CHAINS, BUT WITH NON-IDENTICAL STRUCTURES.
+                - (WHEN COMPARING STRUCTURES OF SINGLE-MODEL TO MULTI-MODEL, MEAN COORDINATES OF MULTI-MODELS USED.)
 
 ======================================================================================================================
 
