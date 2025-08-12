@@ -559,9 +559,9 @@ if __name__ == '__main__':
 
     # # 2. BAR CHART OF ALPHA-CARBON COUNT FOR EACH PDB:
     # # 2.A. CALCULATE CA COUNT FROM PARSED CIFS DATA AND WRITE TO STATS/...LST FILE:
-    rp_parsed_cifs_ssvs_ = sorted(glob.glob(os.path.join(_rp_parsed_cifs_dir('multimod_2713_hetallchains_hom1chain'),
-                                                         '*.ssv')))
-    ca_counts_ = _calc_ca_counts(rp_parsed_cifs_ssvs_)
+    # rp_parsed_cifs_ssvs_ = sorted(glob.glob(os.path.join(_rp_parsed_cifs_dir('multimod_2713_hetallchains_hom1chain'),
+    #                                                      '*.ssv')))
+    # ca_counts_ = _calc_ca_counts(rp_parsed_cifs_ssvs_)
     # ca_counts_dir = _rp_stats_dir('multimod_2713_hetallchains_hom1chain')
     # os.makedirs(ca_counts_dir, exist_ok=True)
     # ca_counts_lst_f = os.path.join(ca_counts_dir, 'ca_counts.lst')
@@ -642,5 +642,9 @@ if __name__ == '__main__':
 
     rp_stats_dst_dir = os.path.join(_rp_nmr_dir(), 'stats', 'multimod_2713_hetallchains_hom1chain')
     os.makedirs(rp_stats_dst_dir, exist_ok=True)
-    stats_dst_f = os.path.join(rp_stats_dst_dir, 'mm_2713.csv')
-    stats_pdf.to_csv(stats_dst_f, index=False)
+
+    pid_stats_dst_f = os.path.join(rp_stats_dst_dir, 'mm_2713_pid.csv')
+    pid_stats_pdf.to_csv(pid_stats_dst_f, index=False)
+
+    pidc_stats_dst_f = os.path.join(rp_stats_dst_dir, 'mm_2713_pidc.csv')
+    pidc_stats_pdf.to_csv(pid_stats_pdf, index=False)
