@@ -15,7 +15,6 @@ from Bio import SeqIO
 import RMSD
 import mmseqs2
 import tm_aligner
-from src.tm_aligner import rp_tmscores_dir
 
 
 # BUILDING RELATIVE PATHS:
@@ -30,6 +29,9 @@ def _rp_rmsd_dir(sub_dir: str) -> str:
 
 def _rp_pdb_chains_dir(sub_dir: str) -> str:
     return os.path.join(_rp_nmr_dir(), 'pdb_chains', sub_dir)
+
+def _rp_tmscores_dir(sub_dir: str) -> str:
+    return os.path.join(_rp_nmr_dir(), 'TMscores', sub_dir)
 
 def _rp_parsed_cifs_dir(sub_dir: str) -> str:
     return os.path.join(_rp_nmr_dir(), 'parsed_cifs', sub_dir)
@@ -125,7 +127,7 @@ def _compute_rmsd(run_and_write_rmsd: bool, pidc: str, sub_dir: str):
 def _compute_tms(run_and_write_tms: bool, pidc: str, sub_dir: str) -> tuple:
     
     if not run_and_write_tms: # THEN READ IN ALREADY CALCULATED VALUES
-        rp_tmscores_dir = tm_aligner.rp_tmscores_dir(sub_dir)
+        rp_tmscores_dir = tm_aligner._rp_tmscores_dir(sub_dir)
         rp_tms_csv_f = os.path.join(rp_tmscores_dir, f'TMS_{pidc}.csv')
         pidc_tms_pdf = pd.read_csv(rp_tms_csv_f)
         min_tms = pidc_tms_pdf['min_TMS'].values[0]
