@@ -214,30 +214,30 @@ def calc_rmsds_of_models(rp_parsed_cifs_ssv: str, rp_mean_coords_csv: str) -> tu
     # rmsd_mat, n_models = RMSD.compute_rmsd_matrix(pidChain, het_hom)
     # clusters = RMSD.cluster_models(rmsd_mat, threshold=2.0)
     # ref_structure = mean_stddev_struct_(het_hom, pidChain)
-    pidchain_name = os.path.basename(rp_mean_coords_csv).removesuffix('.csv')
-    print(pidchain_name)
+    pidc_name = os.path.basename(rp_mean_coords_csv).removesuffix('.csv')
+    print(pidc_name)
     ref_structure_pdf = pd.read_csv(rp_mean_coords_csv)
-    reference_coords = ref_structure_pdf[['mean_x', 'mean_y', 'mean_z']].values
-    pdbid_chain_pdf = pd.read_csv(rp_parsed_cifs_ssv, sep=' ')
+    reference_coords = ref_structure_pdf['mean_x', 'mean_y', 'mean_z'].values
+    pidc_pdf = pd.read_csv(rp_parsed_cifs_ssv, sep=' ')
     rmsds, model_nums = [], []
-    pdc4pdf = [pidchain_name]  # Just for aesthetics of tabular RMSD results.
-    for model_num, pdbid_chain_model in pdbid_chain_pdf.groupby('A_pdbx_PDB_model_num'):
-        pidchain_coords = pdbid_chain_model[['A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']].values
-        if pidchain_name == '1MSH_A' and model_num == 30:
+    pdc4pdf = [pidc_name]  # Just for aesthetics of tabular RMSD results.
+    for model_num, pidc_model in pidc_pdf.groupby('A_pdbx_PDB_model_num'):
+        pidchain_coords = pidc_model['A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z'].values
+        if pidc_name == '1MSH_A' and model_num == 30:
             continue
-        elif pidchain_name == '2JSC_A' and model_num == 1:
+        elif pidc_name == '2JSC_A' and model_num == 1:
             continue
-        elif (pidchain_name == '6UJV_A' or pidchain_name == '6UJV_B' or
-              pidchain_name == '6UJV_C' or pidchain_name == '7CLV_A' or
-              pidchain_name == '7CLV_B' or pidchain_name == '8J4I_A' or
-              pidchain_name == '8J4I_B' or pidchain_name == '8J4I_C' or
-              pidchain_name == '8J4I_D' or pidchain_name == '8J4I_E' or
-              pidchain_name == '8J4I_F'):
+        elif (pidc_name == '6UJV_A' or pidc_name == '6UJV_B' or
+              pidc_name == '6UJV_C' or pidc_name == '7CLV_A' or
+              pidc_name == '7CLV_B' or pidc_name == '8J4I_A' or
+              pidc_name == '8J4I_B' or pidc_name == '8J4I_C' or
+              pidc_name == '8J4I_D' or pidc_name == '8J4I_E' or
+              pidc_name == '8J4I_F'):
             continue
         else:
-            rmsd_pidchain = calculate_rmsd(coords1=reference_coords, coords2=pidchain_coords)
+            rmsd_pidc = calculate_rmsd(coords1=reference_coords, coords2=pidchain_coords)
             model_nums.append(model_num)
-            rmsds.append(rmsd_pidchain)
+            rmsds.append(rmsd_pidc)
             pdc4pdf.append('')  # so that the resulting stats table has the pdbid just on the first row only.
     pdc4pdf = pdc4pdf[:-1]
     rmsds = np.array(rmsds, dtype=np.float16)
@@ -249,42 +249,42 @@ def _calc_rmsds_and_stats():
     TODO Note that rmsds for 6UJV_A, 7CLV_A, 7CLV_B & 8J4I_A are empty.. need to have a closer look at this to see why...
     """
     start = time()
-    rp_mean_coords_pidchains_dir = os.path.join(_rp_rmsd_dir('multimod_2713_hetallchains_hom1chain'), 'mean_coords')
-    rp_mean_coords_pidc_csvs = sorted(glob.glob(os.path.join(rp_mean_coords_pidchains_dir, '*.csv')))
+    rp_mean_coords_pidc_dir = os.path.join(_rp_rmsd_dir('multimod_2713_hetallchains_hom1chain'), 'mean_coords')
+    rp_mean_coords_pidc_csvs = sorted(glob.glob(os.path.join(rp_mean_coords_pidc_dir, '*.csv')))
 
     for rp_mean_coords_pidc_csv in rp_mean_coords_pidc_csvs:
         rmsd_per_model = {'pidc': [], 'pidc_model': [], 'RMSD': [],
                           'min_RMSD': [], 'max_RMSD': [], 'mean_RMSD': [], 'stdev_RMSD': []}
-        pidc_name = os.path.basename(rp_mean_coords_pidc_csv).removesuffix('.csv')
-        print(pidc_name)
-        rmsd_per_model['pidc'].append(pidc_name)
+        pidc = os.path.basename(rp_mean_coords_pidc_csv).removesuffix('.csv')
+        print(pidc)
+        rmsd_per_model['pidc'].append(pidc)
         rmsds = []
         mean_pidc_pdf = pd.read_csv(rp_mean_coords_pidc_csv)
         mean_coords_pidc = mean_pidc_pdf['mean_x', 'mean_y', 'mean_z'].values
         rp_parsed_cif_ssv = os.path.join(_rp_parsed_cifs_dir('multimod_2713_hetallchains_hom1chain'),
-                                         f'{pidc_name}.ssv')
+                                         f'{pidc}.ssv')
         pidc_pdf = pd.read_csv(os.path.join(rp_parsed_cif_ssv), sep=' ')
         for model_num, pidc_model in pidc_pdf.groupby('A_pdbx_PDB_model_num'):
             pidc_coords = pidc_model['A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z'].values
             if pidc == '1MSH_A' and model_num == 30:
                 continue
-            elif pidc_name == '2JSC_A' and model_num == 1:
+            elif pidc == '2JSC_A' and model_num == 1:
                 continue
-            elif (pidc_name == '6UJV_A' or pidc_name == '6UJV_B' or
-                  pidc_name == '6UJV_C' or pidc_name == '7CLV_A' or
-                  pidc_name == '7CLV_B' or pidc_name == '8J4I_A' or
-                  pidc_name == '8J4I_B' or pidc_name == '8J4I_C' or
-                  pidc_name == '8J4I_D' or pidc_name == '8J4I_E' or
-                  pidc_name == '8J4I_F'):
+            elif (pidc == '6UJV_A' or pidc == '6UJV_B' or
+                  pidc == '6UJV_C' or pidc == '7CLV_A' or
+                  pidc == '7CLV_B' or pidc == '8J4I_A' or
+                  pidc == '8J4I_B' or pidc == '8J4I_C' or
+                  pidc == '8J4I_D' or pidc == '8J4I_E' or
+                  pidc == '8J4I_F'):
                 continue
             else:
                 rmsd = calculate_rmsd(coords1=mean_coords_pidc, coords2=pidc_coords)
                 rmsds.append(round(rmsd, 4))
-                pidc_model = f'{pidc_name}_{model_num}' if model_num >= 10 else f'{pidc_name}_0{model_num}'
+                pidc_model = f'{pidc}_{model_num}' if model_num >= 10 else f'{pidc}_0{model_num}'
                 rmsd_per_model['pidc_model'].append(pidc_model)
 
         if len(rmsds) == 0:
-            print(f'rmsds for {pidc_name} is empty: {rmsds}. Assigning np.nan.')
+            print(f'rmsds for {pidc} is empty: {rmsds}. Assigning np.nan.')
             min_rmsd, max_rmsd = np.nan, np.nan
             mean_rmsd, stdev_rmsd = np.nan, np.nan
         else:
@@ -304,7 +304,7 @@ def _calc_rmsds_and_stats():
         rmsd_pdf = pd.DataFrame(rmsd_per_model)
         rmsd_pdf = rmsd_pdf.sort_values(by=['RMSD'], ascending=[False])
 
-        rmsd_pdf['pidc'] = [pidc_name] + ['' for _ in rmsds][: -1]
+        rmsd_pdf['pidc'] = [pidc] + ['' for _ in rmsds][: -1]
         rmsd_pdf['min_RMSD'] = [round(min_rmsd, 4)] + empty_list[: -1]
         rmsd_pdf['max_RMSD'] = [round(max_rmsd, 4)] + empty_list[: -1]
         rmsd_pdf['mean_RMSD'] = [round(mean_rmsd, 4)] + empty_list[: -1]
@@ -312,26 +312,26 @@ def _calc_rmsds_and_stats():
 
         rp_pidc_dir = os.path.join(_rp_rmsd_dir('multimod_2713_hetallchains_hom1chain'))
         os.makedirs(rp_pidc_dir, exist_ok=True)
-        rmsd_pdf.to_csv(os.path.join(rp_pidc_dir, f'RMSD_{pidc_name}.csv'), index=False)
+        rmsd_pdf.to_csv(os.path.join(rp_pidc_dir, f'RMSD_{pidc}.csv'), index=False)
 
     print(f'Completed in {round((time() - start))} seconds.')  # 12 seconds
 
 
 # Note: I don't superimpose coords of different models onto the randomly chosen ref model prior to computing the mean
 # & stddev. It might be beneficial to do so, but for now I've opted not to.
-def mean_stdev_struct(rp_pidchains_ssv: str, rp_dst_dir: str):
-    pidchain = os.path.basename(rp_pidchains_ssv).removesuffix('.ssv')
-    print(pidchain)
-    pdf = pd.read_csv(rp_pidchains_ssv, sep=' ')
+def mean_stdev_struct(rp_pidc_ssv: str, rp_dst_dir: str):
+    pidc = os.path.basename(rp_pidc_ssv).removesuffix('.ssv')
+    print(pidc)
+    pdf = pd.read_csv(rp_pidc_ssv, sep=' ')
     # pdf = pdf.sort_values(by=["A_pdbx_PDB_model_num", "A_id"])
     model_numbers = pdf['A_pdbx_PDB_model_num'].unique()
     coord_list = []
     ref_A_id, ref_S_mon_id, ref_S_seq_id = None, None, None  # _atom_site.id is continous through all models (and chains).
 
-    if pidchain == '1MSH_A':
+    if pidc == '1MSH_A':
         model_numbers = model_numbers[:-1]
         print("Excluding model 30 of 1MSH_A for now because missing 3 residues at C-term.")
-    if pidchain == '2JSC_A':
+    if pidc == '2JSC_A':
         model_numbers = model_numbers[1:]
         print("Excluding model 1 of 2JSC_A for now because it lacks the first residue.")
 
@@ -345,7 +345,7 @@ def mean_stdev_struct(rp_pidchains_ssv: str, rp_dst_dir: str):
             assert np.array_equal(S_mon_id_values, ref_S_mon_id), f'S_mon_id mismatch in model {model_num}'
             assert np.array_equal(S_seq_id_values, ref_S_seq_id), f'S_seq_id mismatch in model {model_num}'
 
-        coords = model_df[['A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']].values
+        coords = model_df['A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z'].values
         coord_list.append(coords)
 
     coord_array = np.stack(coord_list)  # Stack into 3D array: (n_models, n_atoms, 3)
@@ -368,7 +368,7 @@ def mean_stdev_struct(rp_pidchains_ssv: str, rp_dst_dir: str):
 
     rp_rmsd_dst_dir = os.path.join(rp_dst_dir, 'mean_coords')
     os.makedirs(rp_rmsd_dst_dir, exist_ok=True)
-    rp_rmsd_csv = os.path.join(rp_rmsd_dst_dir, f'{pidchain}.csv')
+    rp_rmsd_csv = os.path.join(rp_rmsd_dst_dir, f'{pidc}.csv')
     if mean_df is not None:
         mean_df.to_csv(rp_rmsd_csv, index=False)
     return mean_df
