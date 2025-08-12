@@ -7,8 +7,14 @@ DEFINITIONS:
     "ARE HOMOLOGOUS":
         - evalue < 1e-3; pident >= 30.0; alnlen >= 20; qcov >= 0.9; tcov >= 0.9.    ABBREVIATION: '30_20_90'
 
-    'IDENTICAL STRUCTURES":
+    "IDENTICAL STRUCTURES":
         - RMSD < 1.0 OR TM-SCORE == 1.0.                                            ABBREVIATION: 'LT1R_1T'
+
+    "EXTREME RMSDS":
+        - IF MEAN_RMSD HIGH (> 10 ANGSTROMS), AND LOW SEM_RMSD  (< 0.01)
+
+    "EXTERME TM-SCORES".
+        -
 
 ======================================================================================================================
 DATASET 1.0:
@@ -16,6 +22,7 @@ DATASET 1.0:
     - ALL HETEROMERIC PDB-CHAINS, BUT ONLY ONE (RANDOMLY-SELECTED) CHAIN FROM THE HOMOMERIC PDBS.
     - INCLUDES ONLY MULTIMODEL PDB-CHAINS.
     - INCLUDES ONLY PDB-CHAINS WITH 3 OR MORE RESIDUES.
+    - EXCLUDES ANY THAT DO NOT HAVE EITHER A REASONABLE RMSD OR TM-SCORE.
     - ** DOES NOT REMOVE IDENTICAL PDB-CHAINS ** (I.E. THOSE WITH BOTH IDENTICAL SEQUENCE AND IDENTICAL STRUCTURE).
 
 ======================================================================================================================
@@ -24,6 +31,7 @@ DATASET 1.1:
     - AS DATASET 1.0, PLUS:
 
         - ANY ADDITIONAL MODIFICATIONS AS REQUESTED BY DAVID.
+        - REMOVE PDB-CHAINS THAT DISPLAY "EXTREME RMSDS" AND "EXTERME TM-SCORES".
         - REMOVE PDB-CHAINS THAT HAVE "IDENTICAL SEQUENCES" AND "IDENTICAL STRUCTURES":
                 - "IDENTICAL STRUCTURES" FOR MULTI-MODEL PDB-CHAINS, TO BE DONE VIA GENERATING
                   GAUSSIAN DISTRUBUTIONS OF MODEL COORDINATES AND CALCULATING SIMILARITY BY KL DIVERGENCE.
@@ -79,3 +87,21 @@ DATASET 1.2:
 HOWEVER, FOR 'DATASET 1.0', I WILL NOT PRUNE ACCORDING TO THIS.
 
 """
+import os
+
+if __name__ == "__main__":
+    with open(os.path.join('..','data','NMR','multimodel_lists', 'multimod_2713_hetallchains_hom1chain.lst'), 'r') as f:
+        pidc_2713 = f.read().splitlines()
+
+    pidc_2713.sort()
+
+    rp_datasets_dir = os.path.join('..','data','NMR', 'datasets')
+    os.makedirs(rp_datasets_dir, exist_ok=True)
+    pidc_2702 = []
+    for pidc in pidc_2713:
+        if pidc in ['2AIZ_B', '1GAC_D', '1GAC_C', '1GAC_A', '1GAC_B', '1WCO_A',
+                   '2K1Q_B', '2M9P_B', '2M9Q_B', '2MX6_B', '3CYS_B']:
+            continue
+        else:
+            pidc_2702.append(pidc)
+
