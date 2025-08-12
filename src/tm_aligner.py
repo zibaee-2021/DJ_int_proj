@@ -8,31 +8,31 @@ from time import time
 from tqdm import tqdm
 import subprocess
 import itertools
+import statistics
 import pandas as pd
 import numpy as np
 from multiprocessing import Pool, cpu_count
 from functools import partial
 import platform
-import MDAnalysis as mda
-from MDAnalysis.coordinates import PDB
-"""
-TM-score and meaning:
 
-1.0 = perfect structural match (identical structures)
-< 0.2 ≈ random similarity
-> 0.5 = typically indicates same fold
+
+"""(CGT4o)
+
+TM-score and interpretation:
+
+  1.0 = perfect structural match (identical structures)
 > 0.8 = often considered nearly identical structures (small conformational shifts only)
+> 0.5 = typically indicates same fold
+< 0.2 ≈ random similarity
 """
-def _rp_nmr_dir():
+
+
+def _rp_nmr_dir() -> str:
     return os.path.join('..', 'data', 'NMR')
 
 
-def _rp_tmscores_dir():
-    return os.path.join(_rp_nmr_dir(), 'TMscores')
-
-
-def _rp_mean_coords_input_dir(sub_dir: str):
-    return os.path.join(_rp_nmr_dir(), 'RMSD', sub_dir, 'mean_coords')
+def _rp_tmscores_dir(sub_dir: str) -> str:
+    return os.path.join(_rp_nmr_dir(), 'TMscores', sub_dir)
 
 
 def _read_all_pdbs_from_txt(txt_f: str) -> list:
@@ -46,7 +46,7 @@ def _read_all_pdbs_from_txt(txt_f: str) -> list:
             pidchains = f.read().split('\n')
             pidchains = pidchains[:-1]
     rp_pdb_files = []
-    PDB_dir = os.path.join('..', 'data', 'NMR', 'pdb_chains', 'hethom_combined')
+    PDB_dir = os.path.join('..', 'data', 'NMR', 'pdb_chains', 'hethom_combined')  # TODO update
     for pidchain in pidchains:
         rp_pdb_files.append(os.path.join(PDB_dir, f'{pidchain}.pdb'))
     return rp_pdb_files
@@ -71,7 +71,7 @@ def compute_tm(rp_pdb1, rp_pdb2):
         )
         output = result.stdout
         for line in output.splitlines():
-            if line.startswith('TM-score='):
+            if str(line).startswith('TM-score='):
                 tm = float(line.split('=')[1].split()[0])
                 return tm
     except Exception as e:
@@ -112,136 +112,98 @@ def compute_tm_from_mp_pool(idx_pair, rp_all_pdb_files):
         print(f'Error computing TM-score for {f1} vs {f2}: {e}')
         return f1_idx, f2_idx, np.nan
 
+def compute_tm_all_vs_all():
+    # Generate all unique integer pair combinations (i < j) for above number of PDB files:
+    N = 100 # intended to be the total number of pdb files
+    rp_all_pdb_files = ''  # intended to be list of the rp_pdf_files
+    pairs = list(itertools.combinations(range(N), 2))
+    print(f'Total pairs to compute: {len(pairs)}')  # Total pairs to compute: ~10-50 (4-180)
 
-def _write_mean_coords_to_pdb(rp_pdb_f: str) -> None:
-    """
-    Using MDAnalysis to calculate mean coords of given PDB/PDBchain file and write out to PDB/PDBchain file.
-    Note: the PDB it writes out:
-     - starts with 'MODEL 1' even though its an average of all the models.
-     - lacks 'MASTER' at end and 'TER' at terminus.
-    I assume it is still a valid PDB as it seems unlikely to me that this is an error by MDAnalysis.
-    # TODO: Might need to either calculate the means and write each PDB/PDBchain manually myself,
-    # TODO: OR just edit these files to add the 'MASTER' and 'TER' to each PDB/PDBchain file.
-    """
-    u = mda.Universe(rp_pdb_f)
-    n_atoms = len(u.atoms)
-    coords_per_model = []  # store coords per model
-    for _ in u.trajectory:  # iterate through each model
-        coords_per_model.append(u.atoms.positions.copy())
-    coords_array = np.array(coords_per_model)  # shape=(n_models, n_atoms, 3)
-    mean_coords = coords_array.mean(axis=0)  # mean coords over all models
-    u.atoms.positions = mean_coords  # set mean coords into "Universe"
-    with mda.Writer(os.path.basename(rp_pdb_f), n_atoms) as W:
-        W.write(u.atoms)
+    # Number of worker processes
+    n_workers = max(cpu_count() - 1, 1)
+    print(f'Using {n_workers} parallel workers.')  # Using 9 parallel workers.
+    # Bind the extra argument
+    # _compute_tm = partial(compute_tm, pdb_files=pdb_files_)
+    _compute_tm = partial(compute_tm_from_mp_pool, rp_all_pdb_files=rp_all_pdb_files)
+    # List to store only interesting results
+    results = {'query': [], 'target': [], 'TMscore': []}
+    # Simple heuristic: bigger groups → bigger chunks, but never below 1
+    chunksize = max(1, len(pairs) // (4 * cpu_count()))
+    # Optionally clamp to a reasonable upper bound
+    chunksize = min(chunksize, 10)
 
+    with Pool(processes=n_workers) as pool:
+        for result_ in tqdm(
+                pool.imap_unordered(_compute_tm, pairs, chunksize=10),
+                total=len(pairs), desc="Processing TM-scores"
+        ):
+            pdb1, pdb2, tms = result_
+            if np.isnan(tms):
+                continue
+            # if tm_ <= 0.8:
+            results['query'].append(pdb1)
+            results['target'].append(pdb2)
+            results['TMscore'].append(tms)
+    res_pdf = pd.DataFrame(results)
+    res_pdf.to_csv(os.path.join('..', 'data', 'TM-scores.csv'), index=False)
 
-def _write_PDB_HETATMout_CAonly(rp_pdf_f: str, rp_dst_parsed_pdbs_dir: str) -> None:
-    pidc = os.path.basename(rp_pdf_f).removeprefix('.pdb')
-    print(pidc)
-    u = mda.Universe(rp_pdf_f)  # can also be .cif
-    ca_atoms = u.select_atoms('protein and name CA') # standard residues (no HETATM) and alpha-carbons only.
-
-    rp_parsed_pdb_f = os.path.join(rp_dst_parsed_pdbs_dir, f'{pidc}')
-    with mda.Writer(rp_parsed_pdb_f, ca_atoms.n_atoms) as writer:
-        writer.write(ca_atoms)
+    # Save interesting pairs as .npy
+    rp_dst_tmalign_dir = _rp_tmscores_dir(sub_dir='multimod_2713_hetallchains_hom1chain')
+    os.makedirs(rp_dst_tmalign_dir, exist_ok=True)
+    rp_tm_pairs = os.path.join(rp_dst_tmalign_dir, 'all_vs_all_TMS.npy')
+    print(f'Completed in {round((time() - start) / 60)} minutes.')
 
 
 if __name__ == '__main__':
 
+    # (NOTE: I DISCOVERED I COULD NOT RE-USE THE MEAN COORDS (NP ARRAYS) CALCULATED & USED IN COMPUTING RMSDS,
+    # BECAUSE TM-ALIGN WANTS PDB FILE INPUTS ONLY.
+    # SO, MEAN COORD PDBS FOR TM WERE CALCULATED BY BIOPTYHON VIA src/utils/pdb_chain_writer/write_mean_models_to_pdb(),
+    # AND SAVED TO data/NMR/pdb_chains/multimod_2713_hetallchains_hom1chain/mean_coords.
+
     start = time()
-    # # 1. IN PREP FOR RUNNING TM-ALIGN ON ALL MULTIMODEL PDBCHAIN FILES, PARSE, CALC MEAN COORDS & WRITE TO PDB FILES:
-    # # 1.1. PARSE ALL MULTIMODEL PDBCHAINS (ACCORDING TO MULTIMODEL PDBCHAINS LIST) & WRITE TO PDB FILES:
-    rp_dst_parsed_pdbs_dir_ = os.path.join(_rp_nmr_dir(), 'pdb_chains', 'parsed', 'multimod_hetallchains_hom1chain')
-    os.makedirs(rp_dst_parsed_pdbs_dir_, exist_ok=True)
+    # # CALCULATE TM-SCORES OF EACH MODEL VS THE MEAN OF ALL MODELS:
+    rp_pidc_2713_dir = os.path.join(_rp_nmr_dir(), 'pdb_chains', 'multimod_2713_hetallchains_hom1chain')
+    rp_mean_coords_pidchains_dir = os.path.join(rp_pidc_2713_dir, 'mean_coords')
+    rp_mean_coords_pidc_pdbs = sorted(glob.glob(os.path.join(rp_mean_coords_pidchains_dir, '*.pdb')))
+    rp_permodel_pdb_dir = os.path.join(rp_pidc_2713_dir, 'per_model')
 
-    with open(os.path.join(_rp_nmr_dir(), 'multimodel_lists', 'multimod_2713_hetallchains_hom1chain.lst'), 'r') as f:
-        pidchains = f.read().splitlines()
-    pidchains.sort()
-    print(len(pidchains))  # should be 2713
+    for rp_mean_coords_pidc_pdb in rp_mean_coords_pidc_pdbs:
+        tms_per_model = {'pidc': [], 'pidc_model': [], 'TM-score': [], 'min_TMS': [], 'max_TMS': [], 'mean_TMS': [], 'stdev_TMS': []}
+        pidc_name = os.path.basename(rp_mean_coords_pidc_pdb).removesuffix('.pdb')
+        print(pidc_name)
+        # NOTE: TM-ALIGN RETURNS NONE FOR PROTEINS WITH LESS THAN 3 CA ATOMS:
+        if (pidc_name == '1GAC_A' or pidc_name == '1GAC_B' or pidc_name == '1GAC_C' or pidc_name == '1GAC_D' or
+                pidc_name == '1WCO_A' or pidc_name == '2AIZ_B' or pidc_name == '2K1Q_B' or pidc_name == '2M9P_B' or
+                pidc_name == '2M9Q_B' or pidc_name == '2MX6_B' or pidc_name == '3CYS_B'):
+            continue
+        tm_scores = []
+        rp_permodel_pidc_pdbs = sorted(glob.glob(os.path.join(rp_permodel_pdb_dir, pidc_name, '*.pdb')))
+        for rp_permodel_pidc_pdb in rp_permodel_pidc_pdbs:
+            tms = compute_tm(rp_pdb1=rp_permodel_pidc_pdb, rp_pdb2=rp_mean_coords_pidc_pdb)
+            tms_per_model['pidc_model'].append(os.path.basename(rp_permodel_pidc_pdb).removesuffix('.pdb'))
+            tm_scores.append(tms)
 
-    rp_pdb_dir = os.path.join(_rp_nmr_dir(), 'pdb_chains', 'hethom_combined')
-    os.makedirs(rp_pdb_dir, exist_ok=True)
+        # Note: I build the tms, but otherwise empty, dict & pdf first, to be able to sort by this before adding
+        # the remaining, whcih are scalar or single string values, which are all on just the top line, otherwise
+        # it'd look weird with these single row values randomly on a different line, with nans everywhere else:
+        tms_per_model['TM-score'] = tm_scores
+        empty_list = [np.nan for _ in tm_scores]
+        tms_per_model['pidc'] = ['' for _ in tm_scores]
+        tms_per_model['min_TMS'] = empty_list
+        tms_per_model['max_TMS'] = empty_list
+        tms_per_model['mean_TMS'] = empty_list
+        tms_per_model['stdev_TMS'] = empty_list
+        tms_pdf = pd.DataFrame(tms_per_model)
+        tms_pdf = tms_pdf.sort_values(by=['TM-score'], ascending=[True])
 
-    for pidchain in pidchains:
-        rp_pdb_f_ = os.path.join(rp_pdb_dir, f'{pidchain}.pdb')
-        _write_PDB_HETATMout_CAonly(rp_pdb_f_, rp_dst_parsed_pdbs_dir_)
+        tms_pdf['pidc'] = [pidc_name] + ['' for _ in tm_scores][:-1]
+        tms_pdf['min_TMS'] = [round(min(tm_scores), 4)] + empty_list[:-1]
+        tms_pdf['max_TMS'] = [round(max(tm_scores), 4)] + empty_list[:-1]
+        tms_pdf['mean_TMS'] = [round(statistics.mean(tm_scores), 4)] + empty_list[:-1]
+        tms_pdf['stdev_TMS'] = [round(statistics.stdev(tm_scores), 4)] + empty_list[:-1]
 
-    # # 1.2. CALCULATE MEAN COORDINATES OF ALL PARSED PDBCHAIN FILES AND WRITE OUT TO PDB FILES:
-    rp_parsed_pdbchain_dir = os.path.join(_rp_nmr_dir(), 'pdb_chains', 'parsed', 'multimod_hetallchains_hom1chain')
-    rp_dst_mean_coords_pdb_dir = os.path.join(rp_parsed_pdbchain_dir, 'mean_coords')
-
-    rp_parsed_pdbchains_files = sorted(glob.glob(os.path.join(rp_parsed_pdbchain_dir, '*.pdb')))
-    print(len(rp_parsed_pdbchains_files))  # should be 2713
-    for rp_pdb_f_ in rp_parsed_pdbchains_files:
-        _write_mean_coords_to_pdb(rp_pdb_f_)
-
-    # # 2. CALCULATE TM-SCORES OF ALL VS ALL FOR PARSED PDBCHAINS (USING MEAN COORDS PDB FILES):
-    # rp_mean_coords_pdb_dir = os.path.join(_rp_nmr_dir(), 'pdb_chains', 'parsed', 'multimod_hetallchains_hom1chain',
-    #                                       'mean_coords')
-    # rp_parsed_mean_coords_pdbchains_files = sorted(glob.glob(os.path.join(rp_mean_coords_pdb_dir, '*.pdb')))
-    #
-    # N = len(rp_parsed_mean_coords_pdbchains_files)
-    # print(f'Found {N} PDB/PDBchain files in parsed/... /mean_coords dir.') # Should be 2713
-    #
-    # # Generate all unique integer pair combinations (i < j) for above number of PDB files:
-    # pairs = list(itertools.combinations(range(N), 2))
-    # print(f'Total pairs to compute: {len(pairs)}')  # Total pairs to compute: 6320790
-    #
-    # # Number of worker processes
-    # n_workers = max(cpu_count() - 1, 1)
-    # print(f'Using {n_workers} parallel workers.')  # Using 9 parallel workers.
-    #
-    # # Bind the extra argument
-    # # _compute_tm = partial(compute_tm, pdb_files=pdb_files_)
-    # _compute_tm = partial(compute_tm_from_mp_pool, rp_all_pdb_files=rp_all_pdb_files)
-    #
-    # # List to store only interesting results
-    # results = {'query': [], 'target': [], 'TMscore': []}
-    #
-    # with Pool(processes=n_workers) as pool:
-    #     for result_ in tqdm(
-    #             pool.imap_unordered(_compute_tm, pairs, chunksize=10),
-    #             total=len(pairs), desc="Processing TM-scores"
-    #     ):
-    #         pdb1, pdb2, tms = result_
-    #         if np.isnan(tms):
-    #             continue
-    #         # if tm_ <= 0.8:
-    #         results['query'].append(pdb1)
-    #         results['target'].append(pdb2)
-    #         results['TMscore'].append(tms)
-    # res_pdf = pd.DataFrame(results)
-    # res_pdf.to_csv(os.path.join('..', 'data', 'TM-scores.csv'), index=False)
-    #
-    # # Save interesting pairs as .npy
-    # rp_dst_tmalign_dir = _rp_tmscores_dir()
-    # os.makedirs(rp_dst_tmalign_dir, exist_ok=True)
-    # rp_tm_pairs = os.path.join(rp_dst_tmalign_dir, 'all_vs_all_TMS.npy')
-    # print(f'Completed in {round((time() - start) / 60)} minutes.')
-
-
-
-
-
-    # rp_multimod_pdb = '../data/NMR/raw_pdbs/hethom_combined/1A0N.pdb'
-    # write_mean_coords_to_pdb(rp_multimod_pdb)
-    # rp_singlemod_pdb = '../data/NMR/raw_pdbs/hethom_combined/1FU5.pdb'
-    # write_mean_coords_to_pdb(rp_singlemod_pdb)
-
-    # mmseqs2_results_dir =mmseqs2.rp_mmseqs_results_dir(het_hom='hethom_combined')
-    # homologues = pd.read_csv(os.path.join(mmseqs2_results_dir, 'homologues_30_20_90.csv'))
-    # non_homologues = pd.read_csv(os.path.join(mmseqs2_results_dir, 'non_homologues_30_20_90.csv'))
-    # prefix = os.path.join('..', 'data', 'NMR', 'raw_pdbs', 'hethom_combined')
-    # suffix = '.pdb'
-
-    # pdbid_chain = '1cvr_A'
-    # PDB_DIR = os.path.join('', 'data', 'ATLAS_parsed', pdbid_chain, 'CA_only')
-    # # PDB_DIR = os.path.join('..', 'data', 'ATLAS_parsed', pdbid_chain, 'test')
-    # pdb_files_100_spread = [pdb_f for idx, pdb_f in enumerate(pdb_files_) if idx % 100 == 0]
-    # assert(len(pdb_files_100_spread) == 101)
-
-    # # Save interesting pairs as .npy
-    # rpath_tm_pairs = os.path.join('', 'data', 'ATLAS_parsed', pdbid_chain, 'low_tm_pairs.npy')
-    # np.save(rpath_tm_pairs, np.array(interesting_results, dtype=object))
-    # print(f"Saved {len(interesting_results)} pairs with TM-score < 0.8 to {rpath_tm_pairs}.")
-    # print(f'Completed in {round((time() - start) / 60)} minutes.')
+        rp_pidc_dir = os.path.join(_rp_tmscores_dir(sub_dir='multimod_2713_hetallchains_hom1chain'))
+        os.makedirs(rp_pidc_dir, exist_ok=True)
+        tms_pdf.to_csv(os.path.join(rp_pidc_dir, f'TMS_{pidc_name}.csv'), index=False)
+    print(f'Completed in {round((time() - start) / 60)} minutes.')
