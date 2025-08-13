@@ -234,13 +234,6 @@ def calc_rmsds_of_models(rp_parsed_cifs_ssv: str, rp_mean_coords_csv: str) -> tu
               pidc_name == '8J4I_D' or pidc_name == '8J4I_E' or
               pidc_name == '8J4I_F'):
             continue
-        # elif (pidc == '6UJV_A' or pidc == '6UJV_B' or
-        #       pidc == '6UJV_C' or pidc == '7CLV_A' or
-        #       pidc == '7CLV_B' or pidc == '8J4I_A' or
-        #       pidc == '8J4I_B' or pidc == '8J4I_C' or
-        #       pidc == '8J4I_D' or pidc == '8J4I_E' or
-        #       pidc == '8J4I_F'):
-        #     return [], len(pidc_pdf['A_pdbx_PDB_model_num'].unique()), pdc4pdf
         else:
             rmsd_pidc = calculate_rmsd(coords1=reference_coords, coords2=pidchain_coords)
             model_nums.append(model_num)
@@ -278,13 +271,6 @@ def _calc_rmsds_and_stats():
                 continue
             elif pidc == '2JSC_A' and model_num == 1:
                 continue
-            # elif (pidc == '6UJV_A' # or pidc == '6UJV_B' or pidc == '6UJV_C'
-            #        or pidc == '7CLV_A' or
-            #       pidc == '7CLV_B' or pidc == '8J4I_A' or
-            #       pidc == '8J4I_B' or pidc == '8J4I_C' or
-            #       pidc == '8J4I_D' or pidc == '8J4I_E' or
-            #       pidc == '8J4I_F'):
-            #     continue
             else:
                 rmsd = calculate_rmsd(coords1=mean_coords_pidc, coords2=pidc_coords)
                 rmsds.append(round(rmsd, 4))
