@@ -214,25 +214,18 @@ def calc_rmsds_of_models(rp_parsed_cifs_ssv: str, rp_mean_coords_csv: str) -> tu
     # rmsd_mat, n_models = RMSD.compute_rmsd_matrix(pidChain, het_hom)
     # clusters = RMSD.cluster_models(rmsd_mat, threshold=2.0)
     # ref_structure = mean_stddev_struct_(het_hom, pidChain)
-    pidc_name = os.path.basename(rp_mean_coords_csv).removesuffix('.csv')
-    print(pidc_name)
-    ref_structure_pdf = pd.read_csv(rp_mean_coords_csv)
-    reference_coords = ref_structure_pdf['mean_x', 'mean_y', 'mean_z'].values
-    pidc_pdf = pd.read_csv(rp_parsed_cifs_ssv, sep=' ')
     rmsds, model_nums = [], []
-    pdc4pdf = [pidc_name]  # Just for aesthetics of tabular RMSD results.
+    pidc = os.path.basename(rp_mean_coords_csv).removesuffix('.csv')
+    # print(pidc)
+    ref_structure_pdf = pd.read_csv(rp_mean_coords_csv)
+    reference_coords = ref_structure_pdf[['mean_x', 'mean_y', 'mean_z']].values
+    pidc_pdf = pd.read_csv(rp_parsed_cifs_ssv, sep=' ')
+    pdc4pdf = [pidc]  # Just for aesthetics of tabular RMSD results.
     for model_num, pidc_model in pidc_pdf.groupby('A_pdbx_PDB_model_num'):
-        pidchain_coords = pidc_model['A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z'].values
-        if pidc_name == '1MSH_A' and model_num == 30:
+        pidchain_coords = pidc_model[['A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']].values
+        if pidc == '1MSH_A' and model_num == 30:
             continue
-        elif pidc_name == '2JSC_A' and model_num == 1:
-            continue
-        elif (pidc_name == '6UJV_A' or pidc_name == '6UJV_B' or
-              pidc_name == '6UJV_C' or pidc_name == '7CLV_A' or
-              pidc_name == '7CLV_B' or pidc_name == '8J4I_A' or
-              pidc_name == '8J4I_B' or pidc_name == '8J4I_C' or
-              pidc_name == '8J4I_D' or pidc_name == '8J4I_E' or
-              pidc_name == '8J4I_F'):
+        elif pidc == '2JSC_A' and model_num == 1:
             continue
         else:
             rmsd_pidc = calculate_rmsd(coords1=reference_coords, coords2=pidchain_coords)
