@@ -240,7 +240,8 @@ def calc_rmsds_of_models(rp_parsed_cifs_ssv: str, rp_mean_coords_csv: str) -> tu
             rmsds.append(rmsd_pidc)
             pdc4pdf.append('')  # so that the resulting stats table has the pdbid just on the first row only.
     pdc4pdf = pdc4pdf[:-1]
-    rmsds = np.array(rmsds, dtype=np.float16)
+    # rmsds = np.array(rmsds, dtype=np.float16)  # np.max(rsmds) resulted in `inf` for few pidc because of my casting.
+    rmsds = np.array(rmsds)
     return rmsds, model_nums, pdc4pdf
 
 # COPIED OVER FROM pdb_model_stats.py and ammended to match tm_aligner output format:
@@ -363,7 +364,9 @@ def mean_stdev_struct(rp_pidc_ssv: str, rp_dst_dir: str):
         'std_z': std_coords[:, 2]
     })
     cols_to_cast = ['mean_x', 'std_x', 'mean_y', 'std_y', 'mean_z', 'std_z']
-    mean_df[cols_to_cast] = mean_df[cols_to_cast].astype(np.float16)  # I assume this loss of precision is ok..
+    # I had `mean_df[cols_to_cast].astype(np.float16)` at the end here thinking the loss of precision here would be ok.
+    # However, np.max on the np array of rsmds gave `inf`, which seems to be caused by this less precise data type.
+    mean_df[cols_to_cast] = mean_df[cols_to_cast]
     mean_df = mean_df.reset_index(drop=True)
 
     rp_rmsd_dst_dir = os.path.join(rp_dst_dir, 'mean_coords')
