@@ -199,8 +199,8 @@ def calc_rmsds_pidchain_pairs(pidchain1_name: str, pidchain2_name: str, rp_rmsd_
     rp_pidchain2_ssv = os.path.join(rp_rmsd_mean_coords_dir, f'{pidchain2_name}.csv')
     pdbid_chain2_pdf = pd.read_csv(rp_pidchain2_ssv)
 
-    coords1 = pdbid_chain1_pdf['mean_x', 'mean_y', 'mean_z'].values
-    coords2 = pdbid_chain2_pdf['mean_x', 'mean_y', 'mean_z'].values
+    coords1 = pdbid_chain1_pdf[['mean_x', 'mean_y', 'mean_z']].values
+    coords2 = pdbid_chain2_pdf[['mean_x', 'mean_y', 'mean_z']].values
 
     rmsd_result = calculate_rmsd(coords1, coords2)
     return rmsd_result
@@ -259,7 +259,7 @@ def _calc_rmsds_and_stats():
                                          f'{pidc}.ssv')
         pidc_pdf = pd.read_csv(os.path.join(rp_parsed_cif_ssv), sep=' ')
         for model_num, pidc_model in pidc_pdf.groupby('A_pdbx_PDB_model_num'):
-            pidc_coords = pidc_model['A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z'].values
+            pidc_coords = pidc_model[['A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']].values
             if pidc == '1MSH_A' and model_num == 30:
                 continue
             elif pidc == '2JSC_A' and model_num == 1:
@@ -332,7 +332,7 @@ def mean_stdev_struct(rp_pidc_ssv: str, rp_dst_dir: str):
             assert np.array_equal(S_mon_id_values, ref_S_mon_id), f'S_mon_id mismatch in model {model_num}'
             assert np.array_equal(S_seq_id_values, ref_S_seq_id), f'S_seq_id mismatch in model {model_num}'
 
-        coords = model_df['A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z'].values
+        coords = model_df[['A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']].values
         coord_list.append(coords)
 
     coord_array = np.stack(coord_list)  # Stack into 3D array: (n_models, n_atoms, 3)
