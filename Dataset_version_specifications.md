@@ -34,6 +34,7 @@
 | INCLUDE ALL HETEROMERIC PDB-CHAINS                                 | 0                  |
 | INCLUDE ONLY ONE (RANDOMLY-SELECTED) CHAIN FROM THE HOMOMERIC PDBS | 812                |
 | INCLUDES ONLY MULTIMODEL PDB-CHAINS                                | 468                |
+v0.9 has 2713 PDB-chains
 
 ---
 
@@ -45,6 +46,8 @@ SAME AS DATASET 0.9, **PLUS**:
 | ANY FURTHER MODIFICATIONS/ADDITIONS REQUESTED BY DJ               | TBC                 |
 | EXCLUDE PDB-CHAINS WITH < 3 ALPHA-CARBONS                         | 11                  |
 | EXCLUDE PDB-CHAINS WITH "EXTREME RMSD" **AND** "EXTREME TM-SCORE" | 0                   |
+
+v1.0 has **(tbc)** PDB-chains
 
 NOTE: I have not yet (looked for and) removed "IDENTICAL PDB-CHAINS" from v0.9. <br>
 Furthermore, the presence of PDB records with identical sequence-structures but under different PDB identifiers 
@@ -61,6 +64,8 @@ SAME AS DATASET 1.0, **PLUS**:
 | EXCLUDE "IDENTICAL PDB-CHAINS"                                                                                              | TBC                |
 | EXCLUDE PDB-CHAINS WITH "EXTREME RMSD" **AND** "EXTREME TM-SCORE"<br> WITH MORE STRINGENT THRESHOLDS THAN THAT USED IN v1.0 | TBC                | 
 
+v1.1 has **(tbc)** PDB-chains
+
 NOTE: The method/algorithm for quantifying "IDENTICAL STRUCTURES" when dealing with multi-model PDB-chains has 
 not been decided on yet. I may try something more sophisticated than simply mean coordinates though.
 <br>(E.g. Gaussian distributions of model coordinates and/or contact maps, followed by calculating similarity via 
@@ -75,5 +80,7 @@ SAME AS DATASET 1.1, **PLUS**:
 |-------------------------------------------------------------------------------------------------------------------------|--------------------|
 | ANY FURTHER MODIFICATIONS/ADDITIONS REQUESTED BY DJ                                                                     | TBC                |
 | INCLUDE SUBSET OF SINGLE-MODEL PDB-CHAINS WHICH ARE "HOMOLOGOUS" TO OTHER PDB-CHAINS, BUT HAVE NON-IDENTICAL STRUCTURES | TBC                |
+
+v1.2 has **(tbc)** PDB-chains
 
 NOTE: When comparing structures of single-model to multi-model PDB-chains, I will use mean coordinates of the multi-model PDB-chains.
