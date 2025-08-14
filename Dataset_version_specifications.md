@@ -76,4 +76,4 @@ SAME AS DATASET 1.1, **PLUS**:
 | ANY FURTHER MODIFICATIONS/ADDITIONS REQUESTED BY DJ                                                                     | TBC                |
 | INCLUDE SUBSET OF SINGLE-MODEL PDB-CHAINS WHICH ARE "HOMOLOGOUS" TO OTHER PDB-CHAINS, BUT HAVE NON-IDENTICAL STRUCTURES | TBC                |
 
-NOTE: When comparing structrues of single-model to multi-model PDB-chains, I will use mean coordinates of the multi-model PDB-chains.
+NOTE: When comparing structures of single-model to multi-model PDB-chains, I will use mean coordinates of the multi-model PDB-chains.
