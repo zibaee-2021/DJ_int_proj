@@ -275,13 +275,13 @@ def generate_stats(sub_dir: str, rp_pidc_lst_f: str, rp_fasta_f: str, run_and_wr
         rp_raw_struct_dir = rp_raw_struct_hom_dir if het_hom == 'hom' else rp_raw_struct_het_dir
         rp_raw_struct_f = os.path.join(rp_raw_struct_dir, f'{pid}.{pdb_or_cif}')
         total_chain_count, year, head = _total_chain_count_and_year(rp_raw_struct_f, parser)
-        total_natural_protchain_count = _total_natural_prot_chain_count()
+        protchain_count = _total_natural_prot_chain_count()
         pid_list.append(pid)
         head_list.append(head)
         chains_list.append(total_chain_count)
         hethom_list.append(het_hom)
         year_list.append(year)
-        protchain_count_list.append(total_natural_protchain_count)
+        protchain_count_list.append(protchain_count[pid])
 
         for chain in chains:
             pidc = f'{pid}_{chain}'
@@ -501,34 +501,45 @@ def plot_counts(attribute: str, attr_counts: list, bin_size: int=1, num_pidchain
 
 def _calc_model_counts(rp_parsed_cifs_ssvs: list) -> list:
     model_counts = list()
+    pidc_list, model_count_list = [], []
+    model_counts_pidc = {'pidc': pidc_list, 'model_counts': model_count_list}
     for rp_parsed_cif_ssv in rp_parsed_cifs_ssvs:
         pdf = pd.read_csv(rp_parsed_cif_ssv, sep=' ')
         model_count = len(pdf['A_pdbx_PDB_model_num'].unique())
-        if model_count == 1:
-            print(f'Single model PDB: {os.path.basename(rp_parsed_cif_ssv).removesuffix('.ssv')}')
+        pidc = os.path.basename(rp_parsed_cif_ssv).removesuffix('.ssv')
+        pidc_list.append(pidc)
+        model_count_list.append(model_count)
         model_counts.append(model_count)
+    model_counts_pidc['pidc'] = pidc_list
+    model_counts_pidc['model_counts'] = model_count_list
+    model_counts_pidc_pdf = pd.DataFrame(model_counts_pidc)
+    model_counts_pidc_pdf = model_counts_pidc_pdf.sort_values(by=['model_counts'], ascending=[True])
+    rp_dst_csv = os.path.join(_rp_stats_dir('multimod_2713_hetallchains_hom1chain'), 'model_counts.csv')
+    model_counts_pidc_pdf.to_csv(rp_dst_csv, index=False)
     return sorted(model_counts)
 
 
 def _calc_ca_counts(rp_parsed_cifs_ssvs: list) -> list:
     ca_counts = list()
-    ca_counts_pidc = {'pidc': [], 'ca_counts': []}
+    pidc_list, ca_count_list = [], []
+    ca_counts_pidc = {'pidc': pidc_list, 'ca_counts': ca_count_list}
+
     for rp_parsed_cif_ssv in rp_parsed_cifs_ssvs:
         pdf = pd.read_csv(rp_parsed_cif_ssv, sep=' ')
         ca_counts_all_models = pdf.shape[0]
         model_count = len(pdf['A_pdbx_PDB_model_num'].unique())
         ca_count = int(ca_counts_all_models / model_count)
         ca_counts.append(ca_count)
-
         pidc = os.path.basename(rp_parsed_cif_ssv).removesuffix('.ssv')
-        ca_counts_pidc['pidc'].append(pidc)
-        ca_counts_pidc['ca_counts'].append(ca_count)
-        if ca_count <= 3:
-            print(f'{pidc} has <4 CAs, with only {ca_count} CAs.')
-
+        pidc_list.append(pidc)
+        ca_count_list.append(ca_count)
+        if ca_count < 3:
+            print(f'{pidc} has < 3 CAs, with only {ca_count} CAs.')
+    ca_counts_pidc['pidc'] = pidc_list
+    ca_counts_pidc['ca_counts'] = ca_count_list
     ca_counts_pidc_pdf = pd.DataFrame(ca_counts_pidc)
     ca_counts_pidc_pdf = ca_counts_pidc_pdf.sort_values(by=['ca_counts'], ascending=[True])
-    rp_dst_csv = os.path.join(_rp_stats_dir('multimod_2713_hetallchains_hom1chain'), 'model_counts.csv')
+    rp_dst_csv = os.path.join(_rp_stats_dir('multimod_2713_hetallchains_hom1chain'), 'ca_counts.csv')
     ca_counts_pidc_pdf.to_csv(rp_dst_csv, index=False)
     return sorted(ca_counts)
 
@@ -618,8 +629,8 @@ if __name__ == '__main__':
 
     # # 3. BAR CHART OF MODEL COUNT FOR EACH PDB:
     # # 3.A. CALCULATE MODEL COUNT FROM PARSED CIFS DATA AND WRITE TO STATS/...LST FILE:
-    # rp_parsed_cifs_ssvs_ = sorted(glob.glob(os.path.join(_rp_parsed_cifs_dir(),
-    #                                              'multimod_2713_hetallchains_hom1chain', '*.ssv')))
+    # rp_parsed_cifs_ssvs_ = sorted(glob.glob(os.path.join(_rp_parsed_cifs_dir('multimod_2713_hetallchains_hom1chain'),
+    #                                                      '*.ssv')))
     # model_counts_ = _calc_model_counts(rp_parsed_cifs_ssvs_)
     # model_counts_dir = _rp_stats_dir('multimod_2713_hetallchains_hom1chain')
     # os.makedirs(model_counts_dir, exist_ok=True)
@@ -636,7 +647,7 @@ if __name__ == '__main__':
     # model_counts_.sort()
     # plot_counts(attribute='model', attr_counts=model_counts_, bin_size=10, num_pidchains=2713)
 
-    # # 4. YEAR (DEPOSITION), MODEL COUNT, CHAIN COUNT - FROM ALL DOWNLOADED NMR CIF FILES (NOT THE PDBCHAINS):
+    # # 4. WRITE YEAR (DEPOSITION), MODEL COUNT, CHAIN COUNT - FROM ALL DOWNLOADED NMR CIF FILES (NOT THE PDBCHAINS):
     # # 4.A. EXTRACT YEAR, MODEL COUNT, CHAIN COUNT, FROM PDB FILE AND WRITE TO STATS/...CSV:
     # rp_raw_cif_files = sorted(glob.glob(os.path.join(_rp_nmr_dir(), 'raw_cifs', 'hethom_combined', '*.cif')))
     # ycmc_pdf_ = _tabulate_year_chain_model_counts(rp_raw_cif_files)
@@ -667,26 +678,28 @@ if __name__ == '__main__':
     # plot_rmsds_and_stdev(rsmds_stats_pdf)
     # pass
 
-    # # MAIN STATS FUNCTION
-    # # GENERATE STATS PDF AND WRITE TO CSV: (Takes 18 mins to complete 2713 PDB-chains.)
-    # rp_pidc_lst_f_ = os.path.join('..', 'data', 'NMR', 'multimodel_lists',
-    #                                    'multimod_2713_hetallchains_hom1chain.lst')
-    # rp_fasta_f_ = os.path.join(_rp_mmseqs_fasta_dir(sub_dir='multimod_2713_hetallchains_hom1chain'),
-    #                            'multimod_2713_hetallchains_hom1chain.fasta')
-    # pid_stats_pdf, pidc_stats_pdf = generate_stats(sub_dir='multimod_2713_hetallchains_hom1chain',
-    #                            rp_pidc_lst_f=rp_pidc_lst_f_,
-    #                            rp_fasta_f= rp_fasta_f_,
-    #                            run_and_write_mmseqs2=False,
-    #                            run_and_write_rmsd=False, run_and_write_tms=False, use_mmcif=True)
-    #
-    # rp_stats_dst_dir = os.path.join(_rp_nmr_dir(), 'stats', 'multimod_2713_hetallchains_hom1chain')
-    # os.makedirs(rp_stats_dst_dir, exist_ok=True)
-    #
-    # rp_pid_stats_dst_f = os.path.join(rp_stats_dst_dir, 'mm_2713_pid.csv')
-    # pid_stats_pdf.to_csv(rp_pid_stats_dst_f, index=False)
-    #
-    # rp_pidc_stats_dst_f = os.path.join(rp_stats_dst_dir, 'mm_2713_pidc.csv')
-    # pidc_stats_pdf.to_csv(rp_pidc_stats_dst_f, index=False)
 
-    min_rmsd, max_rmsd, mean_rmsd, stdev_rmsd = _compute_rmsd(run_and_write_rmsd=True, pidc='7CLV_A',
-                                                              sub_dir='multimod_2713_hetallchains_hom1chain')
+    # I have no clue why '7CLV_A', '7CLV_B', '8J4I_A', '6UJV_A' gave 'null' rmsd stats values from generate_stats() function
+    # output to mm_2713_pidc.csv, because they all return values from the _compute_rmsd() function below:
+    # min_rmsd, max_rmsd, mean_rmsd, stdev_rmsd = _compute_rmsd(run_and_write_rmsd=True, pidc='6UJV_A',
+    #                                                           sub_dir='multimod_2713_hetallchains_hom1chain')
+    # pass
+
+    # # MAIN STATS FUNCTION  #########################################################################################
+    # # GENERATE STATS PDF AND WRITE TO CSV: (Takes 18 mins to complete 2713 PDB-chains.)
+    mm_2713 = 'multimod_2713_hetallchains_hom1chain'
+    rp_pidc_lst_f_ = os.path.join('..', 'data', 'NMR', 'multimodel_lists', f'{mm_2713}.lst')
+    rp_fasta_f_ = os.path.join(_rp_mmseqs_fasta_dir(sub_dir=mm_2713), f'{mm_2713}.fasta')
+    pid_stats_pdf, pidc_stats_pdf = generate_stats(sub_dir=mm_2713, rp_pidc_lst_f=rp_pidc_lst_f_,
+                                                   rp_fasta_f= rp_fasta_f_, run_and_write_mmseqs2=False,
+                                                   run_and_write_rmsd=False, run_and_write_tms=False, use_mmcif=True)
+
+    rp_stats_dst_dir = os.path.join(_rp_nmr_dir(), 'stats', 'multimod_2713_hetallchains_hom1chain')
+    os.makedirs(rp_stats_dst_dir, exist_ok=True)
+
+    rp_pid_stats_dst_f = os.path.join(rp_stats_dst_dir, 'mm_2713_pid.csv')
+    pid_stats_pdf.to_csv(rp_pid_stats_dst_f, index=False)
+
+    rp_pidc_stats_dst_f = os.path.join(rp_stats_dst_dir, 'mm_2713_pidc.csv')
+    pidc_stats_pdf.to_csv(rp_pidc_stats_dst_f, index=False)
+    #################################################################################################################
