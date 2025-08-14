@@ -25,6 +25,7 @@
        - Both of following must be TRUE:
            - mean TM-score < 0.2
            - stdev TM-score < 0.1 
+
 ---
 
 ### DATASET 0.9:
@@ -33,6 +34,7 @@
 | INCLUDE ALL HETEROMERIC PDB-CHAINS                                 | 0                  |
 | INCLUDE ONLY ONE (RANDOMLY-SELECTED) CHAIN FROM THE HOMOMERIC PDBS | 812                |
 | INCLUDES ONLY MULTIMODEL PDB-CHAINS                                | 468                |
+
 ---
 
 ### DATASET 1.0:
@@ -47,6 +49,7 @@ SAME AS DATASET 0.9, **PLUS**:
 NOTE: I have not yet (looked for and) removed "IDENTICAL PDB-CHAINS" from v0.9. <br>
 Furthermore, the presence of PDB records with identical sequence-structures but under different PDB identifiers 
 cannot not be completely ruled out from this dataset.
+
 ---
 
 ### DATASET 1.1:
@@ -62,6 +65,7 @@ NOTE: The method/algorithm for quantifying "IDENTICAL STRUCTURES" when dealing w
 not been decided on yet. I may try something more sophisticated than simply mean coordinates though.
 <br>(E.g. Gaussian distributions of model coordinates and/or contact maps, followed by calculating similarity via 
 KL divergence. I will also look at what's commonly done in Molecular Dynamics field, and/or via MD libraries/tools like MDTraj, MDAnalysis, etc.)
+
 ---
 
 ### DATASET 1.2:
