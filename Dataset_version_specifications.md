@@ -44,8 +44,7 @@ SAME AS DATASET 0.9, **PLUS**:
 | EXCLUDE PDB-CHAINS WITH < 3 ALPHA-CARBONS                                                                      | 11                  |
 | EXCLUDE PDB-CHAINS WITH "EXTREME RMSD" **AND** "EXTREME TM-SCORE"                                              | 0                   |
 
-
-**NOTE**: I have not yet (looked for and) removed "IDENTICAL PDB-CHAINS" from 0.1. <br>
+NOTE: I have not yet (looked for and) removed "IDENTICAL PDB-CHAINS" from 0.1. <br>
 Furthermore, the presence of PDB records with identical sequence-structures but under different PDB identifiers 
 cannot not be completely ruled out from this dataset.
 ---
