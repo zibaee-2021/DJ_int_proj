@@ -254,7 +254,7 @@ def _calc_rmsds_and_stats():
         rmsd_per_model['pidc'].append(pidc)
         rmsds = []
         mean_pidc_pdf = pd.read_csv(rp_mean_coords_pidc_csv)
-        mean_coords_pidc = mean_pidc_pdf['mean_x', 'mean_y', 'mean_z'].values
+        mean_coords_pidc = mean_pidc_pdf[['mean_x', 'mean_y', 'mean_z']].values
         rp_parsed_cif_ssv = os.path.join(_rp_parsed_cifs_dir('multimod_2713_hetallchains_hom1chain'),
                                          f'{pidc}.ssv')
         pidc_pdf = pd.read_csv(os.path.join(rp_parsed_cif_ssv), sep=' ')
