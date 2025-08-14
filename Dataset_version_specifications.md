@@ -44,7 +44,7 @@ SAME AS DATASET 0.9, **PLUS**:
 | EXCLUDE PDB-CHAINS WITH < 3 ALPHA-CARBONS                                                                      | 11                  |
 | EXCLUDE PDB-CHAINS WITH "EXTREME RMSD" **AND** "EXTREME TM-SCORE"                                              | 0                   |
 
-NOTE: I have not yet (looked for and) removed "IDENTICAL PDB-CHAINS" from 0.1. <br>
+NOTE: I have not yet (looked for and) removed "IDENTICAL PDB-CHAINS" from v0.9. <br>
 Furthermore, the presence of PDB records with identical sequence-structures but under different PDB identifiers 
 cannot not be completely ruled out from this dataset.
 ---
@@ -52,12 +52,13 @@ cannot not be completely ruled out from this dataset.
 ### DATASET 1.1:
 SAME AS DATASET 1.0, **PLUS**:
 
-| SELECTION CRITERIA                                                                                                  | PDB-CHAINS DROPPED |
-|---------------------------------------------------------------------------------------------------------------------|--------------------|
-| ANY FURTHER MODIFICATIONS/ADDITIONS REQUESTED BY DAVID                                                              | TBC                |
-| EXCLUDE "IDENTICAL PDB-CHAINS"                                                                                      | TBC                |
-| EXCLUDE PDB-CHAINS WITH "EXTREME RMSD" **AND** "EXTREME TM-SCORE"<br> WITH MORE STRINGENT THRESHOLDS AS USED IN 1.0 | TBC                | 
-**NOTE**: The method/algorithm for quantifying "IDENTICAL STRUCTURES" when dealing with multi-model PDB-chains has 
+| SELECTION CRITERIA                                                                                                          | PDB-CHAINS DROPPED |
+|-----------------------------------------------------------------------------------------------------------------------------|--------------------|
+| ANY FURTHER MODIFICATIONS/ADDITIONS REQUESTED BY DAVID                                                                      | TBC                |
+| EXCLUDE "IDENTICAL PDB-CHAINS"                                                                                              | TBC                |
+| EXCLUDE PDB-CHAINS WITH "EXTREME RMSD" **AND** "EXTREME TM-SCORE"<br> WITH MORE STRINGENT THRESHOLDS THAN THAT USED IN v1.0 | TBC                | 
+
+NOTE: The method/algorithm for quantifying "IDENTICAL STRUCTURES" when dealing with multi-model PDB-chains has 
 not been decided on yet. I may try something more sophisticated than simply mean coordinates though.
 <br>(E.g. Gaussian distributions of model coordinates and/or contact maps, followed by calculating similarity via 
 KL divergence. I will also look at what's commonly done in Molecular Dynamics field, and/or via MD libraries/tools like MDTraj, MDAnalysis, etc.)
@@ -70,4 +71,5 @@ SAME AS DATASET 1.1, **PLUS**:
 |-------------------------------------------------------------------------------------------------------------------------|--------------------|
 | ANY FURTHER MODIFICATIONS/ADDITIONS REQUESTED BY DAVID                                                                  | TBC                |
 | INCLUDE SUBSET OF SINGLE-MODEL PDB-CHAINS WHICH ARE "HOMOLOGOUS" TO OTHER PDB-CHAINS, BUT HAVE NON-IDENTICAL STRUCTURES | TBC                |
-**NOTE**: When comparing structrues of single-model to multi-model PDB-chains, I will use mean coordinates of the multi-model PDB-chains.
+
+NOTE: When comparing structrues of single-model to multi-model PDB-chains, I will use mean coordinates of the multi-model PDB-chains.
