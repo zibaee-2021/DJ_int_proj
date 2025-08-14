@@ -5,7 +5,7 @@
     - "IDENTICAL SEQUENCES":
       - Both of following must be TRUE:
         - 100 % `pident` 
-        - 100 % `qcov` **or** 100 % `tcov`
+        - **Either** 100 % `qcov` **or** 100 % `tcov`
     - "IDENTICAL STRUCTURES"
       - Either of following must be TRUE:
         - mean RMSD < 1.0 
@@ -17,11 +17,11 @@
             - alnlen >= 20 
             - qcov >= 0.9
             - tcov >= 0.9
-    - EXTREME RMSD:
+    - "EXTREME RMSD":
        - Both of following must be TRUE:
            - mean RMSD > 10
            - stdev RMSD < 0.01
-    - EXTREME TM-SCORE:
+    - "EXTREME TM-SCORE":
        - Both of following must be TRUE:
            - mean TM-score < 0.2
            - stdev TM-score < 0.1 
@@ -36,13 +36,15 @@
 ---
 
 ### DATASET 1.0:
-SAME AS DATASET 0.1, **PLUS**: 
+SAME AS DATASET 0.9, **PLUS**: 
 
-| SELECTION CRITERIA                                                | PDB-CHAINS DROPPED |
-|-------------------------------------------------------------------|--------------------|
-| ANY FURTHER MODIFICATIONS/ADDITIONS REQUESTED BY DAVID            | TBC                |
-| EXCLUDE PDB-CHAINS WITH < 3 ALPHA-CARBONS                         | 11                 |
-| EXCLUDE PDB-CHAINS WITH "EXTREME RMSD" **AND** "EXTREME TM-SCORE" | 0                  |
+| SELECTION CRITERIA                                                                                             | PDB-CHAINS DROPPED  |
+|----------------------------------------------------------------------------------------------------------------|---------------------|
+| ANY FURTHER MODIFICATIONS/ADDITIONS REQUESTED BY DAVID                                                         | TBC                 |
+| EXCLUDE PDB-CHAINS WITH < 3 ALPHA-CARBONS                                                                      | 11                  |
+| EXCLUDE PDB-CHAINS WITH "EXTREME RMSD" **AND** "EXTREME TM-SCORE"                                              | 0                   |
+
+
 **NOTE**: I have not yet looked for, and not yet removed "IDENTICAL PDB-CHAINS" from 0.1. <br>
 Furthermore, the presence of PDB records with identical sequence-structures but under different PDB identifiers 
 cannot not be completely ruled out from this dataset.
