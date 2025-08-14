@@ -38,11 +38,11 @@
 ### DATASET 1.0:
 SAME AS DATASET 0.9, **PLUS**: 
 
-| SELECTION CRITERIA                                                                                             | PDB-CHAINS DROPPED  |
-|----------------------------------------------------------------------------------------------------------------|---------------------|
-| ANY FURTHER MODIFICATIONS/ADDITIONS REQUESTED BY DAVID                                                         | TBC                 |
-| EXCLUDE PDB-CHAINS WITH < 3 ALPHA-CARBONS                                                                      | 11                  |
-| EXCLUDE PDB-CHAINS WITH "EXTREME RMSD" **AND** "EXTREME TM-SCORE"                                              | 0                   |
+| SELECTION CRITERIA                                                | PDB-CHAINS DROPPED  |
+|-------------------------------------------------------------------|---------------------|
+| ANY FURTHER MODIFICATIONS/ADDITIONS REQUESTED BY DJ               | TBC                 |
+| EXCLUDE PDB-CHAINS WITH < 3 ALPHA-CARBONS                         | 11                  |
+| EXCLUDE PDB-CHAINS WITH "EXTREME RMSD" **AND** "EXTREME TM-SCORE" | 0                   |
 
 NOTE: I have not yet (looked for and) removed "IDENTICAL PDB-CHAINS" from v0.9. <br>
 Furthermore, the presence of PDB records with identical sequence-structures but under different PDB identifiers 
@@ -54,7 +54,7 @@ SAME AS DATASET 1.0, **PLUS**:
 
 | SELECTION CRITERIA                                                                                                          | PDB-CHAINS DROPPED |
 |-----------------------------------------------------------------------------------------------------------------------------|--------------------|
-| ANY FURTHER MODIFICATIONS/ADDITIONS REQUESTED BY DAVID                                                                      | TBC                |
+| ANY FURTHER MODIFICATIONS/ADDITIONS REQUESTED BY DJ                                                                         | TBC                |
 | EXCLUDE "IDENTICAL PDB-CHAINS"                                                                                              | TBC                |
 | EXCLUDE PDB-CHAINS WITH "EXTREME RMSD" **AND** "EXTREME TM-SCORE"<br> WITH MORE STRINGENT THRESHOLDS THAN THAT USED IN v1.0 | TBC                | 
 
@@ -69,7 +69,7 @@ SAME AS DATASET 1.1, **PLUS**:
 
 | SELECTION CRITERIA                                                                                                      | PDB-CHAINS DROPPED |
 |-------------------------------------------------------------------------------------------------------------------------|--------------------|
-| ANY FURTHER MODIFICATIONS/ADDITIONS REQUESTED BY DAVID                                                                  | TBC                |
+| ANY FURTHER MODIFICATIONS/ADDITIONS REQUESTED BY DJ                                                                     | TBC                |
 | INCLUDE SUBSET OF SINGLE-MODEL PDB-CHAINS WHICH ARE "HOMOLOGOUS" TO OTHER PDB-CHAINS, BUT HAVE NON-IDENTICAL STRUCTURES | TBC                |
 
 NOTE: When comparing structrues of single-model to multi-model PDB-chains, I will use mean coordinates of the multi-model PDB-chains.
