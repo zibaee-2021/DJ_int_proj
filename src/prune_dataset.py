@@ -40,36 +40,38 @@ if __name__ == "__main__":
 
     # - INCLUDES ONLY PDB-CHAINS WITH 3 OR MORE RESIDUES:
 
+    # SMALL PDB-CHAINS LISTS:
     _1_AA_pidc = ['1GAC_C', '1GAC_D', '2AIZ_B']
     _2_AA_pidc = ['1GAC_A', '1GAC_B', '1WCO_A', '2K1Q_B', '2M9P_B', '2M9Q_B', '2MX6_B', '3CYS_B']
     _3_AA_pidc = ['1CFA_B', '2KID_B', '2RUI_B']
 
     with open(os.path.join('..','data','NMR','multimodel_lists', 'multimod_2713_hetallchains_hom1chain.lst'), 'r') as f:
         pidc_2713 = sorted(f.read().splitlines())
-    rp_datasets_lists_dir = os.path.join('..','data','NMR', 'datasets', 'lists_specs')
-    os.makedirs(rp_datasets_lists_dir, exist_ok=True)
-    rp_dataset_1p0_lst = os.path.join(rp_datasets_lists_dir, '2702_pidc.lst')
 
+    # FILTER OUT SMALL AND WRITE TO .LST FILE:
     pidc_2702 = [pidc for pidc in pidc_2713 if pidc not in _1_AA_pidc + _2_AA_pidc]
-    with open(rp_dataset_1p0_lst, 'w') as f:
+    rp_ds_lists_dir = os.path.join('..', 'data', 'NMR', 'datasets', 'PDBchain_lists')
+    os.makedirs(rp_ds_lists_dir, exist_ok=True)
+    rp_ds_vblabla_lst = os.path.join(rp_ds_lists_dir, '2702_pidc.lst')
+    with open(rp_ds_vblabla_lst, 'w') as f:
         f.write('\n'.join(pidc_2702))
 
  # - EXCLUDES ANY THAT HAVE "EXTREME RMSD" AND "EXTREME TM-SCORE":
 
     rp_mm_2713_pidc = os.path.join('..', 'data', 'NMR', 'stats', 'multimod_2713_hetallchains_hom1chain', 'mm_2713_pidc.csv')
-    mm_2713_pdf = pd.read_csv(rp_mm_2713_pidc)
+    ds_0p9_pdf = pd.read_csv(rp_mm_2713_pidc)
 
     # 1. Apply size filter:
-    mask_pidc = mm_2713_pdf['CA_count'] < 3
+    mask_pidc = ds_0p9_pdf['CA_count'] < 3
     # print(mask_pidc.sum())
     # print(mm_2713_pdf[mask_pidc])
 
     # 2. Apply structural filters:
     mask_structural = (
-        (mm_2713_pdf['meanRMSD'] > 10) &
-        (mm_2713_pdf['stdevRMSD'] < 0.01) &
-        (mm_2713_pdf['meanTMS'] < 0.2) &
-        (mm_2713_pdf['stdevTMS'] < 0.1)
+            (ds_0p9_pdf['meanRMSD'] > 10) &
+            (ds_0p9_pdf['stdevRMSD'] < 0.01) &
+            (ds_0p9_pdf['meanTMS'] < 0.2) &
+            (ds_0p9_pdf['stdevTMS'] < 0.1)
     )
     # print(mask_structural.sum())
     # print(mm_2713_pdf[mask_structural])
@@ -79,9 +81,9 @@ if __name__ == "__main__":
     # print(mm_2713_pdf['stdevRMSD'].describe())
 
     # 3. Combine filters:
-    dataset_1p0 = mm_2713_pdf.loc[~mask_pidc]
-    dataset_1p0 = dataset_1p0.loc[~mask_structural]
-    print(dataset_1p0.shape)
+    ds_1p0_pdf = ds_0p9_pdf.loc[~mask_pidc]
+    ds_1p0_pdf = ds_1p0_pdf.loc[~mask_structural]
+    print(ds_1p0_pdf.shape)
     rp_datasets_dir = os.path.join('..', 'data', 'NMR', 'datasets')
-    dataset_1p0.to_csv(os.path.join(rp_datasets_dir, 'NMR_1p0.csv'))
+    ds_0p9_pdf.to_csv(os.path.join(rp_datasets_dir, 'NMR_0p9.csv'), index=False)
 
