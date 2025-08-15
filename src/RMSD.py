@@ -239,9 +239,6 @@ def calc_rmsds_of_models(rp_parsed_cifs_ssv: str, rp_mean_coords_csv: str) -> tu
 
 # COPIED OVER FROM pdb_model_stats.py and ammended to match tm_aligner output format:
 def _calc_rmsds_and_stats():
-    """
-    TODO Note that rmsds for 6UJV_A, 7CLV_A, 7CLV_B & 8J4I_A are empty.. need to have a closer look at this to see why...
-    """
     start = time()
     rp_mean_coords_pidc_dir = os.path.join(_rp_rmsd_dir('multimod_2713_hetallchains_hom1chain'), 'mean_coords')
     rp_mean_coords_pidc_csvs = sorted(glob.glob(os.path.join(rp_mean_coords_pidc_dir, '*.csv')))
