@@ -1,5 +1,7 @@
 ### DEFINITIONS:
- 
+
+---
+
 - "IDENTICAL PDB-CHAINS":
   - Both of following must be TRUE:
     - "IDENTICAL SEQUENCES":
@@ -10,25 +12,28 @@
       - Either of following must be TRUE:
         - mean RMSD < 1.0 
         - mean TM-score == 1.0 
-    - "HOMOLOGOUS":
-        - All of following must be TRUE:
-            - evalue < 1e-3 
-            - pident >= 30.0 
-            - alnlen >= 20 
-            - qcov >= 0.9
-            - tcov >= 0.9
-    - "EXTREME RMSD":
-       - Both of following must be TRUE:
-           - mean RMSD > 10
-           - stdev RMSD < 0.01
-    - "EXTREME TM-SCORE":
-       - Both of following must be TRUE:
-           - mean TM-score < 0.2
-           - stdev TM-score < 0.1 
+- "HOMOLOGOUS":
+    - All of following must be TRUE:
+        - evalue < 1e-3 
+        - pident >= 30.0 
+        - alnlen >= 20 
+        - qcov >= 0.9
+        - tcov >= 0.9
+- "EXTREME RMSD":
+   - Both of following must be TRUE:
+       - mean RMSD > 10
+       - stdev RMSD < 0.01
+- "EXTREME TM-SCORE":
+   - Both of following must be TRUE:
+       - mean TM-score < 0.2
+       - stdev TM-score < 0.1 
 
 ---
 
-### DATASET 0.9:
+
+## DATASETS VERSIONS:
+
+### v0.9:
 | SELECTION CRITERIA                                                 | PDB-CHAINS DROPPED |
 |--------------------------------------------------------------------|--------------------|
 | INCLUDE ALL HETEROMERIC PDB-CHAINS                                 | 0                  |
@@ -38,8 +43,8 @@ v0.9 has 2713 PDB-chains
 
 ---
 
-### DATASET 1.0:
-SAME AS DATASET 0.9, **PLUS**: 
+### v1.0:
+SAME AS v0.9, **PLUS**: 
 
 | SELECTION CRITERIA                                                | PDB-CHAINS DROPPED  |
 |-------------------------------------------------------------------|---------------------|
@@ -55,8 +60,8 @@ cannot not be completely ruled out from this dataset.
 
 ---
 
-### DATASET 1.1:
-SAME AS DATASET 1.0, **PLUS**:
+### v1.1:
+SAME AS v1.0, **PLUS**:
 
 | SELECTION CRITERIA                                                                                                          | PDB-CHAINS DROPPED |
 |-----------------------------------------------------------------------------------------------------------------------------|--------------------|
@@ -73,8 +78,8 @@ KL divergence. I will also look at what's commonly done in Molecular Dynamics fi
 
 ---
 
-### DATASET 1.2:
-SAME AS DATASET 1.1, **PLUS**:
+### v1.2:
+SAME AS v1.1, **PLUS**:
 
 | SELECTION CRITERIA                                                                                                      | PDB-CHAINS DROPPED |
 |-------------------------------------------------------------------------------------------------------------------------|--------------------|
