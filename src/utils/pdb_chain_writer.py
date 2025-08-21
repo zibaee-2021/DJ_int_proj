@@ -240,7 +240,7 @@ def parse_ca_atom_and_write_pdb_per_chain() -> None:
     # BUILD DICT OF PIDS MAPPED TO LIST OF WANTED CHAINS. E.G. `['1A3C_A','1A3C_B',...]` TO `['1A3C': ['A','B'],...]`
     pidchains_dict = __pdbid_dict_chain(mm_2713_pidchains)
     length2 = len(pidchains_dict)
-    assert length == length2, '_pdbid_dict_chain() not generating same number of unqiue pids as expected... ??'
+    assert length == length2, '_pdbid_dict_chain() not generating same number of unique pids as expected... ??'
 
     rp_pdbchains_dst_dir = os.path.join(_rp_nmr_dir(), 'pdb_chains', 'multimod_2713_hetallchains_hom1chain')
     os.makedirs(rp_pdbchains_dst_dir, exist_ok=True)
