@@ -1,5 +1,5 @@
 import os, glob
-from asyncio import PidfdChildWatcher
+from collections import OrderedDict
 from time import time
 import statistics
 import json
@@ -13,6 +13,7 @@ from Bio.SVDSuperimposer import SVDSuperimposer
 from Bio.Data.IUPACData import protein_letters_3to1
 from scipy.spatial.distance import squareform
 from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
+
 
 """(CGT5)
 
@@ -34,7 +35,7 @@ AA = ["ALA", "CYS", "ASP", "GLU", "PHE", "GLY", "HIS", "ILE", "LYS", "LEU",
 def three_to_one(resname):
     return protein_letters_3to1[resname.capitalize()]
 
-# BUILDING RELATIVE PATHS:
+# RELATIVE PATHS:
 def _rp_nmr_dir():
     return os.path.join('..', 'data', 'NMR')
 
@@ -50,7 +51,6 @@ def rp_mmseqs_dir(het_hom) -> str:
 def rp_mmseqs_results_dir(het_hom) -> str:
     return os.path.join(rp_mmseqs_dir(het_hom), 'results')
 
-
 def align_alpha_carbons(model1, model2):
     atom_types = ['CA']
     model1_seq = "".join([three_to_one(r.resname) for r in model1.get_residues() if r.resname in AA])
@@ -64,7 +64,6 @@ def align_alpha_carbons(model1, model2):
     si.set(np_model1_coords, np_model2_coords)
     si.run()
     return si
-
 
 def compute_rmsd_matrix(pdbid_chain: str, het_hom: str):
     parser = PDB.MMCIFParser(QUIET=True)
@@ -86,20 +85,32 @@ def compute_rmsd_matrix(pdbid_chain: str, het_hom: str):
     print(f'RMSD matrix:\n{rmsd_matrix}')
     return rmsd_matrix, n_models
 
+def dendrogrm(rmsd_mat, n_models: int, pidc: str):
+    """
+    'squareform()': converts a square matrix into a condensed 1‑D vector of length `N(N−1)/2` containing
+    only the upper‑triangular entries (i.e., the unique pairwise distances).
+    Hierarchical clustering routines in SciPy accept this compact format for efficiency.
+    Note: `rmsd_matrix` must be symmetric with a zero diagonal. If you ever “skip” a pair and leave a zero, you’ll
+    corrupt the distances — so, fill or drop that pair first.
 
-def build_dendrogram(rmsd_mat, n_models):
+    `linkage()`: builds a hierarchical clustering tree (a linkage/dendrogram) from the distances.
+    `method='ward'` works on (squared) Euclidean point distances to minimize within‑cluster variance; the linkage
+    heights are not plain distances in Å. So, if you want a “cut at X Å” interpretation, use 'average'
+    (or 'complete'/'single'), not 'ward'.
+    """
     condensed = squareform(rmsd_mat)
     linkage_matrix = linkage(condensed, method='ward')
     plt.figure(figsize=(10, 5))
-    dendrogram(linkage_matrix, labels=[f'Model {i}' for i in range(n_models)])
-    plt.title('Hierarchical clustering of NMR models (RMSD) for {pdb}')
+    # Note I changed range from 0-index to +1. But this may still fall foul of cases where the model numbering does
+    # not start at 1 and/or does not increase by 1 for a given chain.
+    dendrogram(linkage_matrix, labels=[f'{i}' for i in range(1, 1+n_models)])
+    plt.title(f'Hierarchical clustering of NMR models (RMSD) for {pidc}')
     plt.ylabel('Distance (Å)')
     plt.tight_layout()
     plt.show()
     return linkage_matrix
 
-
-def build_heatmap(rmsd_matrix, linkage_matrix):
+def heatmap(rmsd_matrix, linkage_matrix):
     sns.clustermap(
         rmsd_matrix,
         row_linkage=linkage_matrix,
@@ -112,21 +123,37 @@ def build_heatmap(rmsd_matrix, linkage_matrix):
     plt.title("RMSD heatmap of NMR models")
     plt.show()
 
-
-def build_contour_map(rmsd_matrix):
+def contour_map(rmsd_matrix):
     plt.figure(figsize=(8, 6))
-    c = plt.contourf(rmsd_matrix, levels=15, cmap="viridis")
-    plt.colorbar(c, label="RMSD (Å)")
-    plt.xlabel("Model index")
-    plt.ylabel("Model index")
-    plt.title("RMSD Contour Plot")
+    c = plt.contourf(rmsd_matrix, levels=15, cmap='viridis')
+    plt.colorbar(c, label='RMSD (Å)')
+    plt.xlabel('Model index')
+    plt.ylabel('Model index')
+    plt.title('RMSD Contour Plot')
     plt.show()
-
 
 def cluster_models(rmsd_matrix, threshold=2.0):
     """
     Cluster models so any pair differing by more than threshold Å is in different clusters.
     Returns: dict mapping cluster IDs to list of model indices
+
+    'squareform()':
+                    converts a square matrix into a condensed 1‑D vector of length `N(N−1)/2` containing
+    only the upper‑triangular entries (i.e., the unique pairwise distances).
+    Hierarchical clustering routines in SciPy accept this compact format for efficiency.
+    Note: `rmsd_matrix` must be symmetric with a zero diagonal. If you ever “skip” a pair and leave a zero, you’ll
+    corrupt the distances — so, fill or drop that pair first.
+
+    `linkage()`:
+                    builds a hierarchical clustering tree (a linkage/dendrogram) from the distances.
+    `method='ward'` works on (squared) Euclidean point distances to minimize within‑cluster variance; the linkage
+    heights are not plain distances in Å. So, if you want a “cut at X Å” interpretation, use 'average'
+    (or 'complete'/'single'), not 'ward'.
+
+    `fcluster()`:
+                    converts the hierarchical tree (from `linkage()`) into flat cluster labels by cutting the tree
+    at height t. `criterion='distance'` instructs to “cut at linkage height == threshold”.
+    With average linkage, that linkage height is in Å, so “threshold” has the physical meaning you expect.
     """
     condensed = squareform(rmsd_matrix)  # Convert to condensed distance
     Z = linkage(condensed, method='average')  # Hierarchical clustering
@@ -134,9 +161,9 @@ def cluster_models(rmsd_matrix, threshold=2.0):
 
     clusters = {}
     for i, label in enumerate(cluster_labels):
-        clusters.setdefault(label, []).append(i)
+        clusters.setdefault(label, []).append(i + 1)
+    clusters = OrderedDict(sorted(clusters.items(), key=lambda kv: kv[0]))
     return clusters
-
 
 def clusters_to_json_dict(clusters):
     """
@@ -148,14 +175,12 @@ def clusters_to_json_dict(clusters):
         json_dict[ensemble_key] = [f'model{m}' for m in model_indices]
     return json_dict
 
-
 def write_clusters_json(json_dict, output_path):
     """
     Write the JSON dict to file.
     """
     with open(output_path, 'w') as f:
         json.dump(json_dict, f, indent=4)
-
 
 def cluster_save_to_json(rmsd_mat, pdbid_chain):
     clusters = cluster_models(rmsd_mat, threshold=2.0)
@@ -165,7 +190,6 @@ def cluster_save_to_json(rmsd_mat, pdbid_chain):
     output_file = f'{mm_ensbls}/{pdbid_chain}_ens.json'
     write_clusters_json(json_dict, output_file)
     print(f'Saved ensembles to {output_file}')
-
 
 def calculate_rmsd(coords1, coords2) -> float:
     """
@@ -189,10 +213,7 @@ def calculate_rmsd(coords1, coords2) -> float:
     rmsd = si.get_rms()
     return rmsd
 
-
 def calc_rmsds_pidchain_pairs(pidchain1_name: str, pidchain2_name: str, rp_rmsd_mean_coords_dir: str):
-    # rmsd_mat, n_models = RMSD.compute_rmsd_matrix(pdbid_chain, het_hom)
-    # clusters = RMSD.cluster_models(rmsd_mat, threshold=2.0)
     print(f'pidChain1={pidchain1_name}, pidChain2={pidchain2_name}')
     rp_pidchain1_ssv = os.path.join(rp_rmsd_mean_coords_dir, f'{pidchain1_name}.csv')
     pdbid_chain1_pdf = pd.read_csv(rp_pidchain1_ssv)
@@ -205,9 +226,7 @@ def calc_rmsds_pidchain_pairs(pidchain1_name: str, pidchain2_name: str, rp_rmsd_
     rmsd_result = calculate_rmsd(coords1, coords2)
     return rmsd_result
 
-
-
-def calc_rmsds_of_models(rp_parsed_cifs_ssv: str, rp_mean_coords_csv: str) -> tuple:
+def calc_rmsds_of_models_vs_mean(rp_parsed_cifs_ssv: str, rp_mean_coords_csv: str) -> tuple:
     """
     Calculate RMSD of each model the given PDBchain, vs the mean coordinates of this PDBchain.
     """
@@ -300,7 +319,6 @@ def _calc_rmsds_and_stats():
 
     print(f'Completed in {round((time() - start))} seconds.')  # 12 seconds
 
-
 # Note: I don't superimpose coords of different models onto the randomly chosen ref model prior to computing the mean
 # & stddev. It might be beneficial to do so, but for now I've opted not to.
 def mean_stdev_struct(rp_pidc_ssv: str, rp_dst_dir: str):
@@ -359,14 +377,50 @@ def mean_stdev_struct(rp_pidc_ssv: str, rp_dst_dir: str):
         mean_df.to_csv(rp_rmsd_csv, index=False)
     return mean_df
 
+
+def calc_rmsds_matrix_of_models():
+    """
+    Calculate RMSD of each model against every other model for a given PDB-chain.
+    """
+    rp_pidc_dir = _rp_parsed_cifs_dir('multimod_2713_hetallchains_hom1chain')
+    rp_pidc_ssvs = sorted(glob.glob(os.path.join(rp_pidc_dir, '*.ssv')))
+    rmsd_matrix = None
+
+    for rp_pidc_ssv in rp_pidc_ssvs:
+        pidc = os.path.basename(rp_pidc_ssv).removesuffix('.ssv')
+        print(pidc)
+        pidc_pdf = pd.read_csv(rp_pidc_ssv, sep=' ')
+        num_of_models = pidc_pdf['A_pdbx_PDB_model_num'].nunique()
+        rmsd_matrix = np.zeros((num_of_models, num_of_models))
+
+        for i, (model_num1, model1) in enumerate(pidc_pdf.groupby('A_pdbx_PDB_model_num')):
+            for j, (model_num2, model2) in enumerate(pidc_pdf.groupby('A_pdbx_PDB_model_num')):
+                coords1 = model1[['A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']].values
+                coords2 = model2[['A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']].values
+                if pidc == '1MSH_A':
+                        if model_num1 == 30 or model_num2 == 30:
+                            continue
+                if pidc == '2JSC_A':
+                    if model_num1 == 1 or model_num2 == 1:
+                        continue
+                rmsd = calculate_rmsd(coords1, coords2)
+                rmsd_matrix[i, j] = round(rmsd, 3)
+
+        rp_dst_dir = os.path.join(_rp_rmsd_dir('multimod_2713_hetallchains_hom1chain'), 'rmsd_matrices')
+        os.makedirs(rp_dst_dir, exist_ok=True)
+        rp_rmsd_mat_pidc = os.path.join(rp_dst_dir, pidc)
+        # rmsd_matrix_pdf = pd.DataFrame(rmsd_matrix)
+        # rmsd_matrix_pdf.to_csv(f'{rp_rmsd_mat_pidc}.csv', index=False, header=False)
+        # np.savez(f'{rp_rmsd_mat_pidc}.npy', mat=rmsd_matrix)  # NumPy binary file
+        np.savez(f'{rp_rmsd_mat_pidc}.npz', mat=rmsd_matrix)  # NumPy compressed file
+    return rmsd_matrix
+
+
 if __name__ == '__main__':
-
-    _calc_rmsds_and_stats()
-
-
+    calc_rmsds_matrix_of_models()
+    # _calc_rmsds_and_stats()
     # rp_pidc_ssvs = sorted(glob.glob(os.path.join(_rp_parsed_cifs_dir('multimod_2713_hetallchains_hom1chain'), '*.ssv')))
     # rp_dst_dir = os.path.join(_rp_rmsd_dir('multimod_2713_hetallchains_hom1chain'))
-
 
     # for rp_pidc_ssv in rp_pidc_ssvs:
     #     mean_stdev_struct(rp_pidc_ssv, rp_dst_dir)
@@ -382,7 +436,7 @@ if __name__ == '__main__':
     #                                                     'mean_coords', '*.csv')))
     #
     # for rp_parsed_cifs_ssv_, rp_mean_coords_csv_ in zip(rp_parsed_cifs_ssvs, rp_mean_coords_csvs):
-    #     rmsds_, model_nums_, pidch_list4table_ = calc_rmsds_of_models(rp_parsed_cifs_ssv=rp_parsed_cifs_ssv_,
+    #     rmsds_, model_nums_, pidch_list4table_ = calc_rmsds_of_models_vs_means(rp_parsed_cifs_ssv=rp_parsed_cifs_ssv_,
     #                                                                   rp_mean_coords_csv=rp_mean_coords_csv_)
 
 
