@@ -1,12 +1,7 @@
 import os, glob, math, json
-import orjson
 from collections import Counter
 import pandas as pd
 import numpy as np
-from scipy.spatial.distance import squareform
-from scipy.cluster.hierarchy import linkage, fcluster
-from sklearn.cluster import AgglomerativeClustering
-from sklearn.metrics import silhouette_score
 import matplotlib.pyplot as plt
 import seaborn as sns
 from Bio import SeqIO
