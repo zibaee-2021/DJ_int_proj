@@ -237,20 +237,20 @@ def dendrgm_heatmap_contourmap(rp_matrix: str):
     n_models = rmsd_mat.shape[0]
     linkage_mat = RMSD.dendrogrm(rmsd_mat, n_models, pidc)
     RMSD.heatmap(rmsd_mat, linkage_mat)
-    RMSD.contour_map(rmsd_mat)
+    # RMSD.contour_map(rmsd_mat)
 
 
 if __name__ == '__main__':
     rp_rmsd_mat_dir = os.path.join(_rp_rmsd_dir('multimod_2713_hetallchains_hom1chain'), 'rmsd_matrices')
     rp_rmsd_mats = sorted(glob.glob(os.path.join(rp_rmsd_mat_dir, '*.npz')))
     results, res = list(), dict()
-    for rp_rmsd_mat in rp_rmsd_mats[1:2]:
+    for rp_rmsd_mat in rp_rmsd_mats[:1]:
         pidc = os.path.basename(rp_rmsd_mat).removesuffix('.npz')
         print(pidc)
         loaded = np.load(rp_rmsd_mat)
         rmsd_mat = loaded['mat']
         dendrgm_heatmap_contourmap(rp_rmsd_mat)
-        threshold = 4.0
+        threshold = 6
         clusters_dict = RMSD.cluster_models(rmsd_mat, threshold)
         rp_rmsd_clusters_dir = os.path.join(rp_rmsd_mat_dir, f'clusters_{str(threshold).replace('.', 'p')}')
         os.makedirs(rp_rmsd_clusters_dir, exist_ok=True)
