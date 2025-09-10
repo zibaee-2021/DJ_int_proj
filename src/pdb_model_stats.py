@@ -115,7 +115,7 @@ def _compute_tms(run_and_write_tms: bool, pidc: str, sub_dir: str) -> tuple:
                 pidc == '2M9Q_B' or pidc == '2MX6_B' or pidc == '3CYS_B'):
             min_tms, max_tms, mean_tms, stdev_tms = np.nan, np.nan, np.nan, np.nan
         else:
-            rp_tmscores_dir = tm_aligner._rp_tmscores_dir(sub_dir)
+            rp_tmscores_dir = _rp_tmscores_dir(sub_dir)
             rp_tms_csv_f = os.path.join(rp_tmscores_dir, f'TMS_{pidc}.csv')
             pidc_tms_pdf = pd.read_csv(rp_tms_csv_f)
             min_tms = pidc_tms_pdf['min_TMS'].values[0]
