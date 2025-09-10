@@ -11,8 +11,10 @@ import RMSD
 def _rp_nmr_dir() -> str:
     return os.path.join('..', 'data', 'NMR')
 
-def _rp_rmsd_dir(sub_dir: str) -> str:
-    return os.path.join(_rp_nmr_dir(), 'RMSD', sub_dir)
+def _rp_matrices_dir(sub_dir: str, rmsd_or_tms: str) -> str:
+    rmsd_or_tms.lower()
+    dir_ = 'RMSD' if rmsd_or_tms == 'rmsd' else 'TMscores'
+    return os.path.join(_rp_nmr_dir(), dir_, sub_dir, f'{rmsd_or_tms}_matrices')
 
 def _rp_stats_dir(sub_dir: str) -> str:
     return os.path.join(_rp_nmr_dir(), 'stats', sub_dir)
@@ -225,34 +227,39 @@ def plot_rmsd_and_tms(pdf):
     plt.tight_layout()
     plt.show()
 
-def dendrgm_heatmap_contourmap(rp_matrix: str):
-    pidc = os.path.basename(rp_matrix).removesuffix('.npz')
-    loaded = np.load(rp_matrix)
-    rmsd_mat = loaded['mat']
-    n_models = rmsd_mat.shape[0]
-    linkage_mat = RMSD.dendrogrm(rmsd_mat, n_models, pidc)
-    RMSD.heatmap(rmsd_mat, linkage_mat)
-    # RMSD.contour_map(rmsd_mat)
+def dendrgm_heatmap_contourmap(dist_matrix, pidc: str, rmsd_or_tms: str):
+    n_models = dist_matrix.shape[0]
+    linkage_mat = RMSD.dendrogrm(dist_matrix, n_models, pidc, rmsd_or_tms)
+    RMSD.heatmap(dist_matrix, linkage_mat)
+    # RMSD.contour_map(dist_matrix)
 
 
 if __name__ == '__main__':
-    rp_rmsd_mat_dir = os.path.join(_rp_rmsd_dir('multimod_2713_hetallchains_hom1chain'), 'rmsd_matrices')
-    rp_rmsd_mats = sorted(glob.glob(os.path.join(rp_rmsd_mat_dir, '*.npz')))
+    rmsd_or_tms_ = 'tms'
+    # rmsd_or_tms_ = 'rmsd'
+    sub_dir_ = 'multimod_2713_hetallchains_hom1chain'
+    rp_matrices_dir = os.path.join(_rp_matrices_dir(sub_dir_, rmsd_or_tms_))
+    rp_matrices = sorted(glob.glob(os.path.join(rp_matrices_dir, '*.npz')))
     results, res = list(), dict()
-    for rp_rmsd_mat in rp_rmsd_mats[:1]:
-        pidc = os.path.basename(rp_rmsd_mat).removesuffix('.npz')
+    for rp_matrix in rp_matrices[1:50]:
+        pidc = os.path.basename(rp_matrix).removesuffix('.npz')
         print(pidc)
-        loaded = np.load(rp_rmsd_mat)
-        rmsd_mat = loaded['mat']
-        dendrgm_heatmap_contourmap(rp_rmsd_mat)
-        threshold = 6
-        clusters_dict = RMSD.cluster_models(rmsd_mat, threshold)
-        rp_rmsd_clusters_dir = os.path.join(rp_rmsd_mat_dir, f'clusters_{str(threshold).replace('.', 'p')}')
-        os.makedirs(rp_rmsd_clusters_dir, exist_ok=True)
+        loaded = np.load(rp_matrix)
+        dist_matrix = loaded['mat']
+        if rmsd_or_tms_.lower() == 'tms':  # need to convert similarity matrix to distance matrix
+            dist_matrix = 1.0 - dist_matrix
+        dendrgm_heatmap_contourmap(dist_matrix, pidc, rmsd_or_tms_)
+        if rmsd_or_tms_ == 'tms':
+            thrshld = 0.5
+        else:
+            thrshld = 6
+        clusters_dict = RMSD.cluster_models(dist_matrix, threshold=thrshld)   # WHAT THRESHOLD TO USE ??
+        rp_clusters_dir = os.path.join(rp_matrices_dir, f'clusters_{str(thrshld).replace('.', 'p')}')
+        os.makedirs(rp_clusters_dir, exist_ok=True)
 
         clusters_dict = {int(k): v for k, v in clusters_dict.items()}
 
-        with open(os.path.join(rp_rmsd_clusters_dir, f'{pidc}.json'), 'w') as f:
+        with open(os.path.join(rp_clusters_dir, f'{pidc}.json'), 'w') as f:
             json.dump(clusters_dict, f)
 
 
