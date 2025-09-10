@@ -85,12 +85,12 @@ def compute_rmsd_matrix(pdbid_chain: str, het_hom: str):
     print(f'RMSD matrix:\n{rmsd_matrix}')
     return rmsd_matrix, n_models
 
-def dendrogrm(rmsd_mat, n_models: int, pidc: str):
+def dendrogrm(dist_matrix, n_models: int, pidc: str, rmsd_or_tms: str):
     """
     'squareform()': converts a square matrix into a condensed 1‑D vector of length `N(N−1)/2` containing
     only the upper‑triangular entries (i.e., the unique pairwise distances).
     Hierarchical clustering routines in SciPy accept this compact format for efficiency.
-    Note: `rmsd_matrix` must be symmetric with a zero diagonal. If you ever “skip” a pair and leave a zero, you’ll
+    Note: `dist_matrix` must be symmetric with a zero diagonal. If you ever “skip” a pair and leave a zero, you’ll
     corrupt the distances — so, fill or drop that pair first.
 
     `linkage()`: builds a hierarchical clustering tree (a linkage/dendrogram) from the distances.
@@ -98,14 +98,15 @@ def dendrogrm(rmsd_mat, n_models: int, pidc: str):
     heights are not plain distances in Å. So, if you want a “cut at X Å” interpretation, use 'average'
     (or 'complete'/'single'), not 'ward'.
     """
-    condensed = squareform(rmsd_mat)
+    condensed = squareform(dist_matrix)
     linkage_matrix = linkage(condensed, method='ward')
     plt.figure(figsize=(10, 5))
     # Note I changed range from 0-index to +1. But this may still fall foul of cases where the model numbering does
     # not start at 1 and/or does not increase by 1 for a given chain.
-    dendrogram(linkage_matrix, labels=[f'{i}' for i in range(1, 1+n_models)])
-    plt.title(f'Hierarchical clustering of NMR models (RMSD) for {pidc}')
-    plt.ylabel('Distance (Å)')
+    dendrogram(linkage_matrix, labels=[f'{i}' for i in range(1, 1 + n_models)])
+    plt.title(f'Hierarchical clustering of NMR models ({rmsd_or_tms.upper()}) for {pidc}')
+    label = 'Distance (Å)'
+    plt.ylabel(f'Distance {'(Å)' if rmsd_or_tms.upper() == 'RMSD' else ''}')
     plt.tight_layout()
     plt.show()
     return linkage_matrix
@@ -118,7 +119,7 @@ def heatmap(rmsd_matrix, linkage_matrix):
         cmap="viridis",
         linewidths=0.5,
         figsize=(8, 8),
-        cbar_kws={'label': 'RMSD (Å)'}
+        cbar_kws={'label': 'distance'}
     )
     plt.title("RMSD heatmap of NMR models")
     plt.show()
