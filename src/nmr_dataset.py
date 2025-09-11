@@ -59,9 +59,9 @@ def parse_atomic_records_from_cifs(subdir: str, write_results=True):
     rp_parsed_cifs_dst_dir = os.path.join('..', 'data', 'NMR', 'parsed_cifs', subdir)
     os.makedirs(rp_parsed_cifs_dst_dir, exist_ok=True)
 
-    rpath_cifs_hom = glob.glob(os.path.join(rp_raw_cifs_homomeric, f'*.cif'))
-    rpath_cifs_het = glob.glob(os.path.join(rp_raw_cifs_heteromeric, f'*.cif'))
-    rpath_cifs_all = rpath_cifs_het + rpath_cifs_hom
+    rpath_cifs_hom = glob.glob(os.path.join(rp_raw_cifs_homomeric, f'*.cif'))  #  687 hom cifs
+    rpath_cifs_het = glob.glob(os.path.join(rp_raw_cifs_heteromeric, f'*.cif'))  # 1038 het cifs
+    rpath_cifs_all = rpath_cifs_het + rpath_cifs_hom  # 1725 cifs total
     rpath_cifs_all.sort()
     empty_pdbidchains_all = []
 
