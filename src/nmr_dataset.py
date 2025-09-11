@@ -54,16 +54,19 @@ def generate_pdb_lists_from_parsed_ssvs(subdir: str):
 
 def parse_atomic_records_from_cifs(subdir: str, write_results=True):
     start = time()
-    rp_raw_cifs_meric = os.path.join('..', 'data', 'NMR', 'raw_cifs', subdir)
+    rp_raw_cifs_homomeric = os.path.join('..', 'data', 'NMR', 'raw_cifs', 'homomeric')
+    rp_raw_cifs_heteromeric = os.path.join('..', 'data', 'NMR', 'raw_cifs', 'heteromeric')
     rp_parsed_cifs_dst_dir = os.path.join('..', 'data', 'NMR', 'parsed_cifs', subdir)
     os.makedirs(rp_parsed_cifs_dst_dir, exist_ok=True)
 
-    rpath_cifs = glob.glob(os.path.join(rp_raw_cifs_meric, f'*.cif'))
-    rpath_cifs.sort()
+    rpath_cifs_hom = glob.glob(os.path.join(rp_raw_cifs_homomeric, f'*.cif'))
+    rpath_cifs_het = glob.glob(os.path.join(rp_raw_cifs_heteromeric, f'*.cif'))
+    rpath_cifs_all = rpath_cifs_het + rpath_cifs_hom
+    rpath_cifs_all.sort()
     empty_pdbidchains_all = []
 
     print('Start parsing:')
-    for rp_cif in rpath_cifs:
+    for rp_cif in rpath_cifs_all:
         cif_dict = MMCIF2Dict(rp_cif)
         pdbid = os.path.basename(rp_cif).removesuffix('.cif')
         cif_pdfs_per_chain, empty_pdbidchains = cp.parse_cif(pdb_id=pdbid, mmcif_dict=cif_dict)
@@ -89,7 +92,7 @@ def parse_atomic_records_from_cifs(subdir: str, write_results=True):
             with open(os.path.join('..', 'data', 'NMR', 'parsed_cifs', f'{subdir[:3]}_noCA_PidChains.txt'), 'a') as f:
                 f.write(pdbid_chain + '\n')
 
-    print(f'Completed {len(rpath_cifs)} {subdir} mmCIFs/PDBs in {round((time() - start) / 60)} minutes')
+    print(f'Completed {len(rpath_cifs_all)} {subdir} mmCIFs/PDBs in {round((time() - start) / 60)} minutes')
 
 
 def write_struct_files_for_solution_NMR(_meric: str, cif_or_pdb: str) -> None:
