@@ -6,9 +6,9 @@ from src.utils import cif_parsr as cp
 from src.utils import api_callr as api
 
 
-def generate_pdb_lists_from_parsed_ssvs(_meric: str):
+def generate_pdb_lists_from_parsed_ssvs(subdir: str):
     start = time()
-    rp_parsed_cifs = os.path.join('..', 'data', 'NMR', 'parsed_cifs', _meric)
+    rp_parsed_cifs = os.path.join('..', 'data', 'NMR', 'parsed_cifs', subdir)
     ssv_files = glob.glob(os.path.join(rp_parsed_cifs, '*.ssv'))
 
     multimodel_pdbids = []
@@ -31,9 +31,9 @@ def generate_pdb_lists_from_parsed_ssvs(_meric: str):
     list_dir = os.path.join('..', 'data', 'NMR', 'multimodel_lists')
     os.makedirs(list_dir, exist_ok=True)
 
-    singlemodel_txt = os.path.join(list_dir, f'{_meric[:3]}_singlemod_{len(single_model_pdbids)}_PidChains.txt')
+    singlemodel_txt = os.path.join(list_dir, f'{subdir[:3]}_singlemod_{len(single_model_pdbids)}_PidChains.txt')
     with open(singlemodel_txt, 'w') as f:
-        headr = (f'The following {len(single_model_pdbids)} {_meric} '
+        headr = (f'The following {len(single_model_pdbids)} {subdir} '
                  f'PDBid_chains had only 1 model (solution NMR) in the RCSB dataset:\n')
         singlemods = list()
         for i, fname in enumerate(single_model_pdbids):
@@ -43,19 +43,19 @@ def generate_pdb_lists_from_parsed_ssvs(_meric: str):
         singlemods = headr + ''.join(singlemods)
         f.write(singlemods)
 
-    multimodel_txt = os.path.join(list_dir, f'{_meric[:3]}_multimod_{len(multimodel_pdbids)}_PidChains.txt')
+    multimodel_txt = os.path.join(list_dir, f'{subdir[:3]}_multimod_{len(multimodel_pdbids)}_PidChains.txt')
     with open(multimodel_txt, 'w') as f:
         for fname in multimodel_pdbids:
             f.write(fname.removesuffix('.ssv') + '\n')
 
-    print(f'\nSaved {len(multimodel_pdbids)} {_meric} pdbid_chains with > 1 unique model to text file.')
+    print(f'\nSaved {len(multimodel_pdbids)} {subdir} pdbid_chains with > 1 unique model to text file.')
     print(f'Completed in {round(time() - start)} seconds')
 
 
-def parse_atomic_records_from_cifs(_meric: str, write_results=True):
+def parse_atomic_records_from_cifs(subdir: str, write_results=True):
     start = time()
-    rp_raw_cifs_meric = os.path.join('..', 'data', 'NMR', 'raw_cifs', _meric)
-    rp_parsed_cifs_dst_dir = os.path.join('..', 'data', 'NMR', 'parsed_cifs', _meric)
+    rp_raw_cifs_meric = os.path.join('..', 'data', 'NMR', 'raw_cifs', subdir)
+    rp_parsed_cifs_dst_dir = os.path.join('..', 'data', 'NMR', 'parsed_cifs', subdir)
     os.makedirs(rp_parsed_cifs_dst_dir, exist_ok=True)
 
     rpath_cifs = glob.glob(os.path.join(rp_raw_cifs_meric, f'*.cif'))
@@ -86,10 +86,10 @@ def parse_atomic_records_from_cifs(_meric: str, write_results=True):
         empty_pdbidchains_all = list(set(empty_pdbidchains_all))
         empty_pdbidchains_all.sort()
         for pdbid_chain in empty_pdbidchains_all:
-            with open(os.path.join('..', 'data', 'NMR', 'parsed_cifs', f'{_meric[:3]}_noCA_PidChains.txt'), 'a') as f:
+            with open(os.path.join('..', 'data', 'NMR', 'parsed_cifs', f'{subdir[:3]}_noCA_PidChains.txt'), 'a') as f:
                 f.write(pdbid_chain + '\n')
 
-    print(f'Completed {len(rpath_cifs)} {_meric} mmCIFs/PDBs in {round((time() - start) / 60)} minutes')
+    print(f'Completed {len(rpath_cifs)} {subdir} mmCIFs/PDBs in {round((time() - start) / 60)} minutes')
 
 
 def write_struct_files_for_solution_NMR(_meric: str, cif_or_pdb: str) -> None:
@@ -124,11 +124,12 @@ if __name__ == "__main__":
     # parse_atomic_records_from_cifs(_meric=_meric, write_results=True)  # 6 mins to parse (new Mac). (13 mins Rocky)
     # generate_pdb_lists_from_parsed_ssvs(_meric=_meric)  # 2 secs to generate PDBid_chain lists (multi & single model) (4 secs Rocky)
 
-    _meric = 'heteromeric'
+    # _meric = 'heteromeric'
     # write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='pdb') # 31 mins (new Mac) for 1038 PDBs.  (31 mins Rocky)
     # write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='cif') # 32 mins (new Mac) for 1038 mmCIFs. (32 mins Rocky)
-    parse_atomic_records_from_cifs(_meric=_meric, write_results=True) # 8 mins to parse (new Mac). (17 mins Rocky)
-    generate_pdb_lists_from_parsed_ssvs(_meric=_meric)  # 4 seconds to generate PDBid_chain lists (multi & single model)
+    subdir = 'multimod_2713_hetallchains_hom1chain'
+    parse_atomic_records_from_cifs(subdir=subdir, write_results=True) # 8 mins to parse (new Mac). (17 mins Rocky)
+    generate_pdb_lists_from_parsed_ssvs(subdir)  # 4 seconds to generate PDBid_chain lists (multi & single model)
 
 # Notice: 4 legacy PDB could not be read (7ZE0, 9D9A, 9D9B, 9D9C):
 # Failed to retrieve data from API: 404 Client Error: Not Found for url: https://files.rcsb.org/download/7ZE0.pdb
