@@ -1,24 +1,11 @@
 """
-Two old method for identifying large structural differences between models within individual NMR PDB datasets.
+One of 2 old methods for identifying large structural differences between models within individual NMR PDB datasets.
+
+1. Difference distance matrix (Euclidean distances between CAs).
+2. Essential dynamics: use of PCA for finding large conformational changes.
 
 ----------------------------------------------------------------------------------------------------
-1. USE OF PCA FOR FINDING LARGE CONFORMATIONAL CHANGES:
-
-'Principal Component Analysis: A Method for Determining the Essential Dynamics of Proteins'
-Charles C. David and Donald J. Jacobs
-Methods Mol Biol. 2014 ; 1084: 193–226
-
-But originates in 90s:
-- Large-amplitude nonlinear motions in proteins.
-Garcia, A.E.
-Phys. Rev. Lett. 68:2696–2699 (1992)
-
-Effect of solvent on collective motions in globular proteins.
-Kitao, A., Hirata, F., Go, N.
-J. Mol. Biol. 234:1207–1217, (1993)
-
-----------------------------------------------------------------------------------------------------
-2. DIFFERENCE DISTANCE MATRIX:
+1. DIFFERENCE DISTANCE MATRIX:
 
 'Rigid Domains in Proteins: An Algorithmic Approach to Their Identification'
 Nichols W.L., Rose G.D, Eyk L.F.T., Zimm B.H.
@@ -41,9 +28,13 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.cluster import SpectralClustering
 from sklearn.metrics import silhouette_score
 from Bio.Data.IUPACData import protein_letters_3to1
-from Bio import PDB
 from Bio.SVDSuperimposer import SVDSuperimposer
 
+def _rp_nmr_dir() -> str:
+    return os.path.join('..', 'data', 'NMR')
+
+def _rp_parsed_cifs(subdir: str) -> str:
+    return os.path.join(_rp_nmr_dir(), 'parsed_cifs', subdir)
 
 def three_to_one(resname):
     return protein_letters_3to1[resname.capitalize()]
@@ -73,7 +64,7 @@ def _align(coords_mod_i, coords_mod_j):
     si.run()
     return si
 
-def compute_ddm(pidc_pdf) -> Tuple[list, list]:
+def compute_ddms(pidc_pdf) -> Tuple[list, list]:
     ddms = list()
     model_numbers = pidc_pdf['A_pdbx_PDB_model_num'].unique()
     model_numbers = list(model_numbers)
@@ -95,7 +86,19 @@ def compute_ddm(pidc_pdf) -> Tuple[list, list]:
     return ddms, mp_list
 
 
-def analyze_ddms(ddms: list, model_pairs: List[tuple]=None, min_seq_sep: int=5, k: int=None, top_k_pairs: int=20,
+def compute_ddm_of_pair(pidc_pdf, pidc_pdf2):
+    coords_i = pidc_pdf[['A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']].values  # 2DN1
+    coords_j = pidc_pdf2[['A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']].values  # 2DN2
+    coords_j = coords_j[1:][:]
+    si = _align(coords_i, coords_j)
+    model_i_si, model_j_si = si.reference_coords, si.coords
+    dm_i = _distance_matrix(model_i_si)
+    dm_j = _distance_matrix(model_j_si)
+    ddm = np.abs(dm_i - dm_j)
+    np.fill_diagonal(ddm, 0.0)  #
+    return ddm
+
+def analyse_ddms(ddms: list, model_pairs: List[tuple]=None, min_seq_sep: int=5, k: int=None, top_k_pairs: int=20,
                  random_state: int=0):
     """
     Analyse list of difference distance matrices (ddms) for a single PDB-chain.
@@ -133,7 +136,7 @@ def analyze_ddms(ddms: list, model_pairs: List[tuple]=None, min_seq_sep: int=5, 
     mask = (np.abs(i - j) >= min_seq_sep)
     np.fill_diagonal(mask, False)
 
-    K = len(ddms)
+    # K = len(ddms)
     abs_ddm = np.stack([np.abs(ddm) for ddm in ddms], axis=0)  # (K, N, N)
 
     # Aggregate over all pairs
@@ -143,16 +146,122 @@ def analyze_ddms(ddms: list, model_pairs: List[tuple]=None, min_seq_sep: int=5, 
     # Build per-residue feature vectors from long-range parts of aggregates
     # Feature = [ agg_rms[i, long-range j]; agg_max[i, long-range j] ]
     # Zero out near-diagonal (short-range) entries but keep full length per row
-    agg_rms_masked = agg_rms * mask
-    agg_max_masked = agg_max * mask
+    agg_rms_masked = agg_rms * mask  # (N,N)
+    agg_max_masked = agg_max * mask  # (N,N)
     # Feature for residue r is the concatenation of the full masked rows (fixed length 2N)
-    X = np.hstack([agg_rms_masked, agg_max_masked])  # shape: (N, 2N)
+    X = np.hstack([agg_rms_masked, agg_max_masked])  # (N,2N)
 
     # Residue similarity (cosine on features)
-    X_abs = np.abs(X)                                   # ignore sign; we're about magnitude patterns
-    similarity = cosine_similarity(X_abs)
+    X_abs = np.abs(X)  # (N,2N)                   # ignore sign; we're about magnitude patterns
+    similarity = cosine_similarity(X_abs)  # (N,N)
     np.fill_diagonal(similarity, 1.0)
-    similarity[similarity < 0] = 0.0                    # clamp tiny negatives
+    similarity[similarity < 0] = 0.0  # clamp tiny negatives
+
+    # Choose k if needed (by silhouette on X)
+    if k is None:
+        best_k, best_labels, best_s = None, None, -np.inf
+        for kk in (2, 3, 4):
+            labels_try = SpectralClustering(
+                n_clusters=kk, affinity='precomputed',
+                assign_labels='kmeans', random_state=random_state
+            ).fit_predict(similarity)
+            # Silhouette on the original feature space X (Euclidean)
+            # If a cluster collapses (rare), silhouette can fail; guard it.
+            try:
+                s = silhouette_score(X, labels_try, metric='euclidean')
+            except Exception:
+                s = -1e9
+            if s > best_s:
+                best_k, best_labels, best_s = kk, labels_try, s
+        k = best_k
+        domain_labels = best_labels
+    else:
+        domain_labels = SpectralClustering(
+            n_clusters=k, affinity='precomputed',
+            assign_labels='kmeans', random_state=random_state
+        ).fit_predict(similarity)
+
+    # Per-residue "who moved?" summaries for visualisation
+    # 1) max over partners and pairs (strong, localised differences)
+    per_residue_max = np.max(agg_max * mask, axis=1)
+    # 2) overall RMS over partners and pairs (global participation in change)
+    per_residue_rms = np.sqrt(np.mean((agg_rms**2) * mask, axis=1))
+
+    # Hinge score = z(per_residue_rms) * boundaryness
+    # boundaryness: sequential change of domain label (smoothed)
+    boundary = np.zeros(N)
+    boundary[1:] += (domain_labels[1:] != domain_labels[:-1]).astype(float)
+    boundary[:-1] += (domain_labels[:-1] != domain_labels[1:]).astype(float)
+    boundary *= 0.5
+    # light smoothing
+    kernel = np.array([0.25, 0.5, 0.25])
+    boundary_smooth = np.convolve(boundary, kernel, mode='same')
+
+    # z-score of per_residue_rms (robust)
+    med = np.median(per_residue_rms)
+    mad = np.median(np.abs(per_residue_rms - med)) + 1e-12
+    z_rms = (per_residue_rms - med) / (1.4826 * mad)
+    hinge_score = (z_rms.clip(min=0) + 1.0) * boundary_smooth  # emphasise boundaries with high motion
+
+    # Rank model pairs by global difference (RMS over long-range entries)
+    denom = np.sqrt(mask.sum())
+    pair_scores = []
+    for idx, ddm in enumerate(ddms):
+        score = np.linalg.norm(ddm[mask]) / denom
+        label = model_pairs[idx] if model_pairs is not None else idx
+        pair_scores.append((label, float(score)))
+    pair_scores.sort(key=lambda t: t[1], reverse=True)
+    if top_k_pairs is not None:
+        pair_scores = pair_scores[:top_k_pairs]
+
+    return dict(
+        domain_labels=domain_labels,
+        hinge_score=hinge_score,
+        per_residue_max=per_residue_max,
+        pair_scores=pair_scores,
+        agg_rms=agg_rms,
+        agg_max=agg_max,
+        similarity=similarity,
+        mask=mask,
+        k=k,
+    )
+
+
+def analyse_single_ddm(ddm, model_pairs: List[tuple]=None, min_seq_sep: int=5, k: int=None, top_k_pairs: int=20,
+                       random_state: int=0):
+    ddms = [ddm]
+    N = ddms[0].shape[0]
+    if ddm.shape != (N, N):
+        raise ValueError("All DDMs must have identical (N,N) shape.")
+    if not np.allclose(ddm, ddm.T, atol=1e-6):
+        raise ValueError("DDM not symmetric within tolerance.")
+    if not np.allclose(np.diag(ddm), 0.0, atol=1e-6):
+        raise ValueError("DDM diagonal must be ~0.")
+
+    # Long-range mask
+    i, j = np.ogrid[:N, :N]
+    mask = (np.abs(i - j) >= min_seq_sep)
+    np.fill_diagonal(mask, False)
+
+    abs_ddm = np.stack([np.abs(ddm) for ddm in ddms], axis=0)  # (K, N, N)
+
+    # Aggregate over all pairs
+    agg_rms = np.sqrt(np.mean(abs_ddm**2, axis=0))         # RMS across pairs
+    agg_max = np.max(abs_ddm, axis=0)                      # max across pairs
+
+    # Build per-residue feature vectors from long-range parts of aggregates
+    # Feature = [ agg_rms[i, long-range j]; agg_max[i, long-range j] ]
+    # Zero out near-diagonal (short-range) entries but keep full length per row
+    agg_rms_masked = agg_rms * mask  # (N,N)
+    agg_max_masked = agg_max * mask  # (N,N)
+    # Feature for residue r is the concatenation of the full masked rows (fixed length 2N)
+    X = np.hstack([agg_rms_masked, agg_max_masked])  # (N,2N)
+
+    # Residue similarity (cosine on features)
+    X_abs = np.abs(X)  # (N,2N)                   # ignore sign; we're about magnitude patterns
+    similarity = cosine_similarity(X_abs)  # (N,N)
+    np.fill_diagonal(similarity, 1.0)
+    similarity[similarity < 0] = 0.0  # clamp tiny negatives
 
     # Choose k if needed (by silhouette on X)
     if k is None:
@@ -250,23 +359,32 @@ def plot_matrix(M, title='Matrix', save_png=None):
     return fig, ax
 
 
-def _rp_nmr_dir() -> str:
-    return os.path.join('..', 'data', 'NMR')
-
-def _rp_parsed_cifs(subdir: str) -> str:
-    return os.path.join(_rp_nmr_dir(), 'parsed_cifs', subdir)
 
 if __name__ == "__main__":
 
-    # 1ABT_A has only 4 models, but the A chain seems to have big-ish variations in structure.
-    # rp_pidc_dir = '../data/NMR/pdb_chains/multimod_2713_hetallchains_hom1chain/per_model'
-    # rp_pidc_ssv = '../data/NMR/parsed_cifs/multimod_2713_hetallchains_hom1chain/1ABT_A.ssv'
+    look_at_haem_xray_pair_only = False
+    if look_at_haem_xray_pair_only:
+        # DDM BETWEEN HAEMOGLOBIN B-CHAIN OXY and DEOXY:
+        rp_xray_dir = os.path.join('..', 'data', 'XRAY', 'handpicked')
+        rp_haem_cifs = sorted(glob.glob(os.path.join(rp_xray_dir, 'haemoglobin', '**', '*.cif'), recursive=True))
+        rp_pidc_ssvs = sorted(glob.glob(os.path.join(rp_xray_dir, 'parsed_cifs', '*.ssv'), recursive=True))
+        pidc_pdf = pd.read_csv(rp_pidc_ssvs[0], sep=' ')
+        pidc_pdf2 = pd.read_csv(rp_pidc_ssvs[1], sep=' ')
+        _ddm = compute_ddm_of_pair(pidc_pdf, pidc_pdf2)
+        res = analyse_single_ddm(_ddm, min_seq_sep=5)
+
+        plot_sequence_signal(res['per_residue_max'], title='Max |ddm| per residue (any partner/pair)', ylabel='Å')
+        plot_sequence_signal(res['hinge_score'], title='Hinge score per residue', ylabel='score')
+        plot_matrix(res['agg_rms'], title='RMS( |ddm| ) across model pairs')
+
     rp_pidc_parsed_cif_dir = _rp_parsed_cifs('multimod_2713_hetallchains_hom1chain')
     rp_pidc_ssvs = sorted(glob.glob(os.path.join(rp_pidc_parsed_cif_dir, '*.ssv')))
     for rp_pidc_ssv in  rp_pidc_ssvs:
+        pidc = os.path.basename(rp_pidc_ssv).removesuffix('.ssv')
+        print(pidc)
         _pdf = pd.read_csv(rp_pidc_ssv, sep=' ')
-        _ddms, _model_pairs = compute_ddm(_pdf)
-        res = analyze_ddms(_ddms, model_pairs=_model_pairs, min_seq_sep=5)
+        _ddms, _model_pairs = compute_ddms(_pdf)
+        res = analyse_ddms(_ddms, model_pairs=_model_pairs, min_seq_sep=5)
 
         domain_labels = res['domain_labels']        # (N,)
         hinge_score = res['hinge_score']            # (N,)
@@ -279,11 +397,18 @@ if __name__ == "__main__":
         k = res['k']                                # 2, 3, or 4
 
         # (a) Nice sequence visualisations:
-        plot_sequence_signal(permax, title='Max |ddm| per residue (any partner/pair)', ylabel='Å')
-        plot_sequence_signal(hinge_score, title='Hinge score per residue', ylabel='score')
+        plot_sequence_signal(res['per_residue_max'], title='Max |ddm| per residue (any partner/pair)', ylabel='Å')
+        plot_sequence_signal(res['hinge_score'], title='Hinge score per residue', ylabel='score')
         plot_matrix(res['agg_rms'], title='RMS( |ddm| ) across model pairs')
 
         # (b) Pairs that are likely different:
-        print('Top different model pairs:')
+        top_scoring_pairs = []
         for pair, score in top_pairs:
-            print(pair, f'{score:.3f}')
+            top_scoring_pairs.append(f'{pair} {score:.3f}')
+            # print(f'{pair} {score:.3f}')
+        rp_prot_dynamics_dir = os.path.join(_rp_nmr_dir(), 'prot_dynamics')
+        os.makedirs(rp_prot_dynamics_dir, exist_ok=True)
+        with open(os.path.join(rp_prot_dynamics_dir, f'{pidc}.lst'), 'w') as f:
+            f.write('\n'.join(top_scoring_pairs))
+
+
