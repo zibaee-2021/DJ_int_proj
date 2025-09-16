@@ -95,6 +95,34 @@ def parse_atomic_records_from_cifs(subdir: str, write_results=True):
     print(f'Completed {len(rpath_cifs_all)} {subdir} mmCIFs/PDBs in {round((time() - start) / 60)} minutes')
 
 
+def parse_atomic_records_from_XRAY_cifs(write_results=True):
+    start = time()
+    rp_xray_dir = os.path.join('..', 'data', 'XRAY', 'handpicked')
+    rp_parsed_cifs_dst_dir = os.path.join('..', 'data', 'XRAY', 'handpicked', 'parsed_cifs')
+    os.makedirs(rp_parsed_cifs_dst_dir, exist_ok=True)
+
+    rpath_raw_cifs = os.path.join(rp_xray_dir, '**', '*.cif')
+    rp_raw_cifs = sorted(glob.glob(os.path.join(rpath_raw_cifs), recursive=True))
+
+    for rp_raw_cif in rp_raw_cifs:
+        pid = os.path.basename(rp_raw_cif).removesuffix('.cif')
+        print(f'parsing:{pid}')
+        cif_dict = MMCIF2Dict(rp_raw_cif)
+        cif_pdfs_per_chain, _ = cp.parse_cif(pdb_id=pid, mmcif_dict=cif_dict)
+
+        for pdf_chain in cif_pdfs_per_chain:
+            chain = pdf_chain['S_asym_id'].iloc[0]
+            pdf_chain = pdf_chain.copy()
+            pdf_chain = pdf_chain[['A_pdbx_PDB_model_num', 'S_seq_id', 'S_mon_id',
+                                   'A_id', 'A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']]
+            if write_results:
+                pdf_chain.to_csv(path_or_buf=os.path.join(rp_parsed_cifs_dst_dir, f'{pid}_{chain}.ssv'),
+                                 sep=' ', index=False)
+
+    print(f'Completed {len(rp_raw_cifs)} mmCIFs in {round(time() - start, 1)} secs')
+
+
+
 def write_struct_files_for_solution_NMR(_meric: str, cif_or_pdb: str) -> None:
     start = time()
     dst_dir = os.path.join('..', 'data', 'NMR', f'raw_{cif_or_pdb}s', _meric)
@@ -121,6 +149,7 @@ def write_raw_pdb_or_cif(pdbid: str, cif_or_pdb: str, dst_dir: str):
 
 
 if __name__ == "__main__":
+    # parse_atomic_records_from_XRAY_cifs()
     # _meric = 'homomeric'
     # write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='pdb') # 16 mins (new Mac) for 686-4 = 682 PDBs. (21 mins Rocky)
     # write_struct_files_for_solution_NMR(_meric=_meric, cif_or_pdb='cif') # 21 mins (new Mac) for 686 mmCIFs. (21 mins Rocky)
