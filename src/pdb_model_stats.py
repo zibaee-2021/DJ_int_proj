@@ -386,8 +386,6 @@ def generate_stats(sub_dir: str, rp_pidc_lst_f: str, rp_fasta_f: str, _chains_ye
     print(f'Completed {len(pidc_list)} PDB-chains in {round((time() - start) / 60)} mins')  # 2713 pidc in 50 mins.
     return pid_pdf, pidc_pdf
 
-
-
 # COPIED OVER TO RMSD.py
 def _calc_rmsds_stats(pidchains: list):
     """
@@ -421,8 +419,6 @@ def _calc_rmsds_stats(pidchains: list):
     rmsdstats_pdf = pd.DataFrame(rmsd_stats_per_pidc)
     rmsdstats_pdf = rmsdstats_pdf.sort_values(by=['mean_rmsd', 'stdev_rmsd'], ascending=[True, True])
     return rmsdstats_pdf
-
-
 
 def _tabulate_year_chain_model_counts(pidc_list: list):
     start = time()
@@ -466,8 +462,6 @@ def _tabulate_year_chain_model_counts(pidc_list: list):
     result_pdf.to_csv(os.path.join(_rp_stats_dir('multimod_2713_hetallchains_hom1chain'),
                                    'allchains_head_year_model_hethom.csv'), index=False)
     print(f'Extracted data and written to csv for {len(pid_list)} PDBs in {round((time() - start) / 60)} mins')
-
-
 
 if __name__ == '__main__':
     # pid_c_count_dict = _total_natural_prot_chain_count()
