@@ -16,7 +16,6 @@ But originates in 70s:
 Crippen G.M.
 J of Comp. Phys. 24. 96-107 (1977)
 ----------------------------------------------------------------------------------------------------
-
 """
 import os, glob
 from typing import List, Tuple
@@ -226,7 +225,6 @@ def analyse_ddms(ddms: list, model_pairs: List[tuple]=None, min_seq_sep: int=5, 
         k=k,
     )
 
-
 def analyse_single_ddm(ddm, model_pairs: List[tuple]=None, min_seq_sep: int=5, k: int=None, top_k_pairs: int=20,
                        random_state: int=0):
     ddms = [ddm]
@@ -332,7 +330,6 @@ def analyse_single_ddm(ddm, model_pairs: List[tuple]=None, min_seq_sep: int=5, k
         k=k,
     )
 
-
 def plot_sequence_signal(signal, title='Per-residue signal', ylabel='magnitude', save_png=None):
     fig, ax = plt.subplots(figsize=(10, 2.8))
     ax.plot(np.arange(1, signal.shape[0] + 1), signal, linewidth=1.5)
@@ -357,7 +354,6 @@ def plot_matrix(M, title='Matrix', save_png=None):
         plt.savefig(save_png, dpi=200, bbox_inches='tight')
     plt.show()
     return fig, ax
-
 
 
 if __name__ == "__main__":
