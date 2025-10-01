@@ -1,4 +1,26 @@
+"""
+The two API caller functions below are copy-pasted from a rather obscure, hard-to-find source on RCSB website.
+1. Go here: https://www.rcsb.org/docs/search-and-browse/advanced-search/attribute-search
+2. Scroll to bottom: "C6. Find NMR structures of homomeric or heteromeric assemblies" in "Some Composite Query examples:"
+3. Click on each of the two links:
+    [[Run query for homomeric NMR structures]] uses attributes:
+        QUERY: Experimental Method (Broader Categories) = "NMR" AND Number of Distinct Protein Entities = 1 AND
+               Number of Protein Instances (Chains) per Assembly > 1
+    [[Run query for heteromeric NMR structures]] uses attributes
+        QUERY: Experimental Method (Broader Categories) = "NMR" AND Number of Distinct Protein Entities > 1
+4. This shows the 'Advanced Search Query Builder' GUI above the actual proteins that it returns.
+    Click on 'Search API' button in top right (with cogwheel icon). This takes you to the actual API JSON for one of
+    the two search queries in 3. Click on 'copy query' button.
 
+These JSONs are what you will find below in:
+    `call_rcsb_for_pdbids_of_solution_nmr_homomeric(number)` and
+    `call_rcsb_for_pdbids_of_solution_nmr_heteromeric(number)`
+
+HENCE, THEY ARE NOT HAND-CRAFTED.
+They are copy-pasted directly from RCSB site.
+If you trust the GUI query search tool, then you should also trust these JSONs,
+though admittedly they do seem rather long-winded and obscure.
+"""
 import requests
 
 
