@@ -239,12 +239,14 @@ def essential_dynamics_pca(pidc: str, pidc_pdf, use_correlation=False, top_modes
     if do_kpca:
         # compress with standard PCA first (authors show using ~5 PCs works well)
         X = scores[:pca_top_for_kpca, :].T  # models × top PCs
-        # standardize those PCs before RBF kernel for balance
+        # standardise those PCs before RBF kernel for balance
         Xz = StandardScaler().fit_transform(X)
 
         # --- gamma handling ---
         # If user gives None (or used 'scale'/'auto' before), choose a simple heuristic
         # analogous to SVM's 'scale': gamma = 1 / n_features on standardized data.
+        # Choose the kernel width (gamma). If not provided, use a simple 1/n_features heuristic
+        # (analogous to SVM 'scale') on standardised PCs—robust default without extra tuning.
         if kpca_gamma is None or (isinstance(kpca_gamma, str) and kpca_gamma.lower() in {'scale', 'auto'}):
             gamma = 1.0 / Xz.shape[1]
         elif isinstance(kpca_gamma, (int, float)) and kpca_gamma >= 0:
@@ -252,9 +254,12 @@ def essential_dynamics_pca(pidc: str, pidc_pdf, use_correlation=False, top_modes
         else:
             raise ValueError("kpca_gamma must be None, a non-negative float, or 'scale'/'auto'.")
 
+        # Compute a 2D non-linear embedding capturing curved manifolds of motion in model space.
         kpca = KernelPCA(n_components=2, kernel='rbf', gamma=gamma, fit_inverse_transform=False)
         Xk = kpca.fit_transform(Xz)
         kpca_scores = Xk.T
+
+        # Visualise non-linear separation; clusters that overlap linearly may separate here.
         fig, ax = plt.subplots(figsize=(5, 4.2))
         ax.scatter(Xk[:, 0], Xk[:, 1], s=24, alpha=0.9)
         ax.set_xlabel('kPC1')
@@ -263,10 +268,13 @@ def essential_dynamics_pca(pidc: str, pidc_pdf, use_correlation=False, top_modes
         ax.grid(True, ls='--', lw=0.5, alpha=0.5)
         plt.show()
 
+    # Return everything needed for downstream inspection and decisions:
+    # aligned coordinates (for sanity checks), spectral quantities (eigvals/eigvecs),
+    # model embeddings (scores/kpca_scores), and hinge profiles (wrmsd_modes).
     return {
-        'aligned_coords': aligned,
-        'eigvals': eigvals,
-        'eigvecs': eigvecs,
+        'aligned_coords': aligned,  # aligned coordinates (for sanity checks)
+        'eigvals': eigvals,  # spectral quantities (eigvals/eigvecs)
+        'eigvecs': eigvecs,  # spectral quantities (eigvals/eigvecs)
         'scores': scores,  # shape: (modes, M)
         'wrmsd_modes': wr,  # dict: mode -> per-residue amplitudes (Å)
         'kpca_scores': kpca_scores  # shape: (2, M) or None
