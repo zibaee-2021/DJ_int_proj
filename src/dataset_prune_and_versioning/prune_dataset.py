@@ -1,4 +1,6 @@
-"""-----------------------------------------------------------------------------------------------------------------
+"""
+
+-----------------------------------------------------------------------------------------------------------------
 ---------------- REMOVE PDBID-CHAINS SMALLER THAN 3 ALPHA-CARBONS: ----------------
 -----------------------------------------------------------------------------------------------------------------
 3 PIDC with only 1 CA:
@@ -45,12 +47,12 @@ if __name__ == "__main__":
     _2_AA_pidc = ['1GAC_A', '1GAC_B', '1WCO_A', '2K1Q_B', '2M9P_B', '2M9Q_B', '2MX6_B', '3CYS_B']
     _3_AA_pidc = ['1CFA_B', '2KID_B', '2RUI_B']
 
-    with open(os.path.join('..','data','NMR','multimodel_lists', 'multimod_2713_hetallchains_hom1chain.lst'), 'r') as f:
+    with open(os.path.join('../..', 'data', 'NMR', 'multimodel_lists', 'multimod_2713_hetallchains_hom1chain.lst'), 'r') as f:
         pidc_2713 = sorted(f.read().splitlines())
 
     # FILTER OUT SMALL AND WRITE TO .LST FILE:
     pidc_2702 = [pidc for pidc in pidc_2713 if pidc not in _1_AA_pidc + _2_AA_pidc]
-    rp_ds_lists_dir = os.path.join('..', 'data', 'NMR', 'datasets', 'PDBchain_lists')
+    rp_ds_lists_dir = os.path.join('../..', 'data', 'NMR', 'datasets', 'PDBchain_lists')
     os.makedirs(rp_ds_lists_dir, exist_ok=True)
     rp_ds_vblabla_lst = os.path.join(rp_ds_lists_dir, '2702_pidc.lst')
     with open(rp_ds_vblabla_lst, 'w') as f:
@@ -58,7 +60,7 @@ if __name__ == "__main__":
 
  # - EXCLUDES ANY THAT HAVE "EXTREME RMSD" AND "EXTREME TM-SCORE":
 
-    rp_mm_2713_pidc = os.path.join('..', 'data', 'NMR', 'stats', 'multimod_2713_hetallchains_hom1chain', 'mm_2713_pidc.csv')
+    rp_mm_2713_pidc = os.path.join('../..', 'data', 'NMR', 'stats', 'multimod_2713_hetallchains_hom1chain', 'mm_2713_pidc.csv')
     ds_0p9_pdf = pd.read_csv(rp_mm_2713_pidc)
 
     # 1. Apply size filter:
@@ -84,6 +86,6 @@ if __name__ == "__main__":
     ds_1p0_pdf = ds_0p9_pdf.loc[~mask_pidc]
     ds_1p0_pdf = ds_1p0_pdf.loc[~mask_structural]
     print(ds_1p0_pdf.shape)
-    rp_datasets_dir = os.path.join('..', 'data', 'NMR', 'datasets')
+    rp_datasets_dir = os.path.join('../..', 'data', 'NMR', 'datasets')
     ds_0p9_pdf.to_csv(os.path.join(rp_datasets_dir, 'NMR_0p9.csv'), index=False)
 
