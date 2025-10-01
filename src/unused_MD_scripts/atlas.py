@@ -51,7 +51,7 @@ def load_universe_if_valid(pdbid_chain):
     """
     Check counts and load MDAnalysis Universe.
     """
-    rpath_pdbid_chain = os.path.join('..', 'data', 'ATLAS_downloads', 'ATLAS', pdbid_chain, 'protein', pdbid_chain)
+    rpath_pdbid_chain = os.path.join('../..', 'data', 'ATLAS_downloads', 'ATLAS', pdbid_chain, 'protein', pdbid_chain)
     pdb_path = f'{rpath_pdbid_chain}.pdb'
     validate_filepaths(pdb_path)
     xtc_path = f'{rpath_pdbid_chain}_prod_R2_fit.xtc'
@@ -69,7 +69,7 @@ def load_universe_if_valid(pdbid_chain):
     return u
 
 def save_snapshots_as_pdbs(pdbid_chain, univ_pdbid_chain):
-    rpath_pdbchain_dir = os.path.join('..', 'data', 'ATLAS_parsed', pdbid_chain)
+    rpath_pdbchain_dir = os.path.join('../..', 'data', 'ATLAS_parsed', pdbid_chain)
     os.makedirs(rpath_pdbchain_dir, exist_ok=True)
 
     frame_idx = univ_pdbid_chain.trajectory.frame  # current frame index
