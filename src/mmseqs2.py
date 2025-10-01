@@ -1,3 +1,6 @@
+"""
+Installed mmseqs2 by `conda install -c conda-forge -c bioconda mmseqs2` in activated conda env.
+"""
 import os, subprocess, glob
 from time import time
 import shutil
