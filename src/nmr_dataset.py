@@ -1,9 +1,8 @@
-import os, glob, json
+import os, glob
 from time import time
 import pandas as pd
 from Bio.PDB.MMCIF2Dict import MMCIF2Dict
-from src.utils import cif_parsr as cp
-from src.utils import api_callr as api
+from src import api_callr as api, cif_parsr as cp
 
 
 def generate_pdb_lists_from_parsed_ssvs(subdir: str):
