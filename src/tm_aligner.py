@@ -1,8 +1,8 @@
 """
 Downloaded via Zhang lab website: http://zhanggroup.org/TM-align/
-Compile TMalign.cpp:
- - in src/utils/LinuxOS: `$ g++ -O3 -ffast-math -lm -o TMalign TMalign.cpp`
- - in src/utils/MacOS which has `#include <malloc.h>` on line 73 commented out.
+Compile TMalign_exe.cpp:
+ - in src/TMalign_exe/LinuxOS: `$ g++ -O3 -ffast-math -lm -o TMalign_exe TMalign_exe.cpp`
+ - in src/TMalign_exe/MacOS which has `#include <malloc.h>` on line 73 commented out.
    Prior to compiling the Mac (Silicon) download, I had to comment out `#include <malloc.h>` on line 10 of `basic_fun.h`
    `// #include <malloc.h> // is replaced in Mac by #include <stdlib.h> which is already on line 6.`
    After commenting it out, I compiled, and finally deleted basic_fun.h and all other files.
@@ -52,7 +52,7 @@ def _read_all_pdbs_from_txt(txt_f: str) -> list:
     return rp_pdb_files
 
 op_sys = platform.system()  # 'Linux', 'Darwin' (Darwin = macOS), or 'Windows'
-TMALIGN_BIN = os.path.join('utils', op_sys, 'TMalign')
+TMALIGN_BIN = os.path.join('TMalign_exe', op_sys, 'TMalign_exe')
 
 def compute_tm_from_mp_pool(idx_pair, rp_all_pdb_files):
     """
@@ -198,7 +198,7 @@ if __name__ == '__main__':
 
     # (NOTE: I DISCOVERED I COULD NOT RE-USE THE MEAN COORDS (NP ARRAYS) CALCULATED & USED IN COMPUTING RMSDS,
     # BECAUSE TM-ALIGN WANTS PDB FILE INPUTS ONLY.
-    # SO, MEAN COORD PDBS FOR TM WERE CALCULATED BY BIOPTYHON VIA src/utils/pdb_chain_writer/write_mean_models_to_pdb(),
+    # SO, MEAN COORD PDBS FOR TM WERE CALCULATED BY BIOPTYHON VIA src/TMalign_exe/pdb_chain_writer/write_mean_models_to_pdb(),
     # AND SAVED TO data/NMR/pdb_chains/multimod_2713_hetallchains_hom1chain/mean_coords.
 
     start = time()
