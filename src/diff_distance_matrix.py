@@ -1,8 +1,8 @@
 """
 One of 2 old methods for identifying large structural differences between models within individual NMR PDB datasets.
 
-1. Difference distance matrix (Euclidean distances between CAs).
-2. Essential dynamics: use of PCA for finding large conformational changes.
+1. Difference distance matrix (Euclidean distances between CAs). (this script).
+2. Essential dynamics: use of PCA for finding large conformational changes. (`essential_dynamics.py`).
 
 ----------------------------------------------------------------------------------------------------
 1. DIFFERENCE DISTANCE MATRIX:
