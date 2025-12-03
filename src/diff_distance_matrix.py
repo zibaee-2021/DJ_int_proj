@@ -13,7 +13,6 @@ import matplotlib.pyplot as plt
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.cluster import SpectralClustering
 from sklearn.metrics import silhouette_score
-from Bio.Data.IUPACData import protein_letters_3to1
 from Bio.SVDSuperimposer import SVDSuperimposer
 
 def _rp_nmr_dir() -> str:
@@ -21,9 +20,6 @@ def _rp_nmr_dir() -> str:
 
 def _rp_parsed_cifs(subdir: str) -> str:
     return os.path.join(_rp_nmr_dir(), 'parsed_cifs', subdir)
-
-def three_to_one(resname):
-    return protein_letters_3to1[resname.capitalize()]
 
 def _distance_matrix(coords: np.ndarray) -> np.ndarray:
     """
