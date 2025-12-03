@@ -252,8 +252,8 @@ def calc_rmsds_of_models_vs_mean(rp_parsed_cifs_ssv: str, rp_mean_coords_csv: st
     i.e. most are < 10 Ang).
     Calculating and using RMSD matrices is a superior and robust alternative, done in calc_rmsds_matrix_of_models().
     """
-    # rmsd_mat, n_models = RMSD.compute_rmsd_matrix(pidChain, het_hom)
-    # clusters = RMSD.cluster_models(rmsd_mat, threshold=2.0)
+    # rmsd_mat, n_models = compute_rmsd_matrix(pidChain, het_hom)
+    # clusters = cluster_models(rmsd_mat, threshold=2.0)
     # ref_structure = mean_stddev_struct_(het_hom, pidChain)
     rmsds, model_nums = [], []
     pidc = os.path.basename(rp_mean_coords_csv).removesuffix('.csv')
@@ -468,52 +468,38 @@ def calc_rmsds_matrix_of_models():
         np.savez(f'{rp_rmsd_mat_pidc}.npz', mat=rmsd_matrix)  # NumPy compressed file
     return rmsd_matrix
 
-
 if __name__ == '__main__':
     calc_rmsds_matrix_of_models()
     # _calc_rmsds_and_stats()
     # rp_pidc_ssvs = sorted(glob.glob(os.path.join(_rp_parsed_cifs_dir('multimod_2713_hetallchains_hom1chain'), '*.ssv')))
     # rp_dst_dir = os.path.join(_rp_rmsd_dir('multimod_2713_hetallchains_hom1chain'))
-
     # for rp_pidc_ssv in rp_pidc_ssvs:
     #     mean_stdev_struct(rp_pidc_ssv, rp_dst_dir)
-    #
-    # rp_pidchains_ssvs = sorted(glob.glob(os.path.join('..', 'data', 'NMR', 'parsed_cifs',
-    #                                            'multimod_2713_hetallchains_hom1chain', '*.ssv')))
-
-    # rp_parsed_cifs_ssvs = sorted(glob.glob(os.path.join('..', 'data', 'NMR', 'parsed_cifs',
-    #                                                     'multimod_2713_hetallchains_hom1chain', '*.ssv')))
-    #
-    # rp_mean_coords_csvs = sorted(glob.glob(os.path.join('..', 'data', 'NMR', 'RMSD',
-    #                                                     'multimod_2713_hetallchains_hom1chain',
-    #                                                     'mean_coords', '*.csv')))
-    #
+    # rp_pidchains_ssvs = sorted(glob.glob(os.path.join('..', 'data', 'NMR', 'parsed_cifs', 'multimod_2713_hetallchains_hom1chain', '*.ssv')))
+    # rp_parsed_cifs_ssvs = sorted(glob.glob(os.path.join('..', 'data', 'NMR', 'parsed_cifs', 'multimod_2713_hetallchains_hom1chain', '*.ssv')))
+    # rp_mean_coords_csvs = sorted(glob.glob(os.path.join('..', 'data', 'NMR', 'RMSD', 'multimod_2713_hetallchains_hom1chain', 'mean_coords', '*.csv')))
     # for rp_parsed_cifs_ssv_, rp_mean_coords_csv_ in zip(rp_parsed_cifs_ssvs, rp_mean_coords_csvs):
-    #     rmsds_, model_nums_, pidch_list4table_ = calc_rmsds_of_models_vs_means(rp_parsed_cifs_ssv=rp_parsed_cifs_ssv_,
-    #                                                                   rp_mean_coords_csv=rp_mean_coords_csv_)
-
-
+    #     rmsds_, model_nums_, pidch_list4table_ = calc_rmsds_of_models_vs_means(rp_parsed_cifs_ssv=rp_parsed_cifs_ssv_, rp_mean_coords_csv=rp_mean_coords_csv_)
     # _meric = 'heteromeric'
     # with open(f'../data/NMR/multimodel_lists/{_meric[:3]}_multimod_2104_PidChains.txt', 'r') as f:
-    #     pdbid_chains = f.readlines()
-    # rmsd_mat, n_models = compute_rmsd_matrix(pdbid_chain='1A0N_A', het_hom=_meric)
-
-    # # linkage_matrix = build_dendrogram(rmsd_mat, n_models)
-    # # build_heatmap(rmsd_mat, linkage_matrix)
-    # # build_contour_map(rmsd_mat)
-
-    # cluster_save_to_json(rmsd_mat, pdbid_chain)
-    #
-    # # clusters = cluster_models(rmsd_mat, threshold=2.0)
-    # # json_dict = clusters_to_json_dict(clusters)
-    # # mm_ensbls = '../data/NMR/multimodel_ensembles'
-    # # os.makedirs(mm_ensbls, exist_ok=True)
-    # # output_file = f'{mm_ensbls}/{pdbid_chain}_ens.json'
-    # # write_clusters_json(json_dict, output_file)
-    # # print(f'Saved ensembles to {output_file}')
+    #     pid_chains = f.readlines()
+    # for pid_chain in pid_chains:
+    #     rmsd_mat, n_models = compute_rmsd_matrix(pdbid_chain=pid_chain, het_hom=_meric) # needs to know which subdir the pid_chain is in.
+    # #     rmsd_mat, n_models = compute_rmsd_matrix(pdbid_chain='1A0N_A', het_hom=_meric)
+    #     linkage_matrix = dendrogram(rmsd_mat, n_models)
+    #     heatmap(rmsd_mat, linkage_matrix)
+    #     contour_map(rmsd_mat)
+    #     cluster_save_to_json(rmsd_mat, pid_chain)
+    #     clusters = cluster_models(rmsd_mat, threshold=2.0)
+    #     json_dict = clusters_to_json_dict(clusters)
+    #     mm_ensbls = '../data/NMR/multimodel_ensembles'
+    #     os.makedirs(mm_ensbls, exist_ok=True)
+    #     output_file = f'{mm_ensbls}/{pid_chain}_ens.json'
+    #     write_clusters_json(json_dict, output_file)
+    #     print(f'Saved ensembles to {output_file}')
 
     # PATHS OF PDBid_CHAINS:
-    # rp_mmseqs_results_dir = mmseqs2.rp_mmseqs_results_dir(het_hom='hethom_combined')    # TODO update
+    # rp_mmseqs_results_dir = mmseqs2.rp_mmseqs_results_dir(het_hom='hethom_combined')    # TO DO: update
     # rp_homologues_30_20_90 = os.path.join(rp_mmseqs_results_dir, 'homologues_30_20_90.csv')
     # rp_non_homologues_30_20_90 = os.path.join(rp_mmseqs_results_dir, 'non_homologues_30_20_90.csv')
 
@@ -548,8 +534,6 @@ if __name__ == '__main__':
     # print(f'len(all_pidChains_from_lists)={len(all_pidChains_from_lists)}')
 
     # rp_parsed_cif_dir = os.path.join('..', 'data', 'NMR', 'parsed_cifs', 'hethom_combined')
-    #
-
 
     # rmsd_results, pidChain1_list, pidChain2_list = [], [], []
     # pidChain_rmsds = []
@@ -570,4 +554,3 @@ if __name__ == '__main__':
     # rp_rmsd_dir = _rp_RMSD_dir(het_hom='hethom_combined')
     # os.makedirs(rp_rmsd_dir, exist_ok=True )
     # pdf.to_csv(os.path.join(rp_rmsd_dir, 'homologous_30_20_90.csv'), index=False)
-
