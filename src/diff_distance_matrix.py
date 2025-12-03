@@ -51,7 +51,7 @@ def compute_ddms(pidc_pdf):
     model_numbers = pidc_pdf['A_pdbx_PDB_model_num'].unique()
     model_numbers = list(model_numbers)
     model_pairs = itertools.combinations(model_numbers, 2)
-    mp_list = list()
+    mp_list = []
     for model1, model2 in model_pairs:
         mp_list.append((int(model1), int(model2)))
         model_i_pdf = pidc_pdf[pidc_pdf['A_pdbx_PDB_model_num'] == model1].copy()
