@@ -4,7 +4,7 @@
 # !pip install --upgrade huggingface_hub
 
 """
-### TUTORIAL TO GET mdCATH H5 FILES
+### CONSULT TUTORIAL TO GET mdCATH H5 FILES:
 Use the HuggingFace API to download the mdCATH dataset in H5 format directly from the HuggingFace Hub.
 In this notebook, we demonstrate how to use the API module for this purpose.
 Alternatively, you can download the dataset by appending the desired filename to the
