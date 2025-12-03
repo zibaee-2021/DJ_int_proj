@@ -45,6 +45,9 @@ def _rp_rmsd_dir(sub_dir: str) -> str:
 def _rp_parsed_cifs_dir(sub_dir: str) -> str:
     return os.path.join(_rp_nmr_dir(), 'parsed_cifs', sub_dir)
 
+def _rp_raw_cifs(sub_dir: str) -> str:
+    return os.path.join(_rp_nmr_dir(), 'raw_cifs', sub_dir)
+
 def rp_mmseqs_dir(het_hom) -> str:
     return os.path.join(_rp_nmr_dir(), 'mmseqs', het_hom)
 
@@ -68,8 +71,8 @@ def align_alpha_carbons(model1, model2):
 def compute_rmsd_matrix(pdbid_chain: str, het_hom: str):
     parser = PDB.MMCIFParser(QUIET=True)
     pdbid, chain = pdbid_chain.split('_')
-    structure = parser.get_structure('', f'../data/NMR/raw_cifs/{het_hom}/{pdbid}.cif')
-
+    rf_raw_cifs_dir = _rp_raw_cifs(sub_dir=het_hom)
+    structure = parser.get_structure('', os.path.join(rf_raw_cifs_dir, f'{pdbid}.cif'))
     models = list(structure)
     n_models = len(models)
     print(f'{pdbid_chain} has {n_models} models.')
