@@ -172,7 +172,6 @@ def cluster_models(rmsd_matrix, threshold=2.0) -> dict:
     Z = linkage(condensed, method='average')  # unweighted pair ground method with arithmetic mean (i.e. UPGMA).
     # Z = linkage(condensed, method='ward')  # represents variance
     cluster_labels = fcluster(Z, t=threshold, criterion='distance')  # Assign clusters
-
     clusters = {}
     for i, label in enumerate(cluster_labels):
         clusters.setdefault(label, []).append(i + 1)
