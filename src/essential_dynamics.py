@@ -106,7 +106,7 @@ def pca_sklearn(A0, n_components=None):
     eigvecs = pca.components_.T  # (3N, n_components)
     return eigvals, eigvecs, scores.T  # transpose scores for consistency
 
-def weighted_rmsd_modes(eigvecs, eigvals, N, modes=(0, 1, 2)):
+def weighted_pca_mode_amplitudes(eigvecs, eigvals, N: int, modes=(0,1,2)):
     """
     Map 3N eigenvector components -> per-residue RMSD contributions,
     weighted by sqrt(eigenvalue) to get Å units (Recipe I step 15).
@@ -117,7 +117,7 @@ def weighted_rmsd_modes(eigvecs, eigvals, N, modes=(0, 1, 2)):
         # per-residue amplitude (Å): sqrt( sum_{x,y,z} v^2 ) * sqrt(lambda)
         amp = np.linalg.norm(v, axis=1) * np.sqrt(max(eigvals[mi], 0))  #norm gives shape of motion per residue.
         out[mi] = amp
-    return out  # dict: mode_index -> (N,)
+    return out
 
 def plot_scree(eigvals, title='Scree (eigenvalues)'):
     cum = np.cumsum(eigvals) / np.sum(eigvals)
@@ -237,7 +237,7 @@ def essential_dynamics_pca(pidc: str, pidc_pdf, use_correlation=False, top_modes
 
     # Per-residue weighted RMSD modes (finds high amplitude residues; may be flexible regions (i.e. hinge/loop-like).
     n_used = N
-    wr = weighted_rmsd_modes(eigvecs, eigvals, n_used, modes=top_modes_for_rmsd)
+    wr = weighted_pca_mode_amplitudes(eigvecs, eigvals, n_used, modes=top_modes_for_rmsd)
     for mi, amp in wr.items():
         title = f'{pidc} Weighted RMSD Mode (PC{mi + 1})'
         plot_sequence_signal(amp, title=title, ylabel='Å (weighted)')
