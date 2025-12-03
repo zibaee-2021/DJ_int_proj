@@ -1,25 +1,26 @@
 """
-One of 2 old methods for identifying large structural differences between models within individual NMR PDB datasets.
-
-1. Difference distance matrix (Euclidean distances between CAs).
-2. Essential dynamics: use of PCA for finding large conformational changes.
-
-----------------------------------------------------------------------------------------------------
-2. USE OF PCA FOR FINDING LARGE CONFORMATIONAL CHANGES:
-
+Inspired by:
 'Principal Component Analysis: A Method for Determining the Essential Dynamics of Proteins'
 Charles C. David and Donald J. Jacobs
-Methods Mol Biol. 2014 ; 1084: 193–226
+Methods Mol Biol. 1084: 193–226. (2014)
+----------------------------------------------------------------------------------------------------------
+Originates in 1980s onwards (in terms of proteins):
+Method for Estimating the Configurational Entropy of Macromolecules.
+Karplus M. & Kushick J.N.
+Macromolecules 14: 325-332. (1981)
 
-But originates in 90s:
-- Large-amplitude nonlinear motions in proteins.
+The effects of solvent on the conformation and the collective motions of protein: NMA and MD simulations of melittin in water and in vacuum.
+Kitao, A., Hirata F., Go, N.
+Chemical Physics 158: 447-472. (1991)
+
+Large-amplitude nonlinear motions in proteins.
 Garcia, A.E.
-Phys. Rev. Lett. 68:2696–2699 (1992)
+Phys. Rev. Lett. 68:2696–2699. (1992)
 
 Effect of solvent on collective motions in globular proteins.
-Kitao, A., Hirata, F., Go, N.
-J. Mol. Biol. 234:1207–1217, (1993)
-
+Hayward S., Kitao, A., Hirata, F., Go, N.
+J. Mol. Biol. 234:1207–1217. (1993)
+----------------------------------------------------------------------------------------------------------
 """
 
 import itertools
