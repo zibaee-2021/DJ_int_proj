@@ -69,6 +69,15 @@ def align_alpha_carbons(model1, model2):
     return si
 
 def compute_rmsd_matrix(pdbid_chain: str, het_hom: str):
+    """
+    Compute the RMSD matrix of all-vs-all NMR models in the given PDB-chain.
+    Use Biopython to read the PDB-chain NMR structure file, split it into its models, align each model pair using
+    Biopython's SVDSuperimposer which has a built in RMS calculation function.
+    :param pdbid_chain: PDB id with a chain id connected by underscore, e.g. '1A0N_A'.
+    :param het_hom: Name of subdir in raw_cifs dir. Either "homomeric" or "heteromeric".
+    :return: RMSD matrix and number of models found for the given PDB-chain (can be used to assert dimensions of the
+    returned square RMSD matrix).
+    """
     parser = PDB.MMCIFParser(QUIET=True)
     pdbid, chain = pdbid_chain.split('_')
     rf_raw_cifs_dir = _rp_raw_cifs(sub_dir=het_hom)
@@ -234,6 +243,15 @@ def calc_rmsds_pidchain_pairs(pidchain1_name: str, pidchain2_name: str, rp_rmsd_
 def calc_rmsds_of_models_vs_mean(rp_parsed_cifs_ssv: str, rp_mean_coords_csv: str) -> tuple:
     """
     Calculate RMSD of each model the given PDBchain, vs the mean coordinates of this PDBchain.
+    (The same calculations are performed also in _calc_rmsds_and_stats() below.)
+
+    NOTE:
+    The (pre-computed) mean coords are used in this functionn and in _calc_rmsds_and_stats().
+    However, it is crude as calculating the means is not ideal (especially without explicitly aligning the models
+    because although thy seem aligned in the vast majority of NMR structures, there are outliers. Furthermore, I did
+    not check the alignment of the dataset, but judged it crudely by eye and by the RMSD values which seem reasonable
+    i.e. most are < 10 Ang).
+    Calculating and using RMSD matrices is a superior and robust alternative, done in calc_rmsds_matrix_of_models().
     """
     # rmsd_mat, n_models = RMSD.compute_rmsd_matrix(pidChain, het_hom)
     # clusters = RMSD.cluster_models(rmsd_mat, threshold=2.0)
@@ -263,6 +281,21 @@ def calc_rmsds_of_models_vs_mean(rp_parsed_cifs_ssv: str, rp_mean_coords_csv: st
 
 # COPIED OVER FROM pdb_model_stats.py and ammended to match tm_aligner output format:
 def _calc_rmsds_and_stats():
+    """
+    For all PDB-chains in the NMR dataset, calculate RMSD of each NMR model vs the (pre-computed) mean of NMR models
+    (for this PDB-chain).
+    In addition, for each PDB-chain, store the minimum RMSD, maximum RMSD, and calculate the RMSD means and standard
+    deviations of the models.
+
+    NOTE:
+    The (pre-computed) mean coords of NMR models for each PDB-chain are used in this function and in
+    calc_rmsds_of_models_vs_mean().
+    However, it is crude as calculating the means is not ideal (especially without explicitly aligning the models
+    because although thy seem aligned in the vast majority of NMR structures in the RCSB site, there are still outliers.
+    Furthermore, I did not check the alignment of the dataset, but judged it crudely by eye and by the RMSD values
+    which seem reasonable i.e. most are < 10 Ang).
+    Calculating and using RMSD matrices is a superior and robust alternative, done in calc_rmsds_matrix_of_models().
+    """
     start = time()
     rp_mean_coords_pidc_dir = os.path.join(_rp_rmsd_dir('multimod_2713_hetallchains_hom1chain'), 'mean_coords')
     rp_mean_coords_pidc_csvs = sorted(glob.glob(os.path.join(rp_mean_coords_pidc_dir, '*.csv')))
