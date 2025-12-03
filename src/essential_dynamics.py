@@ -181,7 +181,7 @@ def essential_dynamics_pca(pidc: str, pidc_pdf, use_correlation=False, top_modes
     """
     pidc: PDB-chain identifier.
     pidc_pdf: PDB-chain dataframe.
-    use_correlation: if True, normalize per-variable before PCA (paper advises trying both).
+    use_correlation: if True, normalise per-variable before PCA (paper advises trying both).
     top_modes_for_rmsd: tuple of mode indices for per-residue hinge profiles.
     try_kmeans_k: if int, run k-means on PC scores and print silhouette.
     do_kpca: if True, run KernelPCA (RBF) on the first pca_top_for_kpca PCs for extra separation.
