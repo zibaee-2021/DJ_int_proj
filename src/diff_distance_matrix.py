@@ -157,8 +157,10 @@ def analyse_ddms(ddms: list, model_pairs: List[tuple]=None, min_seq_sep: int=5, 
         domain_labels = best_labels
     else:
         domain_labels = SpectralClustering(
-            n_clusters=k, affinity='precomputed',
-            assign_labels='kmeans', random_state=random_state
+            n_clusters=k,
+            affinity='precomputed',
+            assign_labels='kmeans',
+            random_state=random_state
         ).fit_predict(similarity)
 
     # Per-residue "who moved?" summaries for visualisation
