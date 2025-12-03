@@ -204,7 +204,7 @@ def cluster_save_to_json(rmsd_mat, pdbid_chain):
     write_clusters_json(json_dict, output_file)
     print(f'Saved ensembles to {output_file}')
 
-def calculate_rmsd(coords1, coords2) -> float:
+def calculate_rmsd(coords1: np.ndarray, coords2: np.ndarray) -> float:
     """
     Calculate RMSD between the two given coordinates (as numpy arrays).
     Uses SVDSuperimposer(). This calculates optimal least-squares superposition (Kabsch algorithm), which is the
