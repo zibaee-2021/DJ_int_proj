@@ -46,8 +46,8 @@ def _align(coords_mod_i, coords_mod_j):
     si.run()
     return si
 
-def compute_ddms(pidc_pdf) -> Tuple[list, list]:
-    ddms = list()
+def compute_ddms(pidc_pdf):
+    ddms = []
     model_numbers = pidc_pdf['A_pdbx_PDB_model_num'].unique()
     model_numbers = list(model_numbers)
     model_pairs = itertools.combinations(model_numbers, 2)
