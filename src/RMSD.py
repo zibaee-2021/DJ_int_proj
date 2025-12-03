@@ -430,7 +430,6 @@ def mean_stdev_struct(rp_pidc_ssv: str, rp_dst_dir: str):
         mean_df.to_csv(rp_rmsd_csv, index=False)
     return mean_df
 
-
 def calc_rmsds_matrix_of_models():
     """
     For each NMR PDB-chain, calculate all-vs-all RMSD of the models.
