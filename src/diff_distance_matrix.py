@@ -118,20 +118,20 @@ def analyse_ddms(ddms: list, model_pairs: List[tuple]=None, min_seq_sep: int=5, 
     # K = len(ddms)
     abs_ddm = np.stack(ddms, axis=0) # (K, N, N)
 
-    # Aggregate over all pairs
-    agg_rms = np.sqrt(np.mean(abs_ddm**2, axis=0))         # RMS across pairs
-    agg_max = np.max(abs_ddm, axis=0)                      # max across pairs
+    # Aggregate over all model pairs
+    agg_rms = np.sqrt(np.mean(abs_ddm**2, axis=0))         # RMS aggregated across all model pairs
+    agg_max = np.max(abs_ddm, axis=0)                      # max across all model pairs
 
     # Build per-residue feature vectors from long-range parts of aggregates
     # Feature = [ agg_rms[i, long-range j]; agg_max[i, long-range j] ]
     # Zero out near-diagonal (short-range) entries but keep full length per row
     agg_rms_masked = agg_rms * mask  # (N,N)
     agg_max_masked = agg_max * mask  # (N,N)
-    # Feature for residue r is the concatenation of the full masked rows (fixed length 2N)
+    # Feature for residue is the concatenation of the full masked rows (fixed length 2N)
     X = np.hstack([agg_rms_masked, agg_max_masked])  # (N,2N)
 
     # Residue similarity (cosine on features)
-    X_abs = np.abs(X)  # (N,2N)                   # ignore sign; we're about magnitude patterns
+    X_abs = np.abs(X)  # (N,2N)  Defensive. (Tiny -ve floating-point artefacts can come from ops like np.sqrt()).
     similarity = cosine_similarity(X_abs)  # (N,N)
     np.fill_diagonal(similarity, 1.0)
     similarity[similarity < 0] = 0.0  # clamp tiny negatives
@@ -141,8 +141,10 @@ def analyse_ddms(ddms: list, model_pairs: List[tuple]=None, min_seq_sep: int=5, 
         best_k, best_labels, best_s = None, None, -np.inf
         for kk in (2, 3, 4):
             labels_try = SpectralClustering(
-                n_clusters=kk, affinity='precomputed',
-                assign_labels='kmeans', random_state=random_state
+                n_clusters=kk,
+                affinity='precomputed',  # precomputed means we've already computed the affinity matrix, i.e. the cosine similarities.
+                assign_labels='kmeans',
+                random_state=random_state
             ).fit_predict(similarity)
             # Silhouette on the original feature space X (Euclidean)
             # If a cluster collapses (rare), silhouette can fail; guard it.
