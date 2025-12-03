@@ -79,18 +79,23 @@ def pca_evd(A0):
     PCA via EVD of covariance Q = A0 @ A0.T;
     returns eigvals, eigvecs, scores.
     """
-    # Q is (3N x 3N); for typical N this is fine. For very large 3N, switch to SVD on (M x 3N).
+    # Q is (3N x 3N); With typical N this is fine. But for very large 3N, might be better to switch to SVD on (M x 3N).
     Q = A0 @ A0.T
-    eigvals, eigvecs = np.linalg.eigh(Q)  # symmetric
-    order = np.argsort(eigvals)[::-1]
+    # Covariance matrix is always guaranteed to be symmetric, so always diagonalisable, so eigenvalues are guaraneteed
+    # to all be real, and eigenvectors are guaranteed to all be orthogonal - which is needed for PCA.
+    # We know Q is symmetric so we use np.linalg.eigh() instead of np.linalg.eig().
+    eigvals, eigvecs = np.linalg.eigh(Q)
+
+    # PCA requires ordered eigenvectors by decreasing variance (and eigendecomposition does not guarantee order), so:
+    order = np.argsort(eigvals)[::-1]  # orders by smallest-to-largest), [::-1] reverses it to largest-to-smallest.
     eigvals = eigvals[order]
     eigvecs = eigvecs[:, order]
-    # PC scores for each model: project each centered column onto eigenvectors
+    # PC scores for each model: project each centered column (i.e. model) onto each PCA mode (i.e. eigenvectors).
     scores = eigvecs.T @ A0  # shape: (3N_modes, M)
     return eigvals, eigvecs, scores  # scores[i] is PC_i across models
 
 # NOTE: `pca_evd()` above is a manual implementation of PCA which has a few advantages over
-# e.g. scikit-learn PCA which could be implemented as below:
+# e.g. scikit-learn PCA which could be implemented as below (though not currently used):
 from sklearn.decomposition import PCA
 def pca_sklearn(A0, n_components=None):
     # A0 is (3N, M) with zero mean per row
@@ -110,7 +115,7 @@ def weighted_rmsd_modes(eigvecs, eigvals, N, modes=(0, 1, 2)):
     for mi in modes:
         v = eigvecs[:, mi].reshape(N, 3)
         # per-residue amplitude (Å): sqrt( sum_{x,y,z} v^2 ) * sqrt(lambda)
-        amp = np.linalg.norm(v, axis=1) * np.sqrt(max(eigvals[mi], 0))
+        amp = np.linalg.norm(v, axis=1) * np.sqrt(max(eigvals[mi], 0))  #norm gives shape of motion per residue.
         out[mi] = amp
     return out  # dict: mode_index -> (N,)
 
@@ -195,8 +200,9 @@ def essential_dynamics_pca(pidc: str, pidc_pdf, use_correlation=False, top_modes
               .apply(lambda g: g.to_numpy())
               .to_numpy()
               )
-    # coords: (M, N, 3) numpy array of CA coordinates across models. i.e. M is models, N is CAs, 3 are x,y,z coordinates
-    # So, PDB with 20 models, 90 CAs should have shape (20,90,3).
+    # coords are CA coordinates across models.
+    # shape (M, N, 3) where M is number of models, N is number of atoms (CAs), 3 are x,y,z coordinates.
+    # E.g. PDB with 20 models, 90 CAs has shape (20, 90, 3).
     coords = np.stack(coords, axis=0)
 
     M, N, _ = coords.shape
@@ -210,11 +216,12 @@ def essential_dynamics_pca(pidc: str, pidc_pdf, use_correlation=False, top_modes
     # Returns eigenvalues (mode variances), eigenvectors (mode shapes), and scores (model projections).
     eigvals, eigvecs, scores = pca_evd(co_PCA)  # eigvals: (3N'), eigvecs: (3N', 3N'), scores: (3N', M)
 
+    # For manual visual analysis:
     # Plot variance distribution across PCs to pick a meaningful cutoff (“elbow”/scree test).
     plot_scree(eigvals, title=f"{pidc} Scree ({'corr' if use_correlation else 'cov'}-PCA)")
 
+    # For manual visual analysis:
     # Inspect separation of models in low-dimensional PC space (PC1 vs PC2) for clustering tendencies.
-    # PC scatter (1 vs 2)
     scatter_pc(scores, 0, 1, title=f'{pidc} Models in PC1–PC2 space')
 
     # Optional quick unsupervised clustering directly in PC space to label putative ensembles.
@@ -228,7 +235,7 @@ def essential_dynamics_pca(pidc: str, pidc_pdf, use_correlation=False, top_modes
         print(f'[k-means] k={try_kmeans_k}, silhouette={s:.3f}')
         scatter_pc(scores, 0, 1, labels=km_labels, title=f'{pidc} PC1–PC2 with k-means (k={try_kmeans_k})')
 
-    # Per-residue weighted RMSD modes (hinge finder)
+    # Per-residue weighted RMSD modes (finds high amplitude residues; may be flexible regions (i.e. hinge/loop-like).
     n_used = N
     wr = weighted_rmsd_modes(eigvecs, eigvals, n_used, modes=top_modes_for_rmsd)
     for mi, amp in wr.items():
@@ -245,9 +252,7 @@ def essential_dynamics_pca(pidc: str, pidc_pdf, use_correlation=False, top_modes
 
         # --- gamma handling ---
         # If user gives None (or used 'scale'/'auto' before), choose a simple heuristic
-        # analogous to SVM's 'scale': gamma = 1 / n_features on standardized data.
-        # Choose the kernel width (gamma). If not provided, use a simple 1/n_features heuristic
-        # (analogous to SVM 'scale') on standardised PCs—robust default without extra tuning.
+        # analogous to SVM's 'scale': gamma = 1 / n_features on standardised PCs—robust default without extra tuning.
         if kpca_gamma is None or (isinstance(kpca_gamma, str) and kpca_gamma.lower() in {'scale', 'auto'}):
             gamma = 1.0 / Xz.shape[1]
         elif isinstance(kpca_gamma, (int, float)) and kpca_gamma >= 0:
