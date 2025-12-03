@@ -88,7 +88,7 @@ def convert_aa_seq_to_fasta(rp_prefix: str):
 
 
 if  __name__ == '__main__':
-    foldseek_dst_db_dir = '../data/XRAY/DynDom/Hayward_files/foldseek/debug'
+    foldseek_dst_db_dir = '../data/DynDom/Hayward_files/foldseek/debug'
     os.makedirs(foldseek_dst_db_dir, exist_ok=True)
     rp_pdbname = os.path.join(foldseek_dst_db_dir, 'AACII1R1_confA_2a4n')
     # rp_pdbname = os.path.join(foldseek_dst_db_dir, 'AACII1R1_confB_1b87')
