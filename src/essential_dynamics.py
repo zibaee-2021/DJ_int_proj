@@ -108,8 +108,20 @@ def pca_sklearn(A0, n_components=None):
 
 def weighted_pca_mode_amplitudes(eigvecs, eigvals, N: int, modes=(0,1,2)):
     """
-    Map 3N eigenvector components -> per-residue RMSD contributions,
-    weighted by sqrt(eigenvalue) to get Å units (Recipe I step 15).
+    Convert selected PCA eigenvectors (length 3N) into per-residue displacement
+    amplitudes in Å. This quantity is often called a "weighted RMSD mode" in the essential dynamics literature
+    ('Step 15', 'Recipe I' of David & Jacobs, Methods Mol. Biol. 2014,1084:193–226), but it is a per-residue mode
+    displacement amplitude, NOT a pairwise RMSD between two structures.
+    For each mode i:
+      1) reshape eigenvector v_i to (N,3) to obtain (x,y,z) components per residue,
+      2) take the Euclidean norm per residue: ||v_i(r)||,
+      3) scale by sqrt(lambda_i) to express the mode amplitude in physical units (Å).
+
+    :param eigvecs: (3N,3N)
+    :param eigvals: (3N,)
+    :param N: Number of atoms (i.e. expecting this to be number of alpha-carbons atoms (i.e. length of protein chain))
+    :param modes: PC1-PC3 by default.
+    :return: Weighted RMSD per residue for each mode. key=mode index, value= (N,) array of per-residue amplitudes (Å).
     """
     out = {}
     for mi in modes:
@@ -179,6 +191,7 @@ def plot_matrix(M, title='Matrix', save_png=None):
 def essential_dynamics_pca(pidc: str, pidc_pdf, use_correlation=False, top_modes_for_rmsd=(0, 1, 2),
                            try_kmeans_k=None, pca_top_for_kpca=5, do_kpca=False, kpca_gamma=None):
     """
+    Perform PCA on given models of PDB-chain coordinates to compute essential dynamics of protein ensembles.
     pidc: PDB-chain identifier.
     pidc_pdf: PDB-chain dataframe.
     use_correlation: if True, normalise per-variable before PCA (paper advises trying both).
