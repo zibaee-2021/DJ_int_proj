@@ -106,7 +106,7 @@ def dendrogrm(dist_matrix, n_models: int, pidc: str, rmsd_or_tms: str):
     corrupt the distances — so, fill or drop that pair first.
 
     `linkage()`: builds a hierarchical clustering tree (a linkage/dendrogram) from the distances.
-    `method='ward'` works on (squared) Euclidean point distances to minimize within‑cluster variance; the linkage
+    `method='ward'` works on (squared) Euclidean point distances to minimise within‑cluster variance; the linkage
     heights are not plain distances in Å. So, if you want a “cut at X Å” interpretation, use 'average'
     (or 'complete'/'single'), not 'ward'.
     """
@@ -159,7 +159,7 @@ def cluster_models(rmsd_matrix, threshold=2.0):
 
     `linkage()`:
                     builds a hierarchical clustering tree (a linkage/dendrogram) from the distances.
-    `method='ward'` works on (squared) Euclidean point distances to minimize within‑cluster variance; the linkage
+    `method='ward'` works on (squared) Euclidean point distances to minimise within‑cluster variance; the linkage
     heights are not plain distances in Å. So, if you want a “cut at X Å” interpretation, use 'average'
     (or 'complete'/'single'), not 'ward'.
 
@@ -213,7 +213,7 @@ def calculate_rmsd(coords1, coords2) -> float:
     input coordinates, i.e. Angstroms.
     Lower RMSDs indicate high structural similarity.
 
-    WARNING: The following was from CGT4o:
+    (Note: The following info on the meaning of the different range of RMSD values was supplied via CGT4o)
     < 1 Angs = essentially identical, only minor coordinate fluctuations.
     1-2 Angs = very similar, typically same fold, possibly different side-chain conformations.
     2-4 Angs = Similar global fold; might differ in loops or flexible regions.
@@ -418,7 +418,7 @@ def mean_stdev_struct(rp_pidc_ssv: str, rp_dst_dir: str):
 
 def calc_rmsds_matrix_of_models():
     """
-    Calculate RMSD of each model against every other model for a given PDB-chain.
+    For each NMR PDB-chain, calculate all-vs-all RMSD of the models.
     """
     rp_pidc_dir = _rp_parsed_cifs_dir('multimod_2713_hetallchains_hom1chain')
     rp_pidc_ssvs = sorted(glob.glob(os.path.join(rp_pidc_dir, '*.ssv')))
