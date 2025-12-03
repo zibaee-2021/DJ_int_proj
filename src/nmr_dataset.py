@@ -134,7 +134,7 @@ def write_struct_files_for_solution_NMR(_meric: str, cif_or_pdb: str) -> None:
 
 def write_raw_pdb_or_cif(pdbid: str, cif_or_pdb: str, dst_dir: str):
     import os
-    from src.utils import api_callr as api
+    import api_callr as api
     response = api.call_rcsb_for_cif_or_pdb(pdb_id=pdbid, cif_or_pdb=cif_or_pdb)
     with open(os.path.join(dst_dir, f'{pdbid}.{cif_or_pdb}'), 'w') as f:
         f.write(response.text)
