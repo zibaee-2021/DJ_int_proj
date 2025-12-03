@@ -122,9 +122,8 @@ def analyse_ddms(ddms: list, model_pairs: List[tuple]=None, min_seq_sep: int=5, 
     agg_rms = np.sqrt(np.mean(abs_ddm**2, axis=0))         # RMS aggregated across all model pairs
     agg_max = np.max(abs_ddm, axis=0)                      # max across all model pairs
 
-    # Build per-residue feature vectors from long-range parts of aggregates
-    # Feature = [ agg_rms[i, long-range j]; agg_max[i, long-range j] ]
-    # Zero out near-diagonal (short-range) entries but keep full length per row
+    # Build per-residue feature vectors from long-range parts of aggregates.
+    # Zero out near-diagonal (short-range) entries but keep full length per row:
     agg_rms_masked = agg_rms * mask  # (N,N)
     agg_max_masked = agg_max * mask  # (N,N)
     # Feature for residue is the concatenation of the full masked rows (fixed length 2N)
