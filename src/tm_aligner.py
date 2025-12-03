@@ -87,6 +87,7 @@ def compute_tm_from_mp_pool(idx_pair, rp_all_pdb_files):
         print(f'Error computing TM-score for {f1} vs {f2}: {e}')
         return f1_idx, f2_idx, np.nan
 
+# Currently unused:
 def compute_tm_all_vs_all(rp_pdb_subdir: str):
     pidc = os.path.basename(rp_pdb_subdir).removesuffix('.pdb').split('_')[0]
     print(pidc)
