@@ -360,6 +360,22 @@ def _calc_rmsds_and_stats():
 # Note: I don't superimpose coords of different models onto the randomly chosen ref model prior to computing the mean
 # & stddev. It might be beneficial to do so, but for now I've opted not to.
 def mean_stdev_struct(rp_pidc_ssv: str, rp_dst_dir: str):
+    """
+    Compute the mean of NMR model coordinates for the given PDB-chain and save the result to given destination dir,
+    expected to be in '../data/NMR/RMSD/multimod_2713_hetallchains_hom1chain/mean_coords' dir.
+
+    NOTE:
+    The mean coords are written to data dir and used in _calc_rmsds_and_stats() and () above.
+    However, it is crude as calculating the means is not ideal (especially without explicitly aligning the models
+    because although thy seem aligned in the vast majority of NMR structures, there are outliers. Furthermore, I did
+    not check the alignment of the dataset, but judged it crudely by eye and by the RMSD values which seem reasonable
+    i.e. most are < 10 Ang).
+    Calculating and using RMSD matrices is a superior and robust alternative, done in calc_rmsds_matrix_of_models().
+
+    :param rp_pidc_ssv: Relative path to one pre-parsed space-separated values (ssv) files.
+    :param rp_dst_dir: Relative path to destination dir for mean coordinates of given PDB-chain.
+    :return: Mean coordinates of given PDB-chain in Pandas dataframe.
+    """
     pidc = os.path.basename(rp_pidc_ssv).removesuffix('.ssv')
     print(pidc)
     pdf = pd.read_csv(rp_pidc_ssv, sep=' ')
