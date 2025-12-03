@@ -58,10 +58,8 @@ def compute_ddms(pidc_pdf):
         model_j_pdf = pidc_pdf[pidc_pdf['A_pdbx_PDB_model_num'] == model2].copy()
         coords_i = model_i_pdf[['A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']].values
         coords_j = model_j_pdf[['A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']].values
-        si = _align(coords_i, coords_j)
-        model_i_si, model_j_si = si.reference_coords, si.coords
-        dm_i = _distance_matrix(model_i_si)
-        dm_j = _distance_matrix(model_j_si)
+        dm_i = _distance_matrix(coords_i)
+        dm_j = _distance_matrix(coords_j)
         ddm = np.abs(dm_i - dm_j)
         np.fill_diagonal(ddm, 0.0)  #
         ddms.append(ddm)
