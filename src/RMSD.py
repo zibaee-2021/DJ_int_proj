@@ -145,7 +145,7 @@ def contour_map(rmsd_matrix):
     plt.title('RMSD Contour Plot')
     plt.show()
 
-def cluster_models(rmsd_matrix, threshold=2.0):
+def cluster_models(rmsd_matrix, threshold=2.0) -> dict:
     """
     Cluster models so any pair differing by more than threshold Å is in different clusters.
     Returns: dict mapping cluster IDs to list of model indices
