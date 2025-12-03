@@ -61,10 +61,9 @@ def compute_ddms(pidc_pdf):
         dm_i = _distance_matrix(coords_i)
         dm_j = _distance_matrix(coords_j)
         ddm = np.abs(dm_i - dm_j)
-        np.fill_diagonal(ddm, 0.0)  #
+        np.fill_diagonal(ddm, 0.0)
         ddms.append(ddm)
     return ddms, mp_list
-
 
 def compute_ddm_of_pair(pidc_pdf, pidc_pdf2):
     coords_i = pidc_pdf[['A_Cartn_x', 'A_Cartn_y', 'A_Cartn_z']].values  # 2DN1
