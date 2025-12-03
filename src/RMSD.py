@@ -169,8 +169,8 @@ def cluster_models(rmsd_matrix, threshold=2.0) -> dict:
     With average linkage, that linkage height is in Å, so “threshold” has the physical meaning you expect.
     """
     condensed = squareform(rmsd_matrix)  # Convert to condensed distance
-    # Z = linkage(condensed, method='average')  # Hierarchical clustering
-    Z = linkage(condensed, method='ward')  # Hierarchical clustering
+    Z = linkage(condensed, method='average')  # unweighted pair ground method with arithmetic mean (i.e. UPGMA).
+    # Z = linkage(condensed, method='ward')  # represents variance
     cluster_labels = fcluster(Z, t=threshold, criterion='distance')  # Assign clusters
 
     clusters = {}
