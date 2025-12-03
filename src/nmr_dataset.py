@@ -4,7 +4,6 @@ import pandas as pd
 from Bio.PDB.MMCIF2Dict import MMCIF2Dict
 from src import api_callr as api, cif_parsr as cp
 
-
 def generate_pdb_lists_from_parsed_ssvs(subdir: str):
     start = time()
     rp_parsed_cifs = os.path.join('..', 'data', 'NMR', 'parsed_cifs', subdir)
@@ -50,7 +49,6 @@ def generate_pdb_lists_from_parsed_ssvs(subdir: str):
     print(f'\nSaved {len(multimodel_pdbids)} {subdir} pdbid_chains with > 1 unique model to text file.')
     print(f'Completed in {round(time() - start)} seconds')
 
-
 def parse_atomic_records_from_cifs(subdir: str, write_results=True):
     start = time()
     rp_raw_cifs_homomeric = os.path.join('..', 'data', 'NMR', 'raw_cifs', 'homomeric')
@@ -93,7 +91,6 @@ def parse_atomic_records_from_cifs(subdir: str, write_results=True):
 
     print(f'Completed {len(rpath_cifs_all)} {subdir} mmCIFs/PDBs in {round((time() - start) / 60)} minutes')
 
-
 def parse_atomic_records_from_XRAY_cifs(write_results=True):
     start = time()
     rp_xray_dir = os.path.join('..', 'data', 'XRAY', 'handpicked')
@@ -120,8 +117,6 @@ def parse_atomic_records_from_XRAY_cifs(write_results=True):
 
     print(f'Completed {len(rp_raw_cifs)} mmCIFs in {round(time() - start, 1)} secs')
 
-
-
 def write_struct_files_for_solution_NMR(_meric: str, cif_or_pdb: str) -> None:
     start = time()
     dst_dir = os.path.join('..', 'data', 'NMR', f'raw_{cif_or_pdb}s', _meric)
@@ -137,15 +132,12 @@ def write_struct_files_for_solution_NMR(_meric: str, cif_or_pdb: str) -> None:
             f.write(response.text)
     print(f'Completed {len(sol_nmr_pdbids)} {_meric} {cif_or_pdb}s in {round((time() - start) / 60)} minutes')
 
-
 def write_raw_pdb_or_cif(pdbid: str, cif_or_pdb: str, dst_dir: str):
     import os
     from src.utils import api_callr as api
     response = api.call_rcsb_for_cif_or_pdb(pdb_id=pdbid, cif_or_pdb=cif_or_pdb)
     with open(os.path.join(dst_dir, f'{pdbid}.{cif_or_pdb}'), 'w') as f:
         f.write(response.text)
-
-
 
 if __name__ == "__main__":
     # parse_atomic_records_from_XRAY_cifs()
