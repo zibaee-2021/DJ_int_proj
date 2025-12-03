@@ -116,7 +116,7 @@ def analyse_ddms(ddms: list, model_pairs: List[tuple]=None, min_seq_sep: int=5, 
     np.fill_diagonal(mask, False)
 
     # K = len(ddms)
-    abs_ddm = np.stack([np.abs(ddm) for ddm in ddms], axis=0)  # (K, N, N)
+    abs_ddm = np.stack(ddms, axis=0) # (K, N, N)
 
     # Aggregate over all pairs
     agg_rms = np.sqrt(np.mean(abs_ddm**2, axis=0))         # RMS across pairs
