@@ -7,20 +7,21 @@ on 26Sep25. The version was: 8979d230fb64c7089380b652758d8705493ed4a5 (FoldSeek 
 
 Bug and workaround:
 Attempting to run `foldseek convert2fasta {rp_prefix}_ss {rp_prefix}.3di.fasta` fails with missing header error.
-This is an bug/issue reported in March 2022 (github.com/steineggerlab/foldseek/issues/15).
+This is a bug/issue reported in March 2022 (github.com/steineggerlab/foldseek/issues/15).
 Workarounds provided at the time appear to still be needed (at least for my Mac version).
 
-One 4 line workaround, provided by a FoldSeek contributor ('mvankem'), was:
+4-line workaround, provided by a FoldSeek contributor 'mvankem':
 
     mv db tmp
     cp db_ss db
     foldseek convert2fasta db db_ss.fasta
     mv tmp db
 
-Another, "better", 2 line workaround, provided by Steinegger lab member (milot-mirdita), was:
+Alternative, and "better", 2-line workaround, provided by Steinegger lab member 'milot-mirdita':
 
     foldseek lndb queryDB_h queryDB_ss_h
     foldseek convert2fasta queryDB_ss queryDB_ss.fasta
+
 """
 import subprocess
 import os
