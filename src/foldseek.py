@@ -70,7 +70,7 @@ def convert_3di_states_to_fasta(rp_prefix: str):
     """
     Write FoldSeek 3Di sequence to human-readable FASTA format (`.fasta`).
     This requires the workaround to be run first.
-    :param rp_prefix:  Prefix of input and output filenames. (E.g. PDB filename).
+    :param rp_prefix: Prefix of input and output filenames. (E.g. PDB filename).
     Must include corresponding relative path (e.g. '../data/XRAY/DynDom/Hayward_files/foldseek/'.), which is the same
     for both the input ('<rp_prefix>_ss') and output ('<rp_prefix>.3di.fasta') files.
     """
