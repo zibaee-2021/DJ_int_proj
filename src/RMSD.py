@@ -278,7 +278,8 @@ def calc_rmsds_of_models_vs_mean(rp_parsed_cifs_ssv: str, rp_mean_coords_csv: st
     rmsds = np.array(rmsds)
     return rmsds, model_nums, pdc4pdf
 
-# COPIED OVER FROM pdb_model_stats.py and ammended to match tm_aligner output format:
+# DUPLICATE FROM pdb_model_stats._write_rmsds_and_stats() (duplicated for convenience and intended to be temporary.)
+# and amended to match tm_aligner output format:
 def _calc_rmsds_and_stats():
     """
     For all PDB-chains in the NMR dataset, calculate RMSD of each NMR model vs the (pre-computed) mean of NMR models

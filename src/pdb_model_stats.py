@@ -48,7 +48,7 @@ def _calc_identity_for_stats(het_hom: str, pdbid: str, filt_pdf) -> str:
         identity = '0'
     return identity
 
-# TEMPORARY DUPLICATE OF THAT IN RMSD.py
+# DUPLICATED TO RMSD._calc_rmsds_and_stats() (duplicated for convenience and intended to be temporary.)
 def _write_rmsds_and_stats(sub_dir: str):
     rp_mean_coords_pidc_dir = os.path.join(_rp_rmsd_dir(sub_dir), 'mean_coords')
     rp_mean_coords_pidc_csvs = sorted(glob.glob(os.path.join(rp_mean_coords_pidc_dir, '*.csv')))
@@ -386,7 +386,7 @@ def generate_stats(sub_dir: str, rp_pidc_lst_f: str, rp_fasta_f: str, _chains_ye
     print(f'Completed {len(pidc_list)} PDB-chains in {round((time() - start) / 60)} mins')  # 2713 pidc in 50 mins.
     return pid_pdf, pidc_pdf
 
-# COPIED OVER TO RMSD.py
+# COPIED OVER TO RMSD.py for convenience.
 def _calc_rmsds_stats(pidchains: list):
     """
     # NOTE: COPIED OVER TO RMSD.py
