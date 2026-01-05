@@ -32,6 +32,7 @@ from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.decomposition import KernelPCA
+import plotter as pltr
 
 def _rp_nmr_dir() -> str:
     return os.path.join('..', 'data', 'NMR')
@@ -162,19 +163,19 @@ def scatter_pc(scores, i=0, j=1, labels=None, title=''):
     plt.show()
     return fig, ax
 
-# (Reuse your helpers for per-residue mode plots)
-def plot_sequence_signal(signal, title='Per-residue signal', ylabel='magnitude', save_png=None):
-    fig, ax = plt.subplots(figsize=(10, 2.8))
-    ax.plot(np.arange(1, signal.shape[0] + 1), signal, linewidth=1.5)
-    ax.set_xlabel('Residue index')
-    ax.set_ylabel(ylabel)
-    ax.set_title(title)
-    ax.margins(x=0)
-    ax.grid(True, linestyle='--', linewidth=0.5, alpha=0.5)
-    if save_png:
-        plt.savefig(save_png, dpi=200, bbox_inches='tight')
-    plt.show()
-    return fig, ax
+# (Re-used by 3 scripts so transferred to plotter.py)
+# def plot_sequence_signal(signal, title='Per-residue signal', ylabel='magnitude', save_png=None):
+#     fig, ax = plt.subplots(figsize=(10, 2.8))
+#     ax.plot(np.arange(1, signal.shape[0] + 1), signal, linewidth=1.5)
+#     ax.set_xlabel('Residue index')
+#     ax.set_ylabel(ylabel)
+#     ax.set_title(title)
+#     ax.margins(x=0)
+#     ax.grid(True, linestyle='--', linewidth=0.5, alpha=0.5)
+#     if save_png:
+#         plt.savefig(save_png, dpi=200, bbox_inches='tight')
+#     plt.show()
+#     return fig, ax
 
 def plot_matrix(M, title='Matrix', save_png=None):
     fig, ax = plt.subplots(figsize=(5, 4.5))
@@ -253,7 +254,8 @@ def essential_dynamics_pca(pidc: str, pidc_pdf, use_correlation=False, top_modes
     wr = weighted_pca_mode_amplitudes(eigvecs, eigvals, n_used, modes=top_modes_for_rmsd)
     for mi, amp in wr.items():
         title = f'{pidc} Weighted RMSD Mode (PC{mi + 1})'
-        plot_sequence_signal(amp, title=title, ylabel='Å (weighted)')
+        # plot_sequence_signal(amp, title=title, ylabel='Å (weighted)')
+        pltr.plot_sequence_signal(amp, title=title, ylabel='Å (weighted)')
 
     # Optional: kernel PCA on top of standard PCs (Recipe III)
     kpca_scores = None

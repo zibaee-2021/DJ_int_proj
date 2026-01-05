@@ -14,6 +14,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.cluster import SpectralClustering
 from sklearn.metrics import silhouette_score
 from Bio.SVDSuperimposer import SVDSuperimposer
+import plotter as pltr
 
 def _rp_nmr_dir() -> str:
     return os.path.join('..', 'data', 'NMR')
@@ -313,18 +314,19 @@ def analyse_single_ddm(ddm, model_pairs: List[tuple]=None, min_seq_sep: int=5, k
         k=k,
     )
 
-def plot_sequence_signal(signal, title='Per-residue signal', ylabel='magnitude', save_png=None):
-    fig, ax = plt.subplots(figsize=(10, 2.8))
-    ax.plot(np.arange(1, signal.shape[0] + 1), signal, linewidth=1.5)
-    ax.set_xlabel('Residue index')
-    ax.set_ylabel(ylabel)
-    ax.set_title(title)
-    ax.margins(x=0)
-    ax.grid(True, linestyle='--', linewidth=0.5, alpha=0.5)
-    if save_png:
-        plt.savefig(save_png, dpi=200, bbox_inches='tight')
-    plt.show()
-    return fig, ax
+# (Re-used by 3 scripts so transferred to plotter.py)
+# def plot_sequence_signal(signal, title='Per-residue signal', ylabel='magnitude', save_png=None):
+#     fig, ax = plt.subplots(figsize=(10, 2.8))
+#     ax.plot(np.arange(1, signal.shape[0] + 1), signal, linewidth=1.5)
+#     ax.set_xlabel('Residue index')
+#     ax.set_ylabel(ylabel)
+#     ax.set_title(title)
+#     ax.margins(x=0)
+#     ax.grid(True, linestyle='--', linewidth=0.5, alpha=0.5)
+#     if save_png:
+#         plt.savefig(save_png, dpi=200, bbox_inches='tight')
+#     plt.show()
+#     return fig, ax
 
 def plot_matrix(M, title='Matrix', save_png=None):
     fig, ax = plt.subplots(figsize=(5, 4.5))
@@ -352,8 +354,10 @@ if __name__ == "__main__":
         _ddm = compute_ddm_of_pair(pidc_pdf, pidc_pdf2)
         res = analyse_single_ddm(_ddm, min_seq_sep=5)
 
-        plot_sequence_signal(res['per_residue_max'], title='Max |ddm| per residue (any partner/pair)', ylabel='Å')
-        plot_sequence_signal(res['hinge_score'], title='Hinge score per residue', ylabel='score')
+        # plot_sequence_signal(res['per_residue_max'], title='Max |ddm| per residue (any partner/pair)', ylabel='Å')
+        pltr.plot_sequence_signal(res['per_residue_max'], title='Max |ddm| per residue (any partner/pair)', ylabel='Å')
+        # plot_sequence_signal(res['hinge_score'], title='Hinge score per residue', ylabel='score')
+        pltr.plot_sequence_signal(res['hinge_score'], title='Hinge score per residue', ylabel='score')
         plot_matrix(res['agg_rms'], title='RMS( |ddm| ) across model pairs')
 
     rp_pidc_parsed_cif_dir = _rp_parsed_cifs('multimod_2713_hetallchains_hom1chain')
@@ -376,8 +380,10 @@ if __name__ == "__main__":
         k = res['k']                                # 2, 3, or 4
 
         # (a) Nice sequence visualisations:
-        plot_sequence_signal(res['per_residue_max'], title='Max |ddm| per residue (any partner/pair)', ylabel='Å')
-        plot_sequence_signal(res['hinge_score'], title='Hinge score per residue', ylabel='score')
+        # plot_sequence_signal(res['per_residue_max'], title='Max |ddm| per residue (any partner/pair)', ylabel='Å')
+        pltr.plot_sequence_signal(res['per_residue_max'], title='Max |ddm| per residue (any partner/pair)', ylabel='Å')
+        # plot_sequence_signal(res['hinge_score'], title='Hinge score per residue', ylabel='score')
+        pltr.plot_sequence_signal(res['hinge_score'], title='Hinge score per residue', ylabel='score')
         plot_matrix(res['agg_rms'], title='RMS( |ddm| ) across model pairs')
 
         # (b) Pairs that are likely different:

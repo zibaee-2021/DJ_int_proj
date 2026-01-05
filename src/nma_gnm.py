@@ -48,7 +48,7 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
+import plotter as pltr
 
 def _rp_nmr_dir() -> str:
     return os.path.join('..', 'data', 'NMR')
@@ -261,20 +261,21 @@ def _plot_msf_and_bfactors(msf: np.ndarray, title: str = "") -> None:
 
     plt.show()
 
-
-def _plot_sequence_signal(signal: np.ndarray, title: str, ylabel: str = 'value'):
-    """Simple per-residue line plot."""
-    signal = np.asarray(signal)
-    fig, ax = plt.subplots(figsize=(10, 2.8))
-    ax.plot(np.arange(1, signal.shape[0] + 1), signal, lw=1.5)
-    ax.set_xlabel('Residue index')
-    ax.set_ylabel(ylabel)
-    ax.set_title(title)
-    ax.margins(x=0)
-    ax.grid(ls='--', lw=0.5, alpha=0.5)
-    plt.show()
-    return fig, ax
-
+# (Re-used by 3 scripts, so transferred to plotter.py)
+# def _plot_sequence_signal(signal: np.ndarray, title: str, ylabel: str = 'magnitude', save_png=None):
+#     """Simple per-residue line plot."""
+#     signal = np.asarray(signal)
+#     fig, ax = plt.subplots(figsize=(10, 2.8))
+#     ax.plot(np.arange(1, signal.shape[0] + 1), signal, lw=1.5)
+#     ax.set_xlabel('Residue index')
+#     ax.set_ylabel(ylabel)
+#     ax.set_title(title)
+#     ax.margins(x=0)
+#     ax.grid(ls='--', lw=0.5, alpha=0.5)
+#     if save_png:
+#         plt.savefig(save_png, dpi=200, bbox_inches='tight')
+#     plt.show()
+#     return fig, ax
 
 def _plot_matrix(M: np.ndarray, title: str, cmap: str = 'RdBu_r', vmin=None, vmax=None):
     """Heatmap of an N×N matrix (e.g. correlation matrix)."""
@@ -324,7 +325,9 @@ def run_gnm(coords: np.ndarray, cutoff: float = 7.5, gamma: float = 1.0, n_modes
 
     if do_plots:
         # _plot_sequence_signal(msf, title=f'GNM mean-square fluctuations for {pidc}', ylabel=r'<$\Delta R_i^2$> (arb. units)')
+        # pltr.plot_sequence_signal(msf, title=f'GNM mean-square fluctuations for {pidc}', ylabel=r'<$\Delta R_i^2$> (arb. units)')
         # _plot_sequence_signal(bfacs, title=f'GNM predicted B-factors for {pidc}', ylabel='B (Å², arbitrary scale)')
+        # pltr.plot_sequence_signal(bfacs, title=f'GNM predicted B-factors for {pidc}', ylabel='B (Å², arbitrary scale)')
         _plot_msf_and_bfactors(msf, title=f'GNM predicted MSFs & B-factors for {pidc}')
         _plot_matrix(corr, title=f'GNM cross-correlations for {pidc}', cmap="RdBu_r", vmin=-1.0, vmax=1.0)
 

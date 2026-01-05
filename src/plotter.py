@@ -233,6 +233,76 @@ def dendrgm_heatmap_contourmap(dist_matrix, pidc: str, rmsd_or_tms: str):
     RMSD.heatmap(dist_matrix, linkage_mat)
     # RMSD.contour_map(dist_matrix)
 
+# Called from diff_distance_matrix.py, essential_dynamics.py and nma_gnm.py.
+def plot_sequence_signal(signal, title='Per-residue signal', ylabel='magnitude', save_png=None):
+    fig, ax = plt.subplots(figsize=(10, 2.8))
+    ax.plot(np.arange(1, signal.shape[0] + 1), signal, linewidth=1.5)
+    ax.set_xlabel('Residue index')
+    ax.set_ylabel(ylabel)
+    ax.set_title(title)
+    ax.margins(x=0)
+    ax.grid(True, linestyle='--', linewidth=0.5, alpha=0.5)
+    if save_png:
+        plt.savefig(save_png, dpi=200, bbox_inches='tight')
+    plt.show()
+    return fig, ax
+
+# Called from diff_distance_matrix.py, essential_dynamics.py and nma_gnm.py.
+def plot_matrix(M, title='Matrix', save_png=None):
+    fig, ax = plt.subplots(figsize=(5, 4.5))
+    im = ax.imshow(M, origin='upper', aspect='auto')
+    ax.set_title(title)
+    ax.set_xlabel('Residue index')
+    ax.set_ylabel('Residue index')
+    fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+    if save_png:
+        plt.savefig(save_png, dpi=200, bbox_inches='tight')
+    plt.show()
+    return fig, ax
+
+
+# to compare before definitely deduplicating: ED.py
+def plot_matrix(M, title='Matrix', save_png=None):
+    fig, ax = plt.subplots(figsize=(5, 4.5))
+    im = ax.imshow(M, origin='upper', aspect='auto')
+    ax.set_title(title)
+    ax.set_xlabel('Residue index')
+    ax.set_ylabel('Residue index')
+    fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+    if save_png:
+        plt.savefig(save_png, dpi=200, bbox_inches='tight')
+    plt.show()
+    return fig, ax
+
+
+# to compare before definitely deduplicating: ddm.py
+def plot_matrix(M, title='Matrix', save_png=None):
+    fig, ax = plt.subplots(figsize=(5, 4.5))
+    im = ax.imshow(M, origin='upper', aspect='auto')
+    ax.set_title(title)
+    ax.set_xlabel('Residue index')
+    ax.set_ylabel('Residue index')
+    fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+    if save_png:
+        plt.savefig(save_png, dpi=200, bbox_inches='tight')
+    plt.show()
+    return fig, ax
+
+
+# to compare before definitely deduplicating: nma.py
+def _plot_matrix(M: np.ndarray, title: str, cmap: str = 'RdBu_r', vmin=None, vmax=None):
+    """Heatmap of an N×N matrix (e.g. correlation matrix)."""
+    M = np.asarray(M)
+    fig, ax = plt.subplots(figsize=(5, 4.5))
+    im = ax.imshow(M, origin='upper', aspect='auto', cmap=cmap, vmin=vmin, vmax=vmax)
+    ax.set_xlabel('Residue index')
+    ax.set_ylabel('Residue index')
+    ax.set_title(title)
+    fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+    plt.show()
+    return fig, ax
+
+
 
 if __name__ == '__main__':
     rmsd_or_tms_ = 'tms'
