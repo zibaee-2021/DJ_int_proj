@@ -880,7 +880,6 @@ structure prediction, such as AlphaFold, which is heavily dependent on multiple 
 
             - <details>
               <summary>7 other files:</summary>
-
                 ```
                 2DN1.pdb: PDB input to Foldseek createdb.</summary>
                 2DN1.aa.fasta: FASTA file of amino acid sequence dumped from 2DN1 via Foldseek's convert2fasta 2DN1. Each header line (from 2DN1_h) precedes the sequence body (from 2DN1).
