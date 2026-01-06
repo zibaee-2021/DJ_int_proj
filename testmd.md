@@ -1,5 +1,5 @@
 - <details open>
-  <summary>**data//**</summary>
+  <summary><strong>data/</strong></summary>
 
   - <details open>
     <summary><strong>DynDom/</strong></summary>
@@ -22,10 +22,10 @@
             - <details>
               <summary><strong>14 files output by Foldseek `createdb`</strong></summary>
     
-            </details>
-          </details>
-        </details>
-      </details>
-    </details>
-  </details>
+</details>
+</details>
+</details>
+</details>
+</details>
+</details>
 </details>
