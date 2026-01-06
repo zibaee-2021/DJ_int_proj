@@ -43,7 +43,7 @@
 
   - <details>
     <summary><strong>NMR/</strong></summary>
-</details>
+  </details>
 </details>
 </details>
 </details>
