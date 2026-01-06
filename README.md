@@ -1,5 +1,5 @@
 
-Performed, part-time, over a period 3 months from mid-July to mid-Sept 2025. 
+Performed, part-time, over a period of 3 months from mid-July to mid-Sept 2025. 
 
 ---
 Rationale for mini-project:
