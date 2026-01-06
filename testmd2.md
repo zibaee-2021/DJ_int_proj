@@ -39,12 +39,13 @@
                  2DN1_ss.index: Index for fast access to the 3Di database.
                 ```
 
-</details>
+
 
   - <details>
     <summary><strong>NMR/</strong></summary>
   </details>
 
+</details>
 </details>
 </details>
 </details>
