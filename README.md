@@ -859,7 +859,6 @@ structure prediction, such as AlphaFold, which is heavily dependent on multiple 
 
             - <details>
               <summary>14 files output by Foldseek `createdb`</summary>
-              
                 ```
                 2DN1: Binary database file containing the amino acid sequences (body).
                 2DN1.dbtype: Small file telling FoldSeek what type of file this database is.
@@ -889,7 +888,6 @@ structure prediction, such as AlphaFold, which is heavily dependent on multiple 
                 2DN1_ss_h.dbtype: Symlink to 2DN1_h.dbtype (type descriptor for the alias DB). Ensures consistency when accessing via _ss_h.
                 2DN1_ss_h.index: Symlink to 2DN1_h.index. Provides fast lookup of header entries under the _ss_h alias.
                 ```
-
             </details>
 </details>
 </details>
