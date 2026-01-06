@@ -891,7 +891,7 @@ structure prediction, such as AlphaFold, which is heavily dependent on multiple 
                 ```
             </details>
             </details>
-</details>
+
 </details>
 
 </details>
@@ -1049,6 +1049,7 @@ structure prediction, such as AlphaFold, which is heavily dependent on multiple 
 </details>
 </details>
 </details>
+
 <details open>
 <summary style="margin-left: 0.5em;">src/</summary>
 <summary style="margin-left: 1.5em;">diff_distance_matrix.py</summary>  
