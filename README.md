@@ -881,7 +881,6 @@ structure prediction, such as AlphaFold, which is heavily dependent on multiple 
 
             - <details>
               <summary>7 other files:</summary>
-            </details>
 
                 ```
                 2DN1.pdb: PDB input to Foldseek createdb.</summary>
@@ -892,6 +891,8 @@ structure prediction, such as AlphaFold, which is heavily dependent on multiple 
                 2DN1_ss_h.dbtype: Symlink to 2DN1_h.dbtype (type descriptor for the alias DB). Ensures consistency when accessing via _ss_h.
                 2DN1_ss_h.index: Symlink to 2DN1_h.index. Provides fast lookup of header entries under the _ss_h alias.
                 ```
+
+            </details>
 </details>
 </details>
 
