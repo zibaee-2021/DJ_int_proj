@@ -1,8 +1,7 @@
-- <details open>
+- <details>
   <summary><strong>data/</strong></summary>
 
-  - <details>
-    <summary><strong>DynDom/</strong></summary>
+  - <summary><strong>DynDom/</strong></summary>
 
     - 2 `.html` files & 2 `.csv` files  
       Tables copied from DynDom webpages and scraped to CSV.
