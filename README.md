@@ -852,7 +852,7 @@ structure prediction, such as AlphaFold, which is heavily dependent on multiple 
         <summary><strong>foldseek/</strong></summary>
 
         - <details open>
-          <summary><strong>subdirs, 1 per PDB (e.g. 2DN1/)</strong></summary>
+          <summary><strong>1 subdir per PDB (e.g. 2DN1/)</strong></summary>
 
           - <details open>
             <summary><strong>21 Foldseek-related files</strong></summary>
@@ -878,7 +878,6 @@ structure prediction, such as AlphaFold, which is heavily dependent on multiple 
                 ```
 
             </details>
-
             - <details>
               <summary>7 other files:</summary>
 
