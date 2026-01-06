@@ -21,7 +21,6 @@
 
             - <details>
               <summary><strong>14 files output by Foldseek `createdb`</strong></summary>
-      
     ```
            2DN1: Binary database file containing the amino acid sequences (body).
            2DN1.dbtype: Small file telling FoldSeek what type of file this database is.
@@ -37,7 +36,7 @@
            2DN1_ss: Database containing 3Di alphabet sequence for each residue; symbolic encoding of local 3D geometry.
            2DN1_ss.dbtype: Type marker for the 3Di database.
            2DN1_ss.index: Index for fast access to the 3Di database.
-```
+    ```
 
 </details>
 </details>
