@@ -21,10 +21,11 @@
 
             - <details>
               <summary><strong>14 files output by Foldseek `createdb`</strong></summary>
-
-```text
-2DN1
-2DN1.dbtype
-2DN1.index
-2DN1.lookup
-```
+    
+            </details>
+          </details>
+        </details>
+      </details>
+    </details>
+  </details>
+</details>
