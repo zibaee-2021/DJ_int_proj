@@ -22,7 +22,7 @@
             - <details>
               <summary><strong>14 files output by Foldseek `createdb`</strong></summary>
               
-                ```text
+                ```
                  2DN1: Binary database file containing the amino acid sequences (body).
                  2DN1.dbtype: Small file telling FoldSeek what type of file this database is.
                  2DN1.index: Index file mapping internal IDs to byte offsets in 2DN1, so entries can be fetched quickly.
