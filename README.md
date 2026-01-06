@@ -852,13 +852,13 @@ structure prediction, such as AlphaFold, which is heavily dependent on multiple 
         <summary><strong>foldseek/</strong></summary>
 
         - <details open>
-          <summary><strong>1 subdir per PDB (e.g. 2DN1/)</strong></summary>
+          <summary>1 subdir per PDB (e.g. 2DN1/)</summary>
 
           - <details open>
-            <summary><strong>21 Foldseek-related files</strong></summary>
+            <summary>21 Foldseek-related files</summary>
 
             - <details>
-              <summary><strong>14 files output by Foldseek `createdb`</strong></summary>
+              <summary>14 files output by Foldseek `createdb`</summary>
               
                 ```
                 2DN1: Binary database file containing the amino acid sequences (body).
@@ -876,8 +876,8 @@ structure prediction, such as AlphaFold, which is heavily dependent on multiple 
                 2DN1_ss.dbtype: Type marker for the 3Di database.
                 2DN1_ss.index: Index for fast access to the 3Di database.
                 ```
-
             </details>
+
             - <details>
               <summary>7 other files:</summary>
 
