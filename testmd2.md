@@ -38,9 +38,6 @@
                  2DN1_ss.dbtype: Type marker for the 3Di database.
                  2DN1_ss.index: Index for fast access to the 3Di database.
                 ```
-
-
-
   - <details>
     <summary><strong>NMR/</strong></summary>
   </details>
