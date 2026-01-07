@@ -433,12 +433,12 @@ Here is the full data directory structure and brief descriptions of files in eac
   
   where \(C\) is the covariance matrix and
   
-  $$
-  \bar{\mathbf{X}} =
+  
+  $$\bar{\mathbf{X}} =
   \begin{bmatrix}
   \bar{x}_1 & \bar{x}_2 & \cdots & \bar{x}_p
-  \end{bmatrix}
-  $$
+  \end{bmatrix}$$
+  
 
 
   ---
