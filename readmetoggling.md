@@ -142,12 +142,10 @@
         - <details><summary>oxy/</summary>
 
           - 2 files: 2DN1.cif & 2DN1.pdb.
-</details>
 
 - <details><summary><strong>src/</strong></summary>
 
-  - all of the scripts and files in src were staged to git so they are fully visible on the Github repo.
-    (Hence, no reason to list them here).
+  - all of the scripts and files in `src` were staged to git, making them fully visible on the Github repo. Hence, no purpose in listing them here.
 
 </details>
 
