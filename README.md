@@ -277,6 +277,17 @@ Here is the full data directory structure and brief descriptions of files in eac
   ```
   where $d_i$ is distance between aligned residues $i$ and $d_0$ is a normalisation factor that depends on the chain 
   length.  
+
+  ```math
+  \mathrm{TM\text{-}score}
+  =
+  \max_{\mathrm{alignment}}
+  \frac{1}{L_{\mathrm{target}}}
+  \sum\limits_{i=1}^{L_{\mathrm{aligned}}}
+  \frac{1}{1 + \left( \frac{D_i}{D_0(L_{\mathrm{target}})} \right)^2}
+  ```
+
+
   
   ```
   (CGT4o) TM-score and interpretation:
