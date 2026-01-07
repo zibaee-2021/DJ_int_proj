@@ -212,7 +212,7 @@ Here is the full data directory structure and brief descriptions of files in eac
 </details>
 <details><summary><strong>src/</strong></summary>
 
-#### `RMSD.py`:<br>
+#### Root mean-squared deviation (RMSD):<br>
 A long-established and intuitive method that calculates RMSD between two given coordinates (as numpy arrays) (Kabsch 1976)
 RMSD is suited to comparing pairs of alpha-carbon coordinates belonging to identical sequences, as is the case for 
 different models of the same NMR structure.
@@ -220,7 +220,7 @@ A lower RMSD indicates a higher degree of structural similarity between two prot
 calculate_rmsd() uses Biopython's SVDSuperimposer(), which uses optimal least-squares superposition (Kabsch algorithm), 
 i.e. the Euclidean RMSD between matched atom pairs:
 
-$RMSD = \sqrt{\dfrac{1}{n} \sum\limits_{i=1}^{n} d_i^{2}}$
+$\mathrm{RMSD} = \sqrt{\dfrac{1}{n} \sum\limits_{i=1}^{n} d_i^{2}}$
 where the averaging is performed over the $n$ pairs of equivalent atoms and $d_i$ is the distance between the two atoms 
 in the $i$-th pair.
 
@@ -236,7 +236,7 @@ The units of the calculated RMSD value are the same as the units of the input co
 > 6 Å = Likely different structures; may be different folds entirely.
 > 10 Å = Almost certainly structurally unrelated.
 ```
-
+All computations are carried out in `RMSD.py`.<br>
 The main functions of use in the RMSD.py script are calc_rmsds_matrix_of_models() and calculate_rmsd(). 
 Many of the same calculations are performed in _calc_rmsds_and_stats().  
 
@@ -266,15 +266,16 @@ conformational variations.
 
 ---
 
-#### `tm_aligner.py`:<br>
+#### Template modeling score (TM-score):<br>
 
 TM-score uses nonlinear weighting of atomic distances:
-
-$$\text{TM-score} = \max \left[ 
+```math
+\text{TM-score} = \max \left[ 
 \frac{1}{L_{target}} 
 \sum\limits_{i=1}^{L_{aligned}} 
 \frac{1}{1 + \left( \frac{D_i}{D_0(L_{target})} \right)^2}
-\right]$$
+\right]
+```
 
 where $d_i$ is distance between aligned residues $i$ and $d_0$ is a normalisation factor that depends on the chain 
 length.  
@@ -295,6 +296,7 @@ variations that RMSD pays less attention to (like small deviations of 3-4 Å), w
 The 'over-sensitivity' of RMSD to domain motions was part of the reason a different metric was used for CASP (i.e GDT).
 (Zemla et al. 2003, ref x). (GDT was not replaced by TM-score for reasons of consistency with previous CASP competitions.)  
 
+All computations are carried out in `tm_aligner.py` and are self-explanatory.<br>
 ##### Installing TM-align:<br>
 Installed according to github instructions: https://zhanggroup.org/TM-align/ <br>
 Rocky Linux: Compile TMalign.cpp with `g++ -O3 -ffast-math -lm -o TMalign TMalign.cpp`. <br> 
@@ -308,7 +310,7 @@ the correct relative path.
 
 ---
 
-#### `diff_distance_matrix.py`:<br>
+#### Difference distance matrix:<br>
 A distance matrix is a simple and intuitive method for representing protein structure by calculating the relative 
 distance of atoms from one another (Crippen 1977). It is pre-dated by the 'distance map', which is essentially the same 
 thing (DC. Phillips (1970). In British Biochemistry, Past and Present (Goodwin, T. W., ed.), pp. 11-28). 
@@ -324,6 +326,7 @@ This matrix can be used to locate mobile rigid domains (Nichols et al. 1995).
 The DDM is processed here to help identify and label distinct protein conformational ensembles, via the appropriate 
 processing and clustering algorithm, described below. 
 
+All computations are carried out in `diff_distance_matrix.py`.<br>
 The main functions are `compute_ddms(pidc_pdf)` and `analyse_ddms()`.<br> 
 `compute_ddms(pidc_pdf)` takes a parsed mmCIF of a single NMR protein chain, read from an already parsed copy as an 
 .ssv file. This contains all the NMR models for the protein chain, and is read into a Pandas dataframe ('pidc_pdf'). 
@@ -391,7 +394,7 @@ Weaknesses of DDM method include:
 
 ---
 
-#### `essential_dynamics.py`<br>
+#### `Essential dynamics`<br>
 Information related to the collective motions in proteins can be extracted by principal component anaIysis (PCA) of the 
 Cartesian coordinates, given a number of models. This was introduced in 1981 
 
@@ -404,6 +407,7 @@ identification and quantification of functionally-relevant dynamics. PCA of mult
 modes which indicate directions of conformational change that are energetically favoured by the particular topology of 
 native contacts (Yang et al. 2009).<br> 
 
+All essential dynamics computations are carried out in `essential_dynamics.py`.<br> 
 In summary, this script does the following:
 - Computes PCA, which comes in the form of eigenvalues, eigenvectors and scores.
 - Generates a scree plot, which indicates which modes matter (i.e. a global picture). It addresses: “how many meaningful modes?”
@@ -413,7 +417,6 @@ In summary, this script does the following:
 - optional functionality in the pipeline:
   - $k$-means clustering on the PC scores, to automatically assign cluster labels.
   - kernel PCA, which 
-
 
 The main function in this script is `essential_dynamics_pca()`. It begins by aligning the Cartesian coordinates of 
 atleast 2, but ideally many more ($\geq 10-20$), models of a protein (in `align_all_to_ref()` using SVD, in the same 
