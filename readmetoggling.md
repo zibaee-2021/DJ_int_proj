@@ -144,7 +144,7 @@
           - 2 files: 2DN1.cif & 2DN1.pdb.
 
 - <details><summary><strong>src/</strong></summary>
-  All of the scripts and files in `src` were staged to git, making them fully visible on the Github repo. Hence, no purpose in listing them here.
+  All of the scripts and files in src/ directory were staged to git, making them fully visible on the Github repo. Hence, no purpose in listing them here.
 
 </details>
 
