@@ -1,5 +1,4 @@
-- <details>
-  <summary><strong>data/</strong></summary>
+- <details><summary><strong>data/</strong></summary>
                      
   - <details>
     <summary><strong>DynDom/</strong></summary>
