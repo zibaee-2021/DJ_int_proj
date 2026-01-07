@@ -277,6 +277,7 @@ TM-score uses nonlinear weighting of atomic distances:
 \right]
 ```
 
+
 where $d_i$ is distance between aligned residues $i$ and $d_0$ is a normalisation factor that depends on the chain 
 length.  
 
