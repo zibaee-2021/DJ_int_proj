@@ -946,6 +946,8 @@ scope of that script's main execution block.
 
 </details>
 
+---
+
 <details><summary><strong>Discussion:</strong></summary>
 
 All proteins are mobile, ranging from molecular vibrations on femtosecond timescales, to protein-specific tertiary and 
