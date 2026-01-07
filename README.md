@@ -15,8 +15,7 @@ For simplication and computational reduction, protein structures are parsed to c
 I performed EDA of the NMR structures available in the RCSB.   
 
 ---
-
-Methods for quantifying conformational differences:
+<details><summary>Summary methods for quantifying conformational differences:<\summary>
 
 Clustering the RMSD values such that candidate ensembles could be visualised through dendrograms and heatmaps.
 The utility of such visualisations was important for tracking/sanity-checking the calculations step-by-step, as it required 
@@ -56,6 +55,7 @@ all of these ('EnsembleFlex'), Schneider et al. 2025.
 | **Kernel PCA (non-linear extension)**       | Non-linear mapping via kernel trick (e.g., RBF) on top PCs or coordinates                        | Scatter plots in kernel PC space; silhouette or cluster analysis                              | Curved or anharmonic manifolds of motion; separates overlapping ensembles                        | Captures non-linear motions missed by linear PCA                                                          | Kernel choice and γ-tuning critical; less physically interpretable                  | Same as PCA (ensemble of aligned structures)                                           | moderate–high                     |
 | **Normal Mode Analysis (NMA)**              | Eigen-decomposition of Hessian of potential energy (2nd derivatives of energy wrt coordinates)   | Optional projection of trajectory onto modes; visualization of low-frequency modes            | Harmonic vibrational directions and frequencies near energy minimum                              | Physics-based; provides frequencies and force constants; requires only one structure                      | Harmonic approximation only; no anharmonic or diffusive motion; energy model needed | Single high-quality structure + parameterized force field (all-atom or coarse-grained) | high                              |
 
+</details>
 
 ---
 ### Project Structure and explanations about main scripts:
@@ -983,10 +983,6 @@ structure prediction, such as AlphaFold, which is heavily dependent on multiple 
 ---
 
 
-
--------------------  R E F E R E N C E S -------------------   
-
-
 <details><summary>CITATIONS:</summary>
 
 Protein dynamics:
@@ -1051,7 +1047,7 @@ Tools:
 Two approaches that I consider to be "good dataset practice" are what I'm referring to below as `'data-as-code'`
 and `'dataset versioning'`:
 
-##### 'Data-as-code' mindset:
+<details><summary>'Data-as-code' mindset:</summary>
 
 Coming from traditional wet-lab science, but also from software development in industry, the notions of 
 reproducibility (lab experiments), and version control (software development) are hard-wired into me.
@@ -1065,9 +1061,20 @@ This is not intended to replace straightforward downloading of data that's then 
 Instead, I place emphasis on the value of maintaining **both** this single download & reuse approach, as well as 
 'data-as-code' approach. They both have use.
 
----
+<details><summary>Dataset 'versioning':</summary>
 
-##### Use of AI for code generation:
+Although tools exist for versioning data, (such as Flyway, for SQL databases), here the approach taken is to 
+make use of simple documentation, naming and numbering of dataset versions. 
+This is again to facilitate clearer provenance and visibility of the dataset.
+Here is what it might look like: [Dataset_version_specifications.md](src/unused_dataset_prune_and_versioning/Dataset_version_specifications.md)
+
+I consider both the data-as-code and versioning of datasets approaches to be beneficial, to enable reproducibility and 
+external scrutiny of the datasets.
+It also lends itself to the development of a benchmark dataset. 
+
+</details>
+
+<details><summary>Use of AI for code generation:</summary>
 
 This is the first codebase in which I have made wholescale use of generative AI (GenAI) for generating groups of 
 fully written functions. 
@@ -1108,17 +1115,8 @@ All unused skeleton scripts in [unused_DL_model_training](src/unused_DL_model_tr
   - [diff_distance_matrix.py](src/diff_distance_matrix.py), [DynDom_reader.py](src/DynDom_reader.py), [essential_dynamics.py](src/essential_dynamics.py), [foldseek.py](src/foldseek.py), [mmseqs2.py](src/mmseqs2.py), [plotter.py](src/plotter.py), [tm_aligner.py](src/tm_aligner.py)
 - GenAI was used for writing the clustering & visualisations in [RMSD.py](src/RMSD.py)
 
----
+</details>
 
-##### Dataset 'versioning': 
 
-Although tools exist for versioning data, (such as Flyway, for SQL databases), here the approach taken is to 
-make use of simple documentation, naming and numbering of dataset versions. 
-This is again to facilitate clearer provenance and visibility of the dataset.
-Here is what it might look like: [Dataset_version_specifications.md](src/unused_dataset_prune_and_versioning/Dataset_version_specifications.md)
-
-I consider both the data-as-code and versioning of datasets approaches to be beneficial, to enable reproducibility and 
-external scrutiny of the datasets.
-It also lends itself to the development of a benchmark dataset. 
 
 
