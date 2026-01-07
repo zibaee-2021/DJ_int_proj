@@ -1,25 +1,19 @@
 - <details><summary><strong>data/</strong></summary>
                      
-  - <details>
-    <summary><strong>DynDom/</strong></summary>
+  - <details><summary><strong>DynDom/</strong></summary>
 
     - 2 .html files & 2 .csv files
       Tables copied from DynDom webpages and scraped to CSV.
 
-    - <details>
-      <summary><strong>Hayward_files/</strong></summary>
+    - <details><summary><strong>Hayward_files/</strong></summary>
 
-      - <details>
-        <summary><strong>foldseek/</strong></summary>
+      - <details><summary><strong>foldseek/</strong></summary>
 
-        - <details>
-          <summary>1 subdir per PDB (e.g. 2DN1/)</summary>
+        - <details><summary>1 subdir per PDB (e.g. 2DN1/)</summary>
 
-          - <details>
-            <summary>21 Foldseek-related files</summary>
+          - <details><summary>21 Foldseek-related files</summary>
 
-            - <details>
-              <summary>14 files output by Foldseek `createdb`</summary>
+            - <details><summary>14 files output by Foldseek `createdb`</summary>
               
                 ```
                 2DN1: Binary database file containing the amino acid sequences (body).
