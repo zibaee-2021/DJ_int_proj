@@ -210,7 +210,7 @@ Here is the full data directory structure and brief descriptions of files in eac
 
           - 2 files: 2DN1.cif & 2DN1.pdb.
 
-- <details open><summary><strong>src/</strong></summary>
+<details><summary><strong>src/</strong></summary>
 
 #### `RMSD.py`:<br>
 A long-established and intuitive method that calculates RMSD between two given coordinates (as numpy arrays) (Kabsch 1976)
