@@ -62,9 +62,7 @@
         <summary>pdb_chains_[number]/</summary>
         
         - 1 .pdb file for each PDB-chains, e.g. 2713 .pdb files.
-        </details>  
-    
-    </details>
+        </details
 
     - <details>
       <summary><strong>mmseqs/</strong></summary>
@@ -211,6 +209,9 @@
 </details>
 </details>
 </details>
+</details>
+
+
 </details>
 
 
