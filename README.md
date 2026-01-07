@@ -267,48 +267,44 @@ Here is the full data directory structure and brief descriptions of files in eac
 
 - <details><summary><strong>Template modeling score (TM-score):</strong></summary>
 
-TM-score uses nonlinear weighting of atomic distances:
-```math
-\text{TM-score} = \max \left[ 
-\frac{1}{L_{target}} 
-\sum\limits_{i=1}^{L_{aligned}} 
-\frac{1}{1 + \left( \frac{D_i}{D_0(L_{target})} \right)^2}
-\right]
-```
-
-
-where $d_i$ is distance between aligned residues $i$ and $d_0$ is a normalisation factor that depends on the chain 
-length.  
-
-```
-(CGT4o) TM-score and interpretation:
-1.0 = Perfect structural match (identical structures);
-> 0.8 = Often considered nearly identical structures (small conformational shifts only);
-> 0.5 = Typically indicates same fold;
-0.2–0.5 = Partial/topological similarity;
-< 0.2 ≈ Random similarity.
-```
-
-I opted to include the TM-score because it seems to complement the RMSD calculations, detecting conformational 
-variations that RMSD pays less attention to (like small deviations of 3-4 Å), while ignoring large rearrangements 
-(like domain motions moving 10 Å) that RMSD penalises heavily. Unlike RMSD, TM-score is independent of the protein size.
-
-The 'over-sensitivity' of RMSD to domain motions was part of the reason a different metric was used for CASP (i.e GDT).
-(Zemla et al. 2003, ref x). (GDT was not replaced by TM-score for reasons of consistency with previous CASP competitions.)  
-
-All computations are carried out in `tm_aligner.py` and are self-explanatory.<br>
-##### Installing TM-align:<br>
-Installed according to github instructions: https://zhanggroup.org/TM-align/ <br>
-Rocky Linux: Compile TMalign.cpp with `g++ -O3 -ffast-math -lm -o TMalign TMalign.cpp`. <br> 
-(Note: `-static` command was left out for both Rocky Linux and Mac).<br>
-Mac: in `basic_fun.h` on line 10 `// #include <malloc.h> //` is replaced by `#include <stdlib.h>` which was already 
-on line 6. So, after commenting out `include <malloc.h>` and then compiling, I deleted all other files including 
-`basic_fun.h`.<br>
-The TMalign compiled binary executable file (along with the TMalign.cpp and TMalign.h files) are located in 
-`src/TMalign_exe/Darwin` or `src/TMalign_exe/Linux`. `tm_aligner.py` detects which OS it's running on before building 
-the correct relative path.
-
----
+  TM-score uses nonlinear weighting of atomic distances:
+  ```math
+  \text{TM-score} = \max \left[ 
+  \frac{1}{L_{target}} 
+  \sum\limits_{i=1}^{L_{aligned}} 
+  \frac{1}{1 + \left( \frac{D_i}{D_0(L_{target})} \right)^2}
+  \right]
+  ```
+  where $d_i$ is distance between aligned residues $i$ and $d_0$ is a normalisation factor that depends on the chain 
+  length.  
+  
+  ```
+  (CGT4o) TM-score and interpretation:
+  1.0 = Perfect structural match (identical structures);
+  > 0.8 = Often considered nearly identical structures (small conformational shifts only);
+  > 0.5 = Typically indicates same fold;
+  0.2–0.5 = Partial/topological similarity;
+  < 0.2 ≈ Random similarity.
+  ```
+  
+  I opted to include the TM-score because it seems to complement the RMSD calculations, detecting conformational 
+  variations that RMSD pays less attention to (like small deviations of 3-4 Å), while ignoring large rearrangements 
+  (like domain motions moving 10 Å) that RMSD penalises heavily. Unlike RMSD, TM-score is independent of the protein size.
+  
+  The 'over-sensitivity' of RMSD to domain motions was part of the reason a different metric was used for CASP (i.e GDT).
+  (Zemla et al. 2003, ref x). (GDT was not replaced by TM-score for reasons of consistency with previous CASP competitions.)  
+  
+  All computations are carried out in `tm_aligner.py` and are self-explanatory.<br>
+  ##### Installing TM-align:<br>
+  Installed according to github instructions: https://zhanggroup.org/TM-align/ <br>
+  Rocky Linux: Compile TMalign.cpp with `g++ -O3 -ffast-math -lm -o TMalign TMalign.cpp`. <br> 
+  (Note: `-static` command was left out for both Rocky Linux and Mac).<br>
+  Mac: in `basic_fun.h` on line 10 `// #include <malloc.h> //` is replaced by `#include <stdlib.h>` which was already 
+  on line 6. So, after commenting out `include <malloc.h>` and then compiling, I deleted all other files including 
+  `basic_fun.h`.<br>
+  The TMalign compiled binary executable file (along with the TMalign.cpp and TMalign.h files) are located in 
+  `src/TMalign_exe/Darwin` or `src/TMalign_exe/Linux`. `tm_aligner.py` detects which OS it's running on before building 
+  the correct relative path.
 
 #### Difference distance matrix:<br>
 A distance matrix is a simple and intuitive method for representing protein structure by calculating the relative 
