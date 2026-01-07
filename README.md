@@ -431,6 +431,16 @@ Here is the full data directory structure and brief descriptions of files in eac
          where $\mathbf{C}$ is the covariance matrix
   and $\bar{\mathbf{X}} = \begin{bmatrix} \bar{x}_1 & \bar{x}_2 & \cdots & \bar{x}_p \end{bmatrix}$
   
+  where \(C\) is the covariance matrix and
+  
+  $$
+  \bar{\mathbf{X}} =
+  \begin{bmatrix}
+  \bar{x}_1 & \bar{x}_2 & \cdots & \bar{x}_p
+  \end{bmatrix}
+  $$
+
+
   ---
   
   (For the correlation matrix, the normalisation and covariance computation can be done in either order. In the script,
