@@ -209,7 +209,7 @@ Here is the full data directory structure and brief descriptions of files in eac
         - <details><summary>oxy/</summary>
 
           - 2 files: 2DN1.cif & 2DN1.pdb.
-
+</details>
 <details><summary><strong>src/</strong></summary>
 
 #### `RMSD.py`:<br>
