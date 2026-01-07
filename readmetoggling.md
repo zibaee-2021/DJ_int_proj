@@ -67,52 +67,41 @@
         - <details><summary><strong>results/</strong></summary>
           - 1 big .csv file: all-vs-all alignment results (query | target | evalue | pident | alnlen | qcov | tcov)
   
-    - <details>
-      <summary><strong>multimodel_lists/</strong></summary>
+    - <details><summary><strong>multimodel_lists/</strong></summary>
+      
       - 4 .txt files: heteromeric & homomeric & single & multimodel pdb-chain ids (1 per line)
       - 2 .lst files: single & multimodel pdb-chain ids (1 per line)
-<details>
-<summary>parsed_cifs/</summary>
-<details>
-<summary>multimod_2713_hetallchains_hom1chain/</summary>
-<summary>2713 .ssv files</summary>
-</details>
-</details>
 
-<details>
-<summary>pdb_chains/</summary>
-<details>
-<summary>multimod_2713_hetallchains_hom1chain/</summary>
-<summary>2713 .pdb files: for each of 2713 pdb-chains (processed from 2713 mmCIFs, via Biopython).</summary>
-<details>
-<summary>mean_coords/</summary>
-<summary>2713 .pdb files: mean of models coords, per pdb-chain.</summary>
+    - <details><summary>parsed_cifs/</summary>
+      
+      - <details><summary>multimod_2713_hetallchains_hom1chain/</summary>
+        
+        - 2713 .ssv files
+    - <details><summary>pdb_chains/</summary>
+      
+      - <details><summary>multimod_2713_hetallchains_hom1chain/</summary>
+        
+        - 2713 .pdb files: for each of 2713 pdb-chains (processed from 2713 mmCIFs, via Biopython).
+        - <details><summary>mean_coords/</summary>
 
-<details>
-<summary>per_model/</summary>
-<summary>(2713 subdirs, 1 dir per pdb-chain)/</summary>
-<summary>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2-100 .pdb files per subdir: coords split by model to separate .pdb file, 1 .pdb per model.</summary>
-</details>
-</details>
-</details>
-</details>
+          - <summary>2713 .pdb files: mean of models coords, per pdb-chain.</summary>
+          - <details><summary>per_model/</summary>
+          - <summary>(2713 subdirs, 1 dir per pdb-chain)/</summary>
+            
+            - 2-100 .pdb files per subdir: coords split by model to separate .pdb file, 1 .pdb per model.
+    - <details><summary>prot_dynamics/</summary>
 
-<details>
-<summary>prot_dynamics/</summary>
-<summary>52 .lst files (i.e. just trying it out with 52 pdb-chains): <= 20 RMSD scores for model pairs with highest scores, per pdb-chain.</summary>
-</details>
+      - 52 .lst files (i.e. just trying it out with 52 pdb-chains): <= 20 RMSD scores for model pairs with highest scores, per pdb-chain.
+    - <details><summary>raw_cifs/</summary>
 
-<details>
-<summary>raw_cifs/</summary>
-<details><summary>heteromeric/</summary>
-<summary>1038 .cif files: 1 mmCIF per protein (all chains).</summary>
-</details>
-<details><summary>homomeric/</summary>
-<summary>686 .cif files: 1 mmCIF per protein (all chains).</summary>
-</details>
-</details>
-<details>
-<summary>raw_pdbs/</summary>
+      - <details><summary>heteromeric/</summary>
+        
+        - 1038 .cif files: 1 mmCIF per protein (all chains).
+
+      - <details><summary>homomeric/</summary>
+        
+        - 686 .cif files: 1 mmCIF per protein (all chains).
+    - <details><summary>raw_pdbs/</summary>
 <details><summary>heteromeric/</summary>
 <summary>1038 .pdb files: 1 PDB per protein (all chains).</summary>
 </details>
