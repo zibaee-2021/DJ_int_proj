@@ -212,7 +212,7 @@ Here is the full data directory structure and brief descriptions of files in eac
 </details>
 <details><summary><strong>src/</strong></summary>
 
-#### Root mean-squared deviation (RMSD):<br>
+- <details><summary><strong>Root mean-squared deviation (RMSD):</strong></summary>
 A long-established and intuitive method that calculates RMSD between two given coordinates (as numpy arrays) (Kabsch 1976)
 RMSD is suited to comparing pairs of alpha-carbon coordinates belonging to identical sequences, as is the case for 
 different models of the same NMR structure.
@@ -264,9 +264,8 @@ e.g. about a hinge region. So, because this is one of the forms of conformationa
 RMSD is useful. Unlike RMSD, TM-score does not penalise domain motion, so it is more useful for other, more subtle  
 conformational variations. 
 
----
 
-#### Template modeling score (TM-score):<br>
+- <details><summary><strong>Template modeling score (TM-score):</strong></summary>
 
 TM-score uses nonlinear weighting of atomic distances:
 ```math
@@ -395,7 +394,7 @@ Weaknesses of DDM method include:
 
 ---
 
-#### `Essential dynamics`<br>
+#### `Essential dynamics`:<br>
 Information related to the collective motions in proteins can be extracted by principal component anaIysis (PCA) of the 
 Cartesian coordinates, given a number of models. This was introduced in 1981 
 
@@ -705,8 +704,6 @@ identify their principal geometric directions. This was first demonstrated by Ti
 Atilgan et al. (2001), forming the foundation of elastic network models.
 
 
-
-
 The NMA method involves diagonalising the Hessian of the potential energy of a protein, calculated from its Cartesian 
 coordinates. (Note: A `mode` refers to a collective vibration pattern of a protein that is independent from others 
 modes. They are modelled as small harmonic oscillations around an equilibrium structure. 
@@ -717,6 +714,8 @@ Like calculating the essential dynamics, it outputs the protein's modes and thei
 
 
 Here, the Python implementation of NMA is done with an ENM potential of the GNM type.
+
+All GNM computations are carried out in `nma_gnm.py`.<br> 
 
 The main function `run_gnm()` implements the Gaussian network model given x,y,z coordinates of single protein, as 
 described above, via the 3 following functions that result in the :
@@ -830,7 +829,6 @@ Experiental validation of the utility of DDM, PCA-ED and NMA for protein dynamic
 [11]: https://www.sciencedirect.com/science/article/pii/S0969212607001414?utm_source=chatgpt.com "Article Thorough Validation of Protein Normal Mode Analysis"
 
 
-
 ---
 
 #### `mmseqs2.py`:<br>
@@ -901,11 +899,11 @@ at the top of the script itself. Called by `nmr_dataset`.
 A trimmed down, modified copy of the mmCIF parser script from my [MSc project](https://github.com/zibaee-2021/MSc_2024_project).
 Called by `nmr_dataset`.
 
----
+
 `nmr_dataset.py` <br>
 Generates dataset of raw and parsed structure files, via calling `api_callr.py` and `cif_parsr.py`.
 
----
+
 `pdb_model_stats.py` ...
 Compile and/or calculate the following data into one document:
 - From mmCIF files:
@@ -924,7 +922,7 @@ Compile and/or calculate the following data into one document:
 
 Uses `plotter.py` to generate visualisations of the stats.
 
----
+
 `foldseek.py` ...
 [FoldSeek](https://github.com/steineggerlab/foldseek) compresses structures into a 20-state 3Di alphabet and applies 
 MMseqs2-style searches (refx). It converts 3D structure search into sequence search without losing sensitivity. 
@@ -937,13 +935,10 @@ part would be useable for any subsequent searches if needed in future. And, as w
 Foldseek here partly for the learning experience.)<br>
 
 
-
----
 `DynDom_reader.py` ...
 Written to scrape the dataset from the html page of the DynDom webserver. May not be needed now as superior source of 
 dataset was kindly emailed to me by Prof Steven Hayward.  
 
----
 `plotter.py` ...
 
 Most of the functions here are called from `pdb_model_stats.py` although from code varibly commented out, in the
@@ -951,8 +946,7 @@ scope of that script's main execution block.
 
 </details>
 
----
-#### DISCUSSION:
+<details><summary><strong>Discussion:</strong></summary>
 
 All proteins are mobile, ranging from molecular vibrations on femtosecond timescales, to protein-specific tertiary and 
 quarternary motions. Conformational variations have been reported from early on in the field of structural biology, such as where 
@@ -979,11 +973,8 @@ I would guess it's probably not a good idea to force any restrictions on design 
 of a proof-of-concept project. Furthermore, such a rule is already not adhered to in deep learning pipelines of protein 
 structure prediction, such as AlphaFold, which is heavily dependent on multiple sequence alignments.)
 
-
----
-
-
-<details><summary>CITATIONS:</summary>
+</details>
+<details><summary><strong>References:</strong></summary>
 
 Protein dynamics:
 
@@ -1042,8 +1033,7 @@ Tools:
 
 </details>
 
----
-
+<details><summary><strong>Good data practice</strong></summary>
 Two approaches that I consider to be "good dataset practice" are what I'm referring to below as `'data-as-code'`
 and `'dataset versioning'`:
 
