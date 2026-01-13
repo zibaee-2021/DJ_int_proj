@@ -269,179 +269,175 @@ Here is the full data directory structure and brief descriptions of files in eac
     RMSD is useful. Unlike RMSD, TM-score does not penalise domain motion, so it is more useful for other, more subtle  
     conformational variations.
   
-    - <details><summary><strong>Template modeling score (TM-score):</strong></summary>
+  - <details><summary><strong>Template modeling score (TM-score):</strong></summary>
   
-      TM-score uses nonlinear weighting of atomic distances:<br>
-      $$\text{TM-score} = \max \left[ 
-      \frac{1}{L_{target}} 
-      \sum\limits_{i=1}^{L_{aligned}} 
-      \frac{1}{1 + \left( \frac{D_i}{D_0(L_{target})} \right)^2}
-      \right]$$ 
-      <br>where $d_i$ is distance between aligned residues $i$ and $d_0$ is a normalisation factor that depends on the chain 
-      length.
+    TM-score uses nonlinear weighting of atomic distances:<br>
+    $$\text{TM-score} = \max \left[ 
+    \frac{1}{L_{target}} 
+    \sum\limits_{i=1}^{L_{aligned}} 
+    \frac{1}{1 + \left( \frac{D_i}{D_0(L_{target})} \right)^2}
+    \right]$$ 
+    <br>where $d_i$ is distance between aligned residues $i$ and $d_0$ is a normalisation factor that depends on the chain 
+    length.
   
-      ```
-      (CGT4o) TM-score and interpretation:
-      1.0 = Perfect structural match (identical structures);
-    >   0.8 = Often considered nearly identical structures (small conformational shifts only);
-    >   0.5 = Typically indicates same fold;
-      0.2–0.5 = Partial/topological similarity;
-      < 0.2 ≈ Random similarity.
-      ```
+    ```
+    (CGT4o) TM-score and interpretation:
+    1.0 = Perfect structural match (identical structures);
+    0.8 = Often considered nearly identical structures (small conformational shifts only);
+    0.5 = Typically indicates same fold;
+    0.2–0.5 = Partial/topological similarity;
+    < 0.2 ≈ Random similarity.
+    ```
     
-      I opted to include the TM-score because it seems to complement the RMSD calculations, detecting conformational 
-      variations that RMSD pays less attention to (like small deviations of 3-4 Å), while ignoring large rearrangements 
-      (like domain motions moving 10 Å) that RMSD penalises heavily. Unlike RMSD, TM-score is independent of the protein size.
+    I opted to include the TM-score because it seems to complement the RMSD calculations, detecting conformational 
+    variations that RMSD pays less attention to (like small deviations of 3-4 Å), while ignoring large rearrangements 
+    (like domain motions moving 10 Å) that RMSD penalises heavily. Unlike RMSD, TM-score is independent of the protein size.
     
-      The 'over-sensitivity' of RMSD to domain motions was part of the reason a different metric was used for CASP (i.e GDT).
-      (Zemla et al. 2003, ref x). (GDT was not replaced by TM-score for reasons of consistency with previous CASP competitions.)  
+    The 'over-sensitivity' of RMSD to domain motions was part of the reason a different metric was used for CASP (i.e GDT).
+    (Zemla et al. 2003, ref x). (GDT was not replaced by TM-score for reasons of consistency with previous CASP competitions.)  
     
-      All computations are carried out in `tm_aligner.py` and are self-explanatory.<br>
-      ##### Installing TM-align:<br>
-      Installed according to github instructions: https://zhanggroup.org/TM-align/ <br>
-      Rocky Linux: Compile TMalign.cpp with `g++ -O3 -ffast-math -lm -o TMalign TMalign.cpp`. <br> 
-      (Note: `-static` command was left out for both Rocky Linux and Mac).<br>
-      Mac: in `basic_fun.h` on line 10 `// #include <malloc.h> //` is replaced by `#include <stdlib.h>` which was already 
-      on line 6. So, after commenting out `include <malloc.h>` and then compiling, I deleted all other files including 
-      `basic_fun.h`.<br>
-      The TMalign compiled binary executable file (along with the TMalign.cpp and TMalign.h files) are located in 
-      `src/TMalign_exe/Darwin` or `src/TMalign_exe/Linux`. `tm_aligner.py` detects which OS it's running on before building 
-      the correct relative path.
+    All computations are carried out in `tm_aligner.py` and are self-explanatory.<br>
+    ##### Installing TM-align:<br>
+    Installed according to github instructions: https://zhanggroup.org/TM-align/ <br>
+    Rocky Linux: Compile TMalign.cpp with `g++ -O3 -ffast-math -lm -o TMalign TMalign.cpp`. <br> 
+    (Note: `-static` command was left out for both Rocky Linux and Mac).<br>
+    Mac: in `basic_fun.h` on line 10 `// #include <malloc.h> //` is replaced by `#include <stdlib.h>` which was already 
+    on line 6. So, after commenting out `include <malloc.h>` and then compiling, I deleted all other files including 
+    `basic_fun.h`.<br>
+    The TMalign compiled binary executable file (along with the TMalign.cpp and TMalign.h files) are located in 
+    `src/TMalign_exe/Darwin` or `src/TMalign_exe/Linux`. `tm_aligner.py` detects which OS it's running on before building 
+    the correct relative path.
   
-    - <details><summary><strong>Difference distance matrix (DDM):</strong></summary>
+  - <details><summary><strong>Difference distance matrix (DDM):</strong></summary>
   
-      A distance matrix is a simple and intuitive method for representing protein structure by calculating the relative 
-      distance of atoms from one another (Crippen 1977). It is pre-dated by the 'distance map', which is essentially the same 
-      thing (DC. Phillips (1970). In British Biochemistry, Past and Present (Goodwin, T. W., ed.), pp. 11-28). 
-      And the distance matrix is a precursor to the 'contact map' (Havel et al. 1979) and the 'local distance difference 
-      test' (lDDT) (Mariani et al. 2011), both of which are just functions of the same distance geometry measurements).
-      By its very nature, a distance matrix is rotationally and translationally invariant. Another way of saying this is that: it is 
-      "invariant under the Euclidean group E(3)". As such, there is no point in performing a superimposition of the two 
-      protein conformers being compared (which for example, you do need in RMSD calculations). 
+    A distance matrix is a simple and intuitive method for representing protein structure by calculating the relative 
+    distance of atoms from one another (Crippen 1977). It is pre-dated by the 'distance map', which is essentially the same 
+    thing (DC. Phillips (1970). In British Biochemistry, Past and Present (Goodwin, T. W., ed.), pp. 11-28). 
+    And the distance matrix is a precursor to the 'contact map' (Havel et al. 1979) and the 'local distance difference 
+    test' (lDDT) (Mariani et al. 2011), both of which are just functions of the same distance geometry measurements).
+    By its very nature, a distance matrix is rotationally and translationally invariant. Another way of saying this is that: it is 
+    "invariant under the Euclidean group E(3)". As such, there is no point in performing a superimposition of the two 
+    protein conformers being compared (which for example, you do need in RMSD calculations). 
     
-      Two distance matrices are calculated - one for each of the two protein chains that you want to compare to each other. 
-      The absolute value of their arithmetic difference is the 'difference-distance matrix' (DDM). 
-      This matrix can be used to locate mobile rigid domains (Nichols et al. 1995).
-      The DDM is processed here to help identify and label distinct protein conformational ensembles, via the appropriate 
-      processing and clustering algorithm, described below. 
+    Two distance matrices are calculated - one for each of the two protein chains that you want to compare to each other. 
+    The absolute value of their arithmetic difference is the 'difference-distance matrix' (DDM). 
+    This matrix can be used to locate mobile rigid domains (Nichols et al. 1995).
+    The DDM is processed here to help identify and label distinct protein conformational ensembles, via the appropriate 
+    processing and clustering algorithm, described below. 
     
-      All computations are carried out in `diff_distance_matrix.py`.<br>
-      The main functions are `compute_ddms(pidc_pdf)` and `analyse_ddms()`.<br> 
-      `compute_ddms(pidc_pdf)` takes a parsed mmCIF of a single NMR protein chain, read from an already parsed copy as an 
-      .ssv file. This contains all the NMR models for the protein chain, and is read into a Pandas dataframe ('pidc_pdf'). 
-      It outputs the DDM for all NMR models of the one given protein chain. 
-      The subsequent clustering is done via converting the DDM data into a graph and is performed by the other main function 
-      in `diff_distance_matrix.py` which is called `analyse_ddms()`. 
-      It uses spectral clustering which essentially constructs Laplacian eigenmaps and uses them as the feature space for 
-      clustering.
-      The process requires first generating features from the DDM, for each residue that quantifies how its distances to all 
-      other residues change across the full ensemble (of models). 
-      Features' cosine similarities quantify how similar two residues' patterns are to each other, across the ensemble 
-      thereby giving a measure of coordinated motion. Having gone from Cartesian coordinates to pairwise similarities, the 
-      subsequent clustering is suited to graph-based pre-processing methods, hence spectral clustering, 
-      (rather than GMMs or k-means directly on the coordinates or similarities matrix). This is more suited to dealing 
-      with non-convex clusters (meaning connecting lines between at least one pair of points is outside of the cluster it 
-      belongs to, i.e. the cluster is not 'round').
-      Spectral clustering involves first converting the graph into its Laplacian eigenvectors, on which any one of a number 
-      of clustering algorithms can now be applied. 
-      Spectral clustering treats the similarities data as a graph, with residues as vertices and cosine similarities of 
-      residue pairs as edges. When data is in the form of a graph, clustering involves partitioning it into subgraphs. 
-      A subgraph is defined as vertices that have stronger edge strengths between them, and weaker edge strengths with 
-      vertices of other subgraphs. 
-      The algorithm proceeds by computing a graph Laplacian ($L$) (aka 'Laplacian matrix'), which is the difference between 
-      the degree matrix ($D$) and the similarity matrix ($A$), i.e.: $L = D-A$. The eigenvectors of the graph Laplacian are 
-      then calculated, which has the effect of assigning similar coordinates values so that they end up close  in the 
-      embedding (i.e. capturing 'smooth' variations across the graph). Finally, clustering on this low-dimensional embedding 
-      is performed, using the selection passed to `assign_labels` argument of`SpectralClustering()`, e.g. the standard 
-      centroid-based method, k-means. The eigenvectors essentially "unfold" the graph so that densely connected nodes 
-      (i.e. residues that move together) sit near each other in the new space, making them easy to separate using k-means. 
+    All computations are carried out in `diff_distance_matrix.py`.<br>
+    The main functions are `compute_ddms(pidc_pdf)` and `analyse_ddms()`.<br> 
+    `compute_ddms(pidc_pdf)` takes a parsed mmCIF of a single NMR protein chain, read from an already parsed copy as an 
+    .ssv file. This contains all the NMR models for the protein chain, and is read into a Pandas dataframe ('pidc_pdf'). 
+    It outputs the DDM for all NMR models of the one given protein chain. 
+    The subsequent clustering is done via converting the DDM data into a graph and is performed by the other main function 
+    in `diff_distance_matrix.py` which is called `analyse_ddms()`. 
+    It uses spectral clustering which essentially constructs Laplacian eigenmaps and uses them as the feature space for 
+    clustering.
+    The process requires first generating features from the DDM, for each residue that quantifies how its distances to all 
+    other residues change across the full ensemble (of models). 
+    Features' cosine similarities quantify how similar two residues' patterns are to each other, across the ensemble 
+    thereby giving a measure of coordinated motion. Having gone from Cartesian coordinates to pairwise similarities, the 
+    subsequent clustering is suited to graph-based pre-processing methods, hence spectral clustering, 
+    (rather than GMMs or k-means directly on the coordinates or similarities matrix). This is more suited to dealing 
+    with non-convex clusters (meaning connecting lines between at least one pair of points is outside of the cluster it 
+    belongs to, i.e. the cluster is not 'round').
+    Spectral clustering involves first converting the graph into its Laplacian eigenvectors, on which any one of a number 
+    of clustering algorithms can now be applied. 
+    Spectral clustering treats the similarities data as a graph, with residues as vertices and cosine similarities of 
+    residue pairs as edges. When data is in the form of a graph, clustering involves partitioning it into subgraphs. 
+    A subgraph is defined as vertices that have stronger edge strengths between them, and weaker edge strengths with 
+    vertices of other subgraphs. 
+    The algorithm proceeds by computing a graph Laplacian ($L$) (aka 'Laplacian matrix'), which is the difference between 
+    the degree matrix ($D$) and the similarity matrix ($A$), i.e.: $L = D-A$. The eigenvectors of the graph Laplacian are 
+    then calculated, which has the effect of assigning similar coordinates values so that they end up close  in the 
+    embedding (i.e. capturing 'smooth' variations across the graph). Finally, clustering on this low-dimensional embedding 
+    is performed, using the selection passed to `assign_labels` argument of`SpectralClustering()`, e.g. the standard 
+    centroid-based method, k-means. The eigenvectors essentially "unfold" the graph so that densely connected nodes 
+    (i.e. residues that move together) sit near each other in the new space, making them easy to separate using k-means. 
     
-      The relative effectiveness of using different cluster numbers is calculated by the silhouette score metric.  
-      The silhouette score calculates how well the graph-defined clusters (i.e. output of the spectral clustering step) are 
-      actually separated in feature space. In `compute_ddms()`, the silhouette scores using 2, 3 or 4 clusters are calculated
-      and compared, in order to find which one produces the best clustering.<br>
-      $s_i = \frac{b_i - a_i}{\max(a_i, b_i)},$<br> 
-      where $a_i$ is the average distance to points in the same cluster, and $b_i$ is the smallest average distance to 
-      points in the nearest other cluster.
+    The relative effectiveness of using different cluster numbers is calculated by the silhouette score metric.  
+    The silhouette score calculates how well the graph-defined clusters (i.e. output of the spectral clustering step) are 
+    actually separated in feature space. In `compute_ddms()`, the silhouette scores using 2, 3 or 4 clusters are calculated
+    and compared, in order to find which one produces the best clustering.<br>
+    $s_i = \frac{b_i - a_i}{\max(a_i, b_i)},$<br> 
+    where $a_i$ is the average distance to points in the same cluster, and $b_i$ is the smallest average distance to 
+    points in the nearest other cluster.
     
-      To focus on rigid-domain body movements (i.e. domain re-arrangements; hinge motions), the default value for argument 
-      ` min_seq_sep` is 5. This is used to mask out any variations within 5 adjacent residues. 
+    To focus on rigid-domain body movements (i.e. domain re-arrangements; hinge motions), the default value for argument 
+    ` min_seq_sep` is 5. This is used to mask out any variations within 5 adjacent residues. 
     
-      | `min_seq_sep` value | What pairs are excluded (`\|i–j\| < min_seq_sep`) | Biological signal emphasised |
-      |:--------------------|:--------------------------------------------------|:------------------------------|
-      | **1–2** | Only self and immediate neighbours (peptide bonds) | Very local motions — side-chain shifts, small backbone bends |
-      | **3–5** *(default)* | Suppresses secondary-structure contacts (helical turns, β-hairpins) | Sub-domain or short-loop rearrangements |
-      | **6–10+** | Ignores most local pairs; only long-range residue interactions remain | Large-scale rigid-body domain movements or hinge motions |
+    | `min_seq_sep` value | What pairs are excluded (`\|i–j\| < min_seq_sep`) | Biological signal emphasised |
+    |:--------------------|:--------------------------------------------------|:------------------------------|
+    | **1–2** | Only self and immediate neighbours (peptide bonds) | Very local motions — side-chain shifts, small backbone bends |
+    | **3–5** *(default)* | Suppresses secondary-structure contacts (helical turns, β-hairpins) | Sub-domain or short-loop rearrangements |
+    | **6–10+** | Ignores most local pairs; only long-range residue interactions remain | Large-scale rigid-body domain movements or hinge motions |
     
-      ##### What this script can do and how to use it:
-      Identify protein pairs displaying rigid-domain motion as well as the regions within the proteins that move. 
-      It may be possible to modify (including reducing `min_seq_sep`) in order to focus instead on local conformational 
-      changes, such as secondary structural change. 
-      'Protein pairs' can be pairs of NMR models, MD trajectories, or other where the sequence is identical.
-      It might be possible to modify to allow use of protein pairs that are structurally related but are not identical in 
-      sequence. However this has not been attempted here.  
+    ##### What this script can do and how to use it:
+    Identify protein pairs displaying rigid-domain motion as well as the regions within the proteins that move. 
+    It may be possible to modify (including reducing `min_seq_sep`) in order to focus instead on local conformational 
+    changes, such as secondary structural change. 
+    'Protein pairs' can be pairs of NMR models, MD trajectories, or other where the sequence is identical.
+    It might be possible to modify to allow use of protein pairs that are structurally related but are not identical in 
+    sequence. However this has not been attempted here.  
     
-      Strengths of DDM method include: 
-      - its relative simplicity 
-        - interpretability
-        - low computational requirements 
-        - identifying rigid-domain motions in proteins 
+    Strengths of DDM method include: 
+    - its relative simplicity 
+      - interpretability
+      - low computational requirements 
+      - identifying rigid-domain motions in proteins 
     
-      Weaknesses of DDM method include:
-      - needs identical protein sequence pairs
-        - not many examples in literature of tihs method (c.w. essential dynamics and NMA) 
+    Weaknesses of DDM method include:
+    - needs identical protein sequence pairs
+      - not many examples in literature of tihs method (c.w. essential dynamics and NMA) 
   
-    - <details><summary><strong>Essential dynamics (ED):</strong></summary>
+  - <details><summary><strong>Essential dynamics (ED):</strong></summary>
   
-      Information related to the collective motions in proteins can be extracted by principal component anaIysis (PCA) of the 
-      Cartesian coordinates, given a number of models. This was introduced in 1981 
+    Information related to the collective motions in proteins can be extracted by principal component anaIysis (PCA) of the 
+    Cartesian coordinates, given a number of models. This was introduced in 1981 
     
-      The goal is to find orthogonal directions (aka 'modes') that maximise variance of the data. Compelling evidence for the 
-      application of PCA in identifying dynamic regions within proteins has long since been presented, both in terms of its 
-      correspondence with published NMR as well as X-ray structures of proteins crystallised in different conformations. 
-      In addition, the co-location of dominant principal component profiles with immobile regions, including highly conserved 
-      catalytic sites, lends further weight to the validity of this mathematical treatment of Cartesian coordinates for the
-      identification and quantification of functionally-relevant dynamics. PCA of multiple conformations identifies robust 
-      modes which indicate directions of conformational change that are energetically favoured by the particular topology of 
-      native contacts (Yang et al. 2009).<br> 
+    The goal is to find orthogonal directions (aka 'modes') that maximise variance of the data. Compelling evidence for the 
+    application of PCA in identifying dynamic regions within proteins has long since been presented, both in terms of its 
+    correspondence with published NMR as well as X-ray structures of proteins crystallised in different conformations. 
+    In addition, the co-location of dominant principal component profiles with immobile regions, including highly conserved 
+    catalytic sites, lends further weight to the validity of this mathematical treatment of Cartesian coordinates for the
+    identification and quantification of functionally-relevant dynamics. PCA of multiple conformations identifies robust 
+    modes which indicate directions of conformational change that are energetically favoured by the particular topology of 
+    native contacts (Yang et al. 2009).<br> 
     
-      All essential dynamics computations are carried out in `essential_dynamics.py`.<br> 
-      In summary, this script does the following:
-      - Computes PCA, which comes in the form of eigenvalues, eigenvectors and scores.
-        - Generates a scree plot, which indicates which modes matter (i.e. a global picture). It addresses: “how many meaningful modes?”
-        - Generates a PC1–PC2 scatter plot, which indicates how models distribute along those modes (i.e. the geometry of conformational space). It addresses: "what do these modes do to the ensemble?”
-        - Calculate per-residue weighted RMSD modes to locate hinges/domains.
+    All essential dynamics computations are carried out in `essential_dynamics.py`.<br> 
+    In summary, this script does the following:
+    - Computes PCA, which comes in the form of eigenvalues, eigenvectors and scores.
+      - Generates a scree plot, which indicates which modes matter (i.e. a global picture). It addresses: “how many meaningful modes?”
+      - Generates a PC1–PC2 scatter plot, which indicates how models distribute along those modes (i.e. the geometry of conformational space). It addresses: "what do these modes do to the ensemble?”
+      - Calculate per-residue weighted RMSD modes to locate hinges/domains.
     
-        - optional functionality in the pipeline:
-          - $k$-means clustering on the PC scores, to automatically assign cluster labels.
-          - kernel PCA, which 
+      - optional functionality in the pipeline:
+        - $k$-means clustering on the PC scores, to automatically assign cluster labels.
+        - kernel PCA, which 
     
-      The main function in this script is `essential_dynamics_pca()`. It begins by aligning the Cartesian coordinates of 
-      atleast 2, but ideally many more ($\geq 10-20$), models of a protein (in `align_all_to_ref()` using SVD, in the same 
-      way as for RMSD).
-      This is followed by a covariance computation and eigenvalue decomposition (in `pca_evd()`). Prior to the covariance 
-      computation, the data matrix is row-centered and, optionally, normalised (in `build_data_matrix()`) which would convert 
-      it into a correlation matrix once the covariance computation has been performed on it. Thus, there is a choice between 
-      using a covariance matrix or a correlation matrix. Use of a covariance matrix would mean that features (i.e. atomic 
-      coorinates) with large absolute variance, dominate the variance. Whereas use of correlation matrix instead would mean
-      that features with a strong co-variation pattern (even if the amplitude is small) dominate the variance. So, the 'raw' 
-      covariance matrix indicates where the system (i.e. atoms) moves the most in real space (Å), while the normalised form 
-      (i.e. the correlation matrix) indicates which coordinates fluctuate together in a consistent pattern, regardless of 
-      scale. This is because the normalisation step changes the geometry of the subsequent PCA space. Potentially then, this 
-      script would be able to focus, approximately, on these two different types of protein dynamics. The default setting 
-      though is to use the 'raw' covariance matrix, rather than the correlation matrix. 
+    The main function in this script is `essential_dynamics_pca()`. It begins by aligning the Cartesian coordinates of 
+    atleast 2, but ideally many more ($\geq 10-20$), models of a protein (in `align_all_to_ref()` using SVD, in the same 
+    way as for RMSD).
+    This is followed by a covariance computation and eigenvalue decomposition (in `pca_evd()`). Prior to the covariance 
+    computation, the data matrix is row-centered and, optionally, normalised (in `build_data_matrix()`) which would convert 
+    it into a correlation matrix once the covariance computation has been performed on it. Thus, there is a choice between 
+    using a covariance matrix or a correlation matrix. Use of a covariance matrix would mean that features (i.e. atomic 
+    coorinates) with large absolute variance, dominate the variance. Whereas use of correlation matrix instead would mean
+    that features with a strong co-variation pattern (even if the amplitude is small) dominate the variance. So, the 'raw' 
+    covariance matrix indicates where the system (i.e. atoms) moves the most in real space (Å), while the normalised form 
+    (i.e. the correlation matrix) indicates which coordinates fluctuate together in a consistent pattern, regardless of 
+    scale. This is because the normalisation step changes the geometry of the subsequent PCA space. Potentially then, this 
+    script would be able to focus, approximately, on these two different types of protein dynamics. The default setting 
+    though is to use the 'raw' covariance matrix, rather than the correlation matrix. 
     
-      $$\mathbf{C} = \frac{1}{M - 1} (\mathbf{X} - \bar{\mathbf{X}})^{\mathsf{T}} (\mathbf{X} - \bar{\mathbf{X}})$$<br>
-             where $\mathbf{C}$ is the covariance matrix
-      and $\bar{\mathbf{X}} = \begin{bmatrix} \bar{x}_1 & \bar{x}_2 & \cdots & \bar{x}_p \end{bmatrix}$
+    $$\mathbf{C} = \frac{1}{M - 1} (\mathbf{X} - \bar{\mathbf{X}})^{\mathsf{T}} (\mathbf{X} - \bar{\mathbf{X}})$$<br>
+           where $\mathbf{C}$ is the covariance matrix
+    and $\bar{\mathbf{X}} = \begin{bmatrix} \bar{x}_1 & \bar{x}_2 & \cdots & \bar{x}_p \end{bmatrix}$
   
-      where $\mathbf{C}$ is the covariance matrix
-      $$\bar{\mathbf{X}} = \begin{bmatrix} \bar{x}_1 & \bar{x}_2 & \cdots & \bar{x}_p \end{bmatrix}$$
-    
-  
-  
-    ---
-    
+    where $\mathbf{C}$ is the covariance matrix
+    $$\bar{\mathbf{X}} = \begin{bmatrix} \bar{x}_1 & \bar{x}_2 & \cdots & \bar{x}_p \end{bmatrix}$$
+
     (For the correlation matrix, the normalisation and covariance computation can be done in either order. In the script,
     the normalisation is done first, followed by the covariance computation. The maths formula below show it done the other 
     way round. They give the same result because matrix $\mathbf{D}$ being diagonal and positive definite.)
@@ -540,8 +536,7 @@ Here is the full data directory structure and brief descriptions of files in eac
       might be obscured but as a first-pass visual diagnostic, PC1–PC2 is sufficient. But for a slightly more thorough 
       approach, you might also plot PC1–PC3 and PC2–PC3 and only bother with kPCA if at least one of those 2D PCA plots 
       shows clear curvature or entangled clusters.
-    
-    
+
     `essential_dynamics_pca()` returns the eigenvectors, the eigenvalues, the scores, the rmsd amplitudes per mode, and if 
     also computed the kPCA scores. The utility of each:
     
@@ -560,52 +555,51 @@ Here is the full data directory structure and brief descriptions of files in eac
     analysis for essential dynamics using PDB as inputs but I am not finding it to be robustly functional. I cannot find
     any Github URL for this but given it was 16 years ago, it's not unlikely that it has not been maintained recently.)
   
-    - <details><summary><strong>Normal Mode Analysis (NMA):</strong></summary>
+  - <details><summary><strong>Normal Mode Analysis (NMA):</strong></summary>
   
-      Normal mode analysis (NMA) is used as a predictor of feasible domain motions, not a simulation of them. It models a
-      protein as fully connected graph and treats this as a harmonic oscillator, from which it quantifies small harmonic
-      oscillations. These are restorative motions based on some approximate assumptions that the given structure's atomic 
-      coordinates correspond to a relaxed, near-equilibrium conformation, i.e. one that lies in a local minimum of the energy 
-      landscape.
-      NMA describes only the small, near-equilibrium harmonic fluctuations that restore that minimum.
-      NMA cannot describe motions that cross into other basins or large anharmonic transitions.
-      Accordingly, an X-ray crystal structure or a cryo-EM model (without steric clashes) is typically suitable for NMA.
-      In contrast, a misfolded conformation is not suitable, and an MD snapshot is suitable only if it comes from an 
-      equilibrated, relaxed portion of the trajectory rather than an arbitrary or early-frame snapshot.
-      NMR structures might be useful but the model(s) chosen should be selected with care (ideally one in a relaxed 
-      structure of a local minimum). The ensemble of structures provided by NMR may then also provide a benchmark for 
-      comparison with the motions predicte by NMA.
+    Normal mode analysis (NMA) is used as a predictor of feasible domain motions, not a simulation of them. It models a
+    protein as fully connected graph and treats this as a harmonic oscillator, from which it quantifies small harmonic
+    oscillations. These are restorative motions based on some approximate assumptions that the given structure's atomic 
+    coordinates correspond to a relaxed, near-equilibrium conformation, i.e. one that lies in a local minimum of the energy 
+    landscape.
+    NMA describes only the small, near-equilibrium harmonic fluctuations that restore that minimum.
+    NMA cannot describe motions that cross into other basins or large anharmonic transitions.
+    Accordingly, an X-ray crystal structure or a cryo-EM model (without steric clashes) is typically suitable for NMA.
+    In contrast, a misfolded conformation is not suitable, and an MD snapshot is suitable only if it comes from an 
+    equilibrated, relaxed portion of the trajectory rather than an arbitrary or early-frame snapshot.
+    NMR structures might be useful but the model(s) chosen should be selected with care (ideally one in a relaxed 
+    structure of a local minimum). The ensemble of structures provided by NMR may then also provide a benchmark for 
+    comparison with the motions predicte by NMA.
     
-      A harmonic oscillator arises when the potential energy of a system is approximated by a quadratic (parabolic) function 
-      around an equilibrium configuration. 
-      NMA relies on the eigen-decomposition of a Hessian matrix to obtain collective vibrational modes of a system.
-      The Hessian is the matrix of second derivatives of the aforementioned potential, and it determines the stiffness 
-      (curvature) of the harmonic oscillator in each direction, thereby defining the vibrational frequencies.
-      (The source of the potential can be quantum, molecular mechanics, coarse-grained, or anything else.)
+    A harmonic oscillator arises when the potential energy of a system is approximated by a quadratic (parabolic) function 
+    around an equilibrium configuration. 
+    NMA relies on the eigen-decomposition of a Hessian matrix to obtain collective vibrational modes of a system.
+    The Hessian is the matrix of second derivatives of the aforementioned potential, and it determines the stiffness 
+    (curvature) of the harmonic oscillator in each direction, thereby defining the vibrational frequencies.
+    (The source of the potential can be quantum, molecular mechanics, coarse-grained, or anything else.)
     
-      Elastic network models (ENMs) are a special case of NMA, where the potential is simplified (to Hookean springs between 
-      nodes within a cutoff). Gaussian network models (GNMs) and anisotropic network models (ANMs) are two different 
-      implementations of ENMs. ENMs are not alpha-carbon only by default, but as it has been shown that alpha-carbon-only 
-      ENMs reproduce the same low modes as full-atom NMA (Bahar & Atilgan), alpha-carbon-only became the standard 
-      coarse-grained representation for ENMs and has been implemented here accordingly.
+    Elastic network models (ENMs) are a special case of NMA, where the potential is simplified (to Hookean springs between 
+    nodes within a cutoff). Gaussian network models (GNMs) and anisotropic network models (ANMs) are two different 
+    implementations of ENMs. ENMs are not alpha-carbon only by default, but as it has been shown that alpha-carbon-only 
+    ENMs reproduce the same low modes as full-atom NMA (Bahar & Atilgan), alpha-carbon-only became the standard 
+    coarse-grained representation for ENMs and has been implemented here accordingly.
     
-      Nosology:
+    Nosology:
     
-      normal mode analysis (NMA)
-          └── elastic network models (ENM)
-                  ├── Gaussian network model (GNM)  — isotropic ENM
-                  └── anisotropic network model (ANM) — anisotropic ENM
+    normal mode analysis (NMA)
+        └── elastic network models (ENM)
+                ├── Gaussian network model (GNM)  — isotropic ENM
+                └── anisotropic network model (ANM) — anisotropic ENM
     
-      | Model    | Matrix size    | Eigenvector contains           |
-      | -------- | -------------- |--------------------------------|
-      | Full NMA      | (3N \times 3N)   | 3D displacement vectors (i.e. direction of motion) |
-      | ANM      | (3N \times 3N) | 3D displacement vectors (i.e. direction of motion)       |
-      | GNM | (N \times N) | scalar participation per residue |
+    | Model    | Matrix size    | Eigenvector contains           |
+    | -------- | -------------- |--------------------------------|
+    | Full NMA      | (3N \times 3N)   | 3D displacement vectors (i.e. direction of motion) |
+    | ANM      | (3N \times 3N) | 3D displacement vectors (i.e. direction of motion)       |
+    | GNM | (N \times N) | scalar participation per residue |
     
-      NMA provides the mathematical machinery; ENMs specify a particular harmonic potential used in NMA. 
-      GNMs are an isotropic ENM producing a scalar Laplacian. ANMs are an anisotropic ENM producing a full 3Nx3N Hessian.
-    
-    
+    NMA provides the mathematical machinery; ENMs specify a particular harmonic potential used in NMA. 
+    GNMs are an isotropic ENM producing a scalar Laplacian. ANMs are an anisotropic ENM producing a full 3Nx3N Hessian.
+
     It can identify **directions** in which the protein would move if large motions were allowed.
     The harmonic approximation yields normal modes that mathematically assume small-amplitude oscillations. However, a
     surprising result has emerged, namely that lowest-frequency normal modes predicted by these harmonic models align 
@@ -633,8 +627,7 @@ Here is the full data directory structure and brief descriptions of files in eac
     | Represents           | Empirical dominant motions                          | Vibrational modes with frequencies  |
     | Suitable for         | Domain motions, ensembles, conformational variability | Small oscillations near equilibrium |
     | Interpreted as       | Statistical **principal directions**                | Physical **vibrational eigenmodes** |
-    
-    
+
     NMA does not rely having two or more Cartesian coordinates for a protein. 
     It can be applied on a single set of Cartesian coordinates of a protein. 
     NMA is designed for computationally estimating small-scale dynamics of protein structure given only a single (static) 
@@ -701,7 +694,6 @@ Here is the full data directory structure and brief descriptions of files in eac
     identify their principal geometric directions. This was first demonstrated by Tirion (1996), Bahar et al. (1997), and 
     Atilgan et al. (2001), forming the foundation of elastic network models.
     
-    
     The NMA method involves diagonalising the Hessian of the potential energy of a protein, calculated from its Cartesian 
     coordinates. (Note: A `mode` refers to a collective vibration pattern of a protein that is independent from others 
     modes. They are modelled as small harmonic oscillations around an equilibrium structure. 
@@ -709,7 +701,6 @@ Here is the full data directory structure and brief descriptions of files in eac
     This model treats the protein instead as a harmonic oscillator, a graph where edges are springs connecting alpha-carbon 
     atoms within a cutoff distance, e.g. 10 Angstrom.  
     Like calculating the essential dynamics, it outputs the protein's modes and their amplitudes.   
-    
     
     Here, the Python implementation of NMA is done with an ENM potential of the GNM type.
     
@@ -750,7 +741,6 @@ Here is the full data directory structure and brief descriptions of files in eac
        - Sharp transitions between red and blue regions indicates hinges or pivot regions.
        - Long-range spots far from the diagonal indicate distant residues that are dynamically coupled.
     
-    
     A summary of methods described and implemented in this codebase (not including 'Cartesian displacement'), what 
     diagonalisation is involved in each, how it's interpreted and what information each model is realistically capable of 
     predicting and/or characterising:
@@ -767,17 +757,6 @@ Here is the full data directory structure and brief descriptions of files in eac
   
   </details>
   
-  Methods tried but discontinued:
-  Calculating the RMSDs/TM-scores of all NMR models vs the mean of the models for each protein.
-  (A shortcut was taken in which I did not first align the proteins before all subsequent calculations, and found a few
-  cases where PDBs were clearly not aligned (adding doubt on all the other PDBs). E.g. .. (add PDB id of the massive 
-  proteins NMR PDBs that included lipids) 
-  
-  I tried to make use of FATCAT (https://github.com/GodzikLab/FATCAT-dist) but was not able to. I noticed it had not 
-  been touched for 3 years, so did not persist. 
-  Running DynDom from source code was not attempted, but datasets were acquired both from the webserver and from the lead 
-  researcher.
-  
   To make clear the distinction between what PCA/ED does vs what NMA does, and the distinct use of the word 'mode': 
   
   | Concept/Object     | **Normal Mode (NMA)**                                   | **Essential Mode (PCA/ED)**                    |
@@ -791,8 +770,6 @@ Here is the full data directory structure and brief descriptions of files in eac
   
   'Normal modes' are oscillatory patterns determined by the energy landscape (physics-driven). <br>
   'Essential modes' are statistical patterns determined by the trajectory ensemble (data-driven).
-  
-  ---
   
   - <details><summary>Experiental validation of the utility of DDM, PCA-ED and NMA for protein dynamics:</summary>
   
