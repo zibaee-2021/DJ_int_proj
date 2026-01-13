@@ -215,6 +215,7 @@ Here is the full data directory structure and brief descriptions of files in eac
 
           - 2 files: 2DN1.cif & 2DN1.pdb.
 </details>
+
 - <details><summary><strong>src/</strong></summary>
 
   - <details><summary><strong>Root mean-squared deviation (RMSD):</strong></summary>
