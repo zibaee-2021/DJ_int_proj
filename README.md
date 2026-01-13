@@ -1,41 +1,46 @@
+<details><summary><strong>Rationale for this mini-project:</strong></summary>
 
-Performed, part-time, over a period of 3 months from mid-July to mid-Sept 2025. 
+A proof-of-concept exploration of the predictive capability of a diffusion model for alternate protein conformations.
+
+Performed, part-time, over a period of 3 months from mid-July to mid-Sept 2025.
+
+</details>
 
 ---
-Rationale for mini-project:
 
-A proof-of-concept exploration of the predictive capability of a diffusion model for alternate protein conformations. 
-The proposed setting was for the diffusion model to employ a pre-trained protein language model. 
-
----
-Immediate goal: 
+<details><summary><strong>Immediate goal: </strong></summary>
 
 Assemble and curate a protein dataset containing proteins that are observed to populate different structures.
 For simplication and computational reduction, protein structures are parsed to contain alpha-carbons only.
 I performed EDA of the NMR structures available in the RCSB.   
 
+</details>
+
 ---
-<details><summary>Summary methods for quantifying conformational differences:<\summary>
+
+<details><summary><strong>Five different approaches to quantify conformational differences and/or dynamics of individual proteins:</strong></summary>
 
 Clustering the RMSD values such that candidate ensembles could be visualised through dendrograms and heatmaps.
 The utility of such visualisations was important for tracking/sanity-checking the calculations step-by-step, as it required 
-both evaluating the protein structures as well as evaluating/checking the Python code and libraries used - due to heavy use of 
-autogenerared code (A.I.). 
-I found the useability of the RCSB viewer for overlaying protein structures (for different models of NMR structures in particular) 
-not great. Described in [rcsb/FAQs](https://www.rcsb.org/docs/3d-viewers/mol*/faqs-scenarios#how-do-i-view-all-models-of-an-nmr-ensemble), scroll down to "How do I select specific models from an ensemble to see them ...?"
+both evaluating the protein structures as well as evaluating the Python.
 
-The exploration of the NMR dataset evolved into an exploration of how one even establishes the existence of different 
-protein structures. A distinction might be needed to be made between flexibility/mobility, naturally-occuring 
-ensemble populations, ligand-induced change, and non-native conformational changes. 
+The RCSB viewer for overlaying protein structures (of different models of NMR structures in particular) is convoluted. 
+Instructoins are at [rcsb/FAQs](https://www.rcsb.org/docs/3d-viewers/mol*/faqs-scenarios#how-do-i-view-all-models-of-an-nmr-ensemble), scroll down to "How do I select specific models from an ensemble to see them ...?"
 
-This is highly challenging. Nonetheless, a number of potentially useful and seemingly elegant methods were found that 
-might be suitable for identifying, characterising and quantifying protein dynamics:
+The exploration of the NMR dataset naturally led to the question of how one determines the existence of different 
+protein structures for a single protein. Some distinct groupings, with unclear boundaries between them include 
+flexibility/mobility, naturally-occuring ensemble populations, ligand-induced conformational change, and non-native 
+conformational changes. 
 
-Whenever you have the Cartesian coordinates of a protein that populates different conformations, you can apply the 
-aforementioned methods of clustering the data in RMSD matrices or TM-score matrices, which give scalar measurements of the 
-differences between any pair of Cartesian coordinates.  
-(This may come from different models of NMR data, or different time points in an MD trajectory, or from a curated 
-dataset such as [DynDom](https://dyndom.cmp.uea.ac.uk/dyndom/)),
+This is challenging. Nonetheless, 4 or 5 potentially useful and seemingly elegant methods were found that might be 
+suitable for identifying, characterising and quantifying protein dynamics.
+
+RMSD and TM-score matrices and clustering: 
+
+Whenever you have the Cartesian coordinates of a protein that populates different conformations, you can apply 
+clustering to the data in RMSD matrices or TM-score matrices, which compute scalar differences between any pair of 
+Cartesian coordinates. (This may come from different models of NMR data, or different time points in an MD trajectory, 
+or from a curated dataset such as [DynDom](https://dyndom.cmp.uea.ac.uk/dyndom/)),
 
 #### Older methods for deriving dynamics from protein structures:
 
