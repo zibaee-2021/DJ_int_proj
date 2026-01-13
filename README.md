@@ -1,6 +1,6 @@
 <details><summary><strong>Rationale for this mini-project:</strong></summary><br>
 
-  A proof-of-concept exploration of the predictive capability of a diffusion model for alternate protein conformations.
+>  A proof-of-concept exploration of the predictive capability of a diffusion model for alternate protein conformations.
   The focus of this mini-project remained on the preliminary methods for generating and characterising the required 
   dataset. (No model design, training or inference was done by me.)
 
@@ -8,7 +8,7 @@ Performed, part-time, over a period of 3 months from mid-July to mid-Sept 2025.
 
 </details>
 
-<details><summary><strong>Immediate goal: </strong></summary>
+<details><summary><strong>Immediate goal: </strong></summary><br>
 
   Assemble and curate a structural dataset of proteins that are observed to populate different structures.
   For simplication and to reduce computational demand, protein structures are parsed to contain alpha-carbons only.
