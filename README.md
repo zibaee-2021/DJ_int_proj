@@ -218,12 +218,12 @@ Here is the full data directory structure and brief descriptions of files in eac
 
   - <details><summary><strong>Root mean-squared deviation (RMSD):</strong></summary>
     
-    A long-established and intuitive method that calculates RMSD between two given coordinates (as numpy arrays) (Kabsch 1976)
-    RMSD is suited to comparing pairs of alpha-carbon coordinates belonging to identical sequences, as is the case for 
-    different models of the same NMR structure.
+    A long-established and intuitive method which calculates a scalar measure of the difference between two sets of 
+    atomic coordinates (Kabsch 1976). RMSD is suited to comparing pairs of alpha-carbon coordinates belonging to identical sequences, as is the case for 
+    different models of the same NMR structure and so it was used here.
     A lower RMSD indicates a higher degree of structural similarity between two protein structures.
-    calculate_rmsd() uses Biopython's SVDSuperimposer(), which uses optimal least-squares superposition (Kabsch algorithm), 
-    i.e. the Euclidean RMSD between matched atom pairs:
+    `calculate_rmsd()` uses Biopython's `SVDSuperimposer()`, which uses optimal least-squares superposition, giving 
+    the Euclidean RMSD between matched atom pairs. This is the Kabsch algorithm.
     
     $\mathrm{RMSD} = \sqrt{\dfrac{1}{n} \sum\limits_{i=1}^{n} d_i^{2}}$
     where the averaging is performed over the $n$ pairs of equivalent atoms and $d_i$ is the distance between the two atoms 
