@@ -1,6 +1,8 @@
 <details><summary><strong>Rationale for this mini-project:</strong></summary>
 
 A proof-of-concept exploration of the predictive capability of a diffusion model for alternate protein conformations.
+The focus of this mini-project remained on the preliminary methods for generating and characterising the required 
+dataset. No model training or inference was done.
 
 Performed, part-time, over a period of 3 months from mid-July to mid-Sept 2025.
 
@@ -16,24 +18,21 @@ I performed EDA of the NMR structures available in the RCSB.
 
 </details>
 
----
+
+
 
 <details><summary><strong>Five different approaches to quantify conformational differences and/or dynamics of individual proteins:</strong></summary>
 
-Clustering the RMSD values such that candidate ensembles could be visualised through dendrograms and heatmaps.
-The utility of such visualisations was important for tracking/sanity-checking the calculations step-by-step, as it required 
-both evaluating the protein structures as well as evaluating the Python.
-
-The RCSB viewer for overlaying protein structures (of different models of NMR structures in particular) is convoluted. 
-Instructoins are at [rcsb/FAQs](https://www.rcsb.org/docs/3d-viewers/mol*/faqs-scenarios#how-do-i-view-all-models-of-an-nmr-ensemble), scroll down to "How do I select specific models from an ensemble to see them ...?"
+(Directly visualising two or more protein structures, e.g. for different models of the same NMR protein structure data, 
+would be the RCSB viewer. However, using this for overlaying protein structures is explained at [rcsb/FAQs](https://www.rcsb.org/docs/3d-viewers/mol*/faqs-scenarios#how-do-i-view-all-models-of-an-nmr-ensemble). 
+Scroll down to "How do I select specific models from an ensemble to see them ...?")
 
 The exploration of the NMR dataset naturally led to the question of how one determines the existence of different 
 protein structures for a single protein. Some distinct groupings, with unclear boundaries between them include 
 flexibility/mobility, naturally-occuring ensemble populations, ligand-induced conformational change, and non-native 
-conformational changes. 
-
-This is challenging. Nonetheless, 4 or 5 potentially useful and seemingly elegant methods were found that might be 
-suitable for identifying, characterising and quantifying protein dynamics.
+conformational changes. Thus, characterising protein dynamics is not always straightforward.<br> 
+Two commonly-used methods for quantifying structural differences between identical protein sequences include the 
+calculation of RMSDs and TM-scores. 
 
 RMSD and TM-score matrices and clustering: 
 
@@ -42,12 +41,17 @@ clustering to the data in RMSD matrices or TM-score matrices, which compute scal
 Cartesian coordinates. (This may come from different models of NMR data, or different time points in an MD trajectory, 
 or from a curated dataset such as [DynDom](https://dyndom.cmp.uea.ac.uk/dyndom/)),
 
-#### Older methods for deriving dynamics from protein structures:
+Clustering the RMSD values such that candidate ensembles could be visualised through dendrograms and heatmaps.
+The utility of such visualisations was important for tracking/sanity-checking the calculations step-by-step, as it required 
+both evaluating the protein structures as well as evaluating the Python.
 
-My exploration led to some old and less used methods including the difference-distance matrices (DDM), 
-principal component analysis (PCA) for 'essential dynamics' (ED), and Normal Mode Analysis (NMA). See table below.
-Note: I subsequently found this combination in very recent publication which includes a single software package for computing 
-all of these ('EnsembleFlex'), Schneider et al. 2025. 
+These methods are limited though and upon exploring the literature, I came across a number of other somewhat older 
+methods for measuring differences and dynamics. They included the calculation of difference-distance matrices (DDM), 
+principal component analysis (PCA) for 'essential dynamics' (ED), and Normal Mode Analysis (NMA).<br>
+The table below summarises these methods.
+
+(Note: I subsequently was intruiged to find this combination being used in very recent publication which includes a 
+single software package for computing all of these ('EnsembleFlex'), Schneider et al. 2025.)
 
 <details><summary>Table of methods implemented here for quantitatively characterising structural variants and dynamics:</summary> 
 
