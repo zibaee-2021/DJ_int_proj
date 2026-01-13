@@ -765,6 +765,7 @@ Here is the full data directory structure and brief descriptions of files in eac
     | **GNM (Gaussian Network Model)**         | (N \times N) Laplacian            | Scalar participation / correlation patterns of residues           | **No** — isotropic, sign structure only                      | Predicted relative flexibility and correlated/anti-correlated regions                                      |
     | **Spectral clustering of graphs / DDMs** | (N \times N) Laplacian            | Relational partitions and collective groupings                    | **No** — partitions, not displacement vectors                | Identification of moving blocks, hinges, and collective rearrangement patterns                             |
   
+  </details>
   
   Methods tried but discontinued:
   Calculating the RMSDs/TM-scores of all NMR models vs the mean of the models for each protein.
@@ -942,8 +943,6 @@ Here is the full data directory structure and brief descriptions of files in eac
   scope of that script's main execution block.
   
   </details>
-
----
 
 <details><summary><strong>Discussion:</strong></summary>
 
