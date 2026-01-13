@@ -32,21 +32,21 @@ calculation of RMSDs and TM-scores.
 
   - <details><summary><strong>RMSD and TM-score matrices and clustering:</strong></summary> 
 
-    Whenever you have the Cartesian coordinates of a protein that populates different conformations, you can apply 
+    - Whenever you have the Cartesian coordinates of a protein that populates different conformations, you can apply 
     clustering to the data in RMSD matrices or TM-score matrices, which compute scalar differences between any pair of 
     Cartesian coordinates. (This may come from different models of NMR data, or different time points in an MD trajectory, 
     or from a curated dataset such as [DynDom](https://dyndom.cmp.uea.ac.uk/dyndom/)),
     
-    Clustering the RMSD values such that candidate ensembles could be visualised through dendrograms and heatmaps.
+    - Clustering the RMSD values such that candidate ensembles could be visualised through dendrograms and heatmaps.
     The utility of such visualisations was important for tracking/sanity-checking the calculations step-by-step, as it required 
     both evaluating the protein structures as well as evaluating the Python.
     
-    These methods are limited though and upon exploring the literature, I came across a number of other somewhat older 
+    - These methods are limited though and upon exploring the literature, I came across a number of other somewhat older 
     methods for measuring differences and dynamics. They included the calculation of difference-distance matrices (DDM), 
     principal component analysis (PCA) for 'essential dynamics' (ED), and Normal Mode Analysis (NMA).<br>
     The table below summarises these methods.
     
-    (Note: I subsequently was intruiged to find this combination being used in very recent publication which includes a 
+    - (Note: I subsequently was intruiged to find this combination being used in very recent publication which includes a 
     single software package for computing all of these ('EnsembleFlex'), Schneider et al. 2025.)
     
   - <details><summary>Table of methods implemented here for quantitatively characterising structural variants and dynamics:</summary> 
