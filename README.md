@@ -1,27 +1,23 @@
 <details><summary><strong>Rationale for this mini-project:</strong></summary>
 
+
 A proof-of-concept exploration of the predictive capability of a diffusion model for alternate protein conformations.
 The focus of this mini-project remained on the preliminary methods for generating and characterising the required 
-dataset. No model training or inference was done.
+dataset. (No model design, training or inference was done by me.)
 
 Performed, part-time, over a period of 3 months from mid-July to mid-Sept 2025.
 
 </details>
 
----
-
 <details><summary><strong>Immediate goal: </strong></summary>
 
-Assemble and curate a protein dataset containing proteins that are observed to populate different structures.
-For simplication and computational reduction, protein structures are parsed to contain alpha-carbons only.
-I performed EDA of the NMR structures available in the RCSB.   
+Assemble and curate a structural dataset of proteins that are observed to populate different structures.
+For simplication and to reduce computational demand, protein structures are parsed to contain alpha-carbons only.
+I performed EDA of all NMR structures available in the RCSB.   
 
 </details>
 
-
-
-
-<details><summary><strong>Five different approaches to quantify conformational differences and/or dynamics of individual proteins:</strong></summary>
+- <details><summary><strong>Five different approaches to quantify conformational differences and/or dynamics of individual proteins:</strong></summary>
 
 (Directly visualising two or more protein structures, e.g. for different models of the same NMR protein structure data, 
 would be the RCSB viewer. However, using this for overlaying protein structures is explained at [rcsb/FAQs](https://www.rcsb.org/docs/3d-viewers/mol*/faqs-scenarios#how-do-i-view-all-models-of-an-nmr-ensemble). 
@@ -34,41 +30,41 @@ conformational changes. Thus, characterising protein dynamics is not always stra
 Two commonly-used methods for quantifying structural differences between identical protein sequences include the 
 calculation of RMSDs and TM-scores. 
 
-RMSD and TM-score matrices and clustering: 
+  - <details><summary><strong>RMSD and TM-score matrices and clustering: 
 
-Whenever you have the Cartesian coordinates of a protein that populates different conformations, you can apply 
-clustering to the data in RMSD matrices or TM-score matrices, which compute scalar differences between any pair of 
-Cartesian coordinates. (This may come from different models of NMR data, or different time points in an MD trajectory, 
-or from a curated dataset such as [DynDom](https://dyndom.cmp.uea.ac.uk/dyndom/)),
+  Whenever you have the Cartesian coordinates of a protein that populates different conformations, you can apply 
+  clustering to the data in RMSD matrices or TM-score matrices, which compute scalar differences between any pair of 
+  Cartesian coordinates. (This may come from different models of NMR data, or different time points in an MD trajectory, 
+  or from a curated dataset such as [DynDom](https://dyndom.cmp.uea.ac.uk/dyndom/)),
+  
+  Clustering the RMSD values such that candidate ensembles could be visualised through dendrograms and heatmaps.
+  The utility of such visualisations was important for tracking/sanity-checking the calculations step-by-step, as it required 
+  both evaluating the protein structures as well as evaluating the Python.
+  
+  These methods are limited though and upon exploring the literature, I came across a number of other somewhat older 
+  methods for measuring differences and dynamics. They included the calculation of difference-distance matrices (DDM), 
+  principal component analysis (PCA) for 'essential dynamics' (ED), and Normal Mode Analysis (NMA).<br>
+  The table below summarises these methods.
+  
+  (Note: I subsequently was intruiged to find this combination being used in very recent publication which includes a 
+  single software package for computing all of these ('EnsembleFlex'), Schneider et al. 2025.)
+  
+  <details><summary>Table of methods implemented here for quantitatively characterising structural variants and dynamics:</summary> 
+  
+  | **Method**                                  | **Core Algorithm / Mathematical Basis**                                                          | **Typical Post-processing / Clustering**                                                      | **What It Measures or Detects**                                                                  | **Pros**                                                                                                  | **Cons**                                                                            | **Required Inputs**                                                                    | **Relative Computational Demand** |
+  | :------------------------------------------ | :----------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------- |:----------------------------------|
+  | **RMSD Matrix (all-vs-all)**                | Pairwise Euclidean distance between Cartesian coordinates; optionally after Kabsch superposition | Hierarchical clustering (Ward, average, complete), dendrograms, multidimensional scaling      | Overall structural dissimilarity between models (global or per-chain conformation)               | Simple, widely understood; directly interpretable; works even with few models                             | Sensitive to outliers and domain motions; loses local detail                        | ≥ 2 models of same atom order (typically Cα or backbone only)                          | low                               |
+  | **TM-score Matrix (all-vs-all)**            | Sequence-independent superposition optimizing TM-score metric (length-normalized similarity)     | Same clustering or heat-map visualization as RMSD                                             | Fold-level structural similarity; insensitive to local disorder                                  | Scale-independent; robust to domain motions and chain-length variation                                    | Non-linear optimization; slower than RMSD; less local sensitivity                   | ≥ 2 protein structures (Cα or full-atom)                                               | moderate                          |
+  | **Difference-Distance Matrix (DDM)**        | Element-wise subtraction of intra-model distance matrices; optional SVD alignment beforehand     | Spectral clustering (Laplacian eigenmaps); hinge scoring; domain segmentation                 | Localized internal rearrangements; hinge/bend detection; conformational subdomain identification | Captures internal geometry changes independent of global rotation/translation; interpretable residue-wise | Requires many models; sensitive to missing residues; needs long-range mask tuning   | ≥ 2 models with matched residue indices (Cα sufficient)                                | moderate                          |
+  | **Essential Dynamics (PCA of coordinates)** | Eigen-decomposition of covariance (or correlation) matrix of aligned coordinates                 | Low-dimensional projection (PC1–PC2); optional k-means clustering in PC space; scree analysis | Directions of maximal correlated fluctuation across ensemble (collective motions)                | Physically intuitive; identifies dominant motions; easy visualisation                                     | Needs sufficient sampling; ignores time ordering; linear method                     | ≥ 10–20 models or MD frames, aligned (Cα or all-atom)                                  | moderate                          |
+  | **Kernel PCA (non-linear extension)**       | Non-linear mapping via kernel trick (e.g., RBF) on top PCs or coordinates                        | Scatter plots in kernel PC space; silhouette or cluster analysis                              | Curved or anharmonic manifolds of motion; separates overlapping ensembles                        | Captures non-linear motions missed by linear PCA                                                          | Kernel choice and γ-tuning critical; less physically interpretable                  | Same as PCA (ensemble of aligned structures)                                           | moderate–high                     |
+  | **Normal Mode Analysis (NMA)**              | Eigen-decomposition of Hessian of potential energy (2nd derivatives of energy wrt coordinates)   | Optional projection of trajectory onto modes; visualization of low-frequency modes            | Harmonic vibrational directions and frequencies near energy minimum                              | Physics-based; provides frequencies and force constants; requires only one structure                      | Harmonic approximation only; no anharmonic or diffusive motion; energy model needed | Single high-quality structure + parameterized force field (all-atom or coarse-grained) | high                              |
 
-Clustering the RMSD values such that candidate ensembles could be visualised through dendrograms and heatmaps.
-The utility of such visualisations was important for tracking/sanity-checking the calculations step-by-step, as it required 
-both evaluating the protein structures as well as evaluating the Python.
 
-These methods are limited though and upon exploring the literature, I came across a number of other somewhat older 
-methods for measuring differences and dynamics. They included the calculation of difference-distance matrices (DDM), 
-principal component analysis (PCA) for 'essential dynamics' (ED), and Normal Mode Analysis (NMA).<br>
-The table below summarises these methods.
-
-(Note: I subsequently was intruiged to find this combination being used in very recent publication which includes a 
-single software package for computing all of these ('EnsembleFlex'), Schneider et al. 2025.)
-
-<details><summary>Table of methods implemented here for quantitatively characterising structural variants and dynamics:</summary> 
-
-| **Method**                                  | **Core Algorithm / Mathematical Basis**                                                          | **Typical Post-processing / Clustering**                                                      | **What It Measures or Detects**                                                                  | **Pros**                                                                                                  | **Cons**                                                                            | **Required Inputs**                                                                    | **Relative Computational Demand** |
-| :------------------------------------------ | :----------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------- |:----------------------------------|
-| **RMSD Matrix (all-vs-all)**                | Pairwise Euclidean distance between Cartesian coordinates; optionally after Kabsch superposition | Hierarchical clustering (Ward, average, complete), dendrograms, multidimensional scaling      | Overall structural dissimilarity between models (global or per-chain conformation)               | Simple, widely understood; directly interpretable; works even with few models                             | Sensitive to outliers and domain motions; loses local detail                        | ≥ 2 models of same atom order (typically Cα or backbone only)                          | low                               |
-| **TM-score Matrix (all-vs-all)**            | Sequence-independent superposition optimizing TM-score metric (length-normalized similarity)     | Same clustering or heat-map visualization as RMSD                                             | Fold-level structural similarity; insensitive to local disorder                                  | Scale-independent; robust to domain motions and chain-length variation                                    | Non-linear optimization; slower than RMSD; less local sensitivity                   | ≥ 2 protein structures (Cα or full-atom)                                               | moderate                          |
-| **Difference-Distance Matrix (DDM)**        | Element-wise subtraction of intra-model distance matrices; optional SVD alignment beforehand     | Spectral clustering (Laplacian eigenmaps); hinge scoring; domain segmentation                 | Localized internal rearrangements; hinge/bend detection; conformational subdomain identification | Captures internal geometry changes independent of global rotation/translation; interpretable residue-wise | Requires many models; sensitive to missing residues; needs long-range mask tuning   | ≥ 2 models with matched residue indices (Cα sufficient)                                | moderate                          |
-| **Essential Dynamics (PCA of coordinates)** | Eigen-decomposition of covariance (or correlation) matrix of aligned coordinates                 | Low-dimensional projection (PC1–PC2); optional k-means clustering in PC space; scree analysis | Directions of maximal correlated fluctuation across ensemble (collective motions)                | Physically intuitive; identifies dominant motions; easy visualisation                                     | Needs sufficient sampling; ignores time ordering; linear method                     | ≥ 10–20 models or MD frames, aligned (Cα or all-atom)                                  | moderate                          |
-| **Kernel PCA (non-linear extension)**       | Non-linear mapping via kernel trick (e.g., RBF) on top PCs or coordinates                        | Scatter plots in kernel PC space; silhouette or cluster analysis                              | Curved or anharmonic manifolds of motion; separates overlapping ensembles                        | Captures non-linear motions missed by linear PCA                                                          | Kernel choice and γ-tuning critical; less physically interpretable                  | Same as PCA (ensemble of aligned structures)                                           | moderate–high                     |
-| **Normal Mode Analysis (NMA)**              | Eigen-decomposition of Hessian of potential energy (2nd derivatives of energy wrt coordinates)   | Optional projection of trajectory onto modes; visualization of low-frequency modes            | Harmonic vibrational directions and frequencies near energy minimum                              | Physics-based; provides frequencies and force constants; requires only one structure                      | Harmonic approximation only; no anharmonic or diffusive motion; energy model needed | Single high-quality structure + parameterized force field (all-atom or coarse-grained) | high                              |
 </details>
 
----
 ### Directory structure and main Python scripts:
 
----
 
 Data files were not staged in git (but can all be generated by running code in `src` dir).
 Here is the full data directory structure and brief descriptions of files in each dir and subdir:
