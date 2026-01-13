@@ -1,5 +1,5 @@
 <details><summary><strong>Rationale for this mini-project:</strong></summary>
-
+<br>
 
 A proof-of-concept exploration of the predictive capability of a diffusion model for alternate protein conformations.
 The focus of this mini-project remained on the preliminary methods for generating and characterising the required 
@@ -17,7 +17,7 @@ I performed EDA of all NMR structures available in the RCSB.
 
 </details>
 
-- <details><summary><strong>Five different approaches to quantify conformational differences and/or dynamics of individual proteins:</strong></summary>
+<details><summary><strong>Five different approaches to quantify conformational differences and/or dynamics of individual proteins:</strong></summary>
 
 (Directly visualising two or more protein structures, e.g. for different models of the same NMR protein structure data, 
 would be the RCSB viewer. However, using this for overlaying protein structures is explained at [rcsb/FAQs](https://www.rcsb.org/docs/3d-viewers/mol*/faqs-scenarios#how-do-i-view-all-models-of-an-nmr-ensemble). 
@@ -49,7 +49,7 @@ calculation of RMSDs and TM-scores.
   (Note: I subsequently was intruiged to find this combination being used in very recent publication which includes a 
   single software package for computing all of these ('EnsembleFlex'), Schneider et al. 2025.)
   
-  <details><summary>Table of methods implemented here for quantitatively characterising structural variants and dynamics:</summary> 
+  - <details><summary>Table of methods implemented here for quantitatively characterising structural variants and dynamics:</summary> 
   
   | **Method**                                  | **Core Algorithm / Mathematical Basis**                                                          | **Typical Post-processing / Clustering**                                                      | **What It Measures or Detects**                                                                  | **Pros**                                                                                                  | **Cons**                                                                            | **Required Inputs**                                                                    | **Relative Computational Demand** |
   | :------------------------------------------ | :----------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------- |:----------------------------------|
