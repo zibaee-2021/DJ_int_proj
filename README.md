@@ -1,5 +1,4 @@
-<details><summary><strong>Rationale for this mini-project:</strong></summary>
-<br>
+<details><summary><strong>Rationale for this mini-project:</strong></summary><br>
 
 A proof-of-concept exploration of the predictive capability of a diffusion model for alternate protein conformations.
 The focus of this mini-project remained on the preliminary methods for generating and characterising the required 
@@ -9,7 +8,7 @@ Performed, part-time, over a period of 3 months from mid-July to mid-Sept 2025.
 
 </details>
 
-<details><summary><strong>Immediate goal: </strong></summary>
+<details><summary><strong>Immediate goal: </strong></summary>c
 
 Assemble and curate a structural dataset of proteins that are observed to populate different structures.
 For simplication and to reduce computational demand, protein structures are parsed to contain alpha-carbons only.
@@ -17,7 +16,8 @@ I performed EDA of all NMR structures available in the RCSB.
 
 </details>
 
-<details><summary><strong>Five different approaches to quantify conformational differences and/or dynamics of individual proteins:</strong></summary>
+<details><summary><strong>Five different approaches to quantify conformational differences and/or dynamics of 
+individual proteins:</strong></summary><br>
 
 (Directly visualising two or more protein structures, e.g. for different models of the same NMR protein structure data, 
 would be the RCSB viewer. However, using this for overlaying protein structures is explained at [rcsb/FAQs](https://www.rcsb.org/docs/3d-viewers/mol*/faqs-scenarios#how-do-i-view-all-models-of-an-nmr-ensemble). 
