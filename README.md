@@ -30,7 +30,7 @@ conformational changes. Thus, characterising protein dynamics is not always stra
 Two commonly-used methods for quantifying structural differences between identical protein sequences include the 
 calculation of RMSDs and TM-scores. 
 
-  - <details><summary><strong>RMSD and TM-score matrices and clustering: 
+  - <details><summary><strong>RMSD and TM-score matrices and clustering:</strong></summary> 
 
     Whenever you have the Cartesian coordinates of a protein that populates different conformations, you can apply 
     clustering to the data in RMSD matrices or TM-score matrices, which compute scalar differences between any pair of 
