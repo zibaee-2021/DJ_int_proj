@@ -23,7 +23,7 @@ individual proteins:</strong></summary><br>
 would be the RCSB viewer. However, using this for overlaying protein structures is explained at [rcsb/FAQs](https://www.rcsb.org/docs/3d-viewers/mol*/faqs-scenarios#how-do-i-view-all-models-of-an-nmr-ensemble). 
 Scroll down to "How do I select specific models from an ensemble to see them ...?")
 
-The exploration of the NMR dataset naturally led to the question of how one determines the existence of different 
+- The exploration of the NMR dataset naturally led to the question of how one determines the existence of different 
 protein structures for a single protein. Some distinct groupings, with unclear boundaries between them include 
 flexibility/mobility, naturally-occuring ensemble populations, ligand-induced conformational change, and non-native 
 conformational changes. Thus, characterising protein dynamics is not always straightforward.<br> 
