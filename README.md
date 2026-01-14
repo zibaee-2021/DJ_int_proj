@@ -10,45 +10,50 @@
 
 <details><summary><strong>Immediate goal:</strong></summary>
 
-- Assemble and curate a structural dataset of proteins that are observed to populate different structures.
+- Assemble and curate a dataset of protein structures that are observed to populate different conformations.
   For simplication and to reduce computational demand, protein structures are parsed to contain alpha-carbons only.
 
-- I performed EDA of all NMR structures available in the RCSB.   
+- The main activity included exploratory data analysis of all NMR structures available in the RCSB, as well as Python 
+  implementations of different methods for characterising protein dynamics.
 
 </details>
 
-<details><summary><strong>Five different approaches to quantify conformational differences and/or dynamics of 
+<details><summary><strong>Four different approaches to quantify conformational differences and/or dynamics of 
 individual proteins:</strong></summary>
 
-- (Directly visualising two or more protein structures, e.g. for different models of the same NMR protein structure data, 
-would be the RCSB viewer. However, using this for overlaying protein structures is explained at [rcsb/FAQs](https://www.rcsb.org/docs/3d-viewers/mol*/faqs-scenarios#how-do-i-view-all-models-of-an-nmr-ensemble). 
-Scroll down to "How do I select specific models from an ensemble to see them ...?")
+- (Directly visualising structures of two or more models of a protein for which has NMR data has been deposited, can be
+  done in-browser, using the freely-available RCSB viewer. How to overlay protein structures is explained at 
+  [rcsb/FAQs](https://www.rcsb.org/docs/3d-viewers/mol*/faqs-scenarios#how-do-i-view-all-models-of-an-nmr-ensemble). Scroll down to "How do I select specific models from an ensemble to see them ...?")
 
 - The exploration of the NMR dataset naturally led to the question of how one determines the existence of different 
-protein structures for a single protein. Some distinct groupings, with unclear boundaries between them include 
-flexibility/mobility, naturally-occuring ensemble populations, ligand-induced conformational change, and non-native 
-conformational changes. Thus, characterising protein dynamics is not always straightforward.<br> 
-Two commonly-used methods for quantifying structural differences between identical protein sequences include the 
-calculation of RMSDs and TM-scores. 
+  protein structures for a single protein. Some groupings that are distinct, albeit with unclear boundaries between 
+  them, include general flexibility/mobility, naturally-occuring ensemble populations, ligand-induced conformational 
+  change, and non-native conformational changes. Thus, characterising protein dynamics is often not straightforward.<br> 
+  Two commonly-used methods for quantifying structural differences between identical protein sequences include the 
+  calculation of RMSDs and TM-scores. 
 
   - <details><summary><strong>RMSD and TM-score matrices and clustering:</strong></summary> 
 
-    - Whenever you have the Cartesian coordinates of a protein that populates different conformations, you can apply 
-    clustering to the data in RMSD matrices or TM-score matrices, which compute scalar differences between any pair of 
-    Cartesian coordinates. (This may come from different models of NMR data, or different time points in an MD trajectory, 
-    or from a curated dataset such as [DynDom](https://dyndom.cmp.uea.ac.uk/dyndom/)),
+    - Whenever you have Cartesian coordinates of a protein that populates a number of different conformations, you can 
+    can make a reasonable attempt at characterising distinct structural groupings, via calculating RMSD or TM-scores 
+    between them, followed by clustering. 
+    - Using NMR structures that typically may have more than 10 models, one can construct RMSD matrices or TM-score 
+    matrices, in which a scalar value of the difference between every pair of models is calculated directly from their 
+    Cartesian coordinates, here done for alpha-carbons only. (Apart from the use of different models of NMR data, one 
+    would also be able to apply this method to different time points in an MD trajectory).
     
-    - Clustering the RMSD values such that candidate ensembles could be visualised through dendrograms and heatmaps.
-    The utility of such visualisations was important for tracking/sanity-checking the calculations step-by-step, as it required 
-    both evaluating the protein structures as well as evaluating the Python.
+    - Subsequent clustering of the RMSD/TM-score matrices makes it possible for candidate ensembles to be identified, 
+    and this can be visualised via dendrograms an heatmaps. The utility of such visualisations was also helpful for 
+    'sanity-checking' the calculations step-by-step, as it required the evaluation of both the protein structures 
+    themselves, as well as the Python implementation of the method.
     
-    - These methods are limited though and upon exploring the literature, I came across a number of other somewhat older 
-    methods for measuring differences and dynamics. They included the calculation of difference-distance matrices (DDM), 
-    principal component analysis (PCA) for 'essential dynamics' (ED), and Normal Mode Analysis (NMA).<br>
+    - Upon exploring the literature, I came across 3 somewhat older methods for measuring differences and dynamics that 
+    could be complementary to the RMSD/TM-score method. They included: the calculation of difference-distance matrices 
+    (DDM); principal component analysis (PCA) for 'essential dynamics' (ED); Normal Mode Analysis (NMA).<br>
     The table below summarises these methods.
     
-    - (Note: I subsequently was intruiged to find this combination being used in very recent publication which includes a 
-    single software package for computing all of these ('EnsembleFlex'), Schneider et al. 2025.)
+    - Note: A short time later, I was intruiged to find this combination of methods being incorporated into a software
+    package ('EnsembleFlex'), in very recent publication (Schneider et al. 2025.)
     
   - <details><summary>Table of methods implemented here for quantitatively characterising structural variants and dynamics:</summary> 
   
@@ -74,7 +79,7 @@ Here is the full data directory structure and brief descriptions of files in eac
   - <details><summary><strong>DynDom/</strong></summary>
 
     - 2 .html files & 2 .csv files
-      Tables copied from DynDom webpages and scraped to CSV.
+      Tables copied from DynDom webpages [DynDom](https://dyndom.cmp.uea.ac.uk/dyndom/) and scraped to CSV.
 
     - <details><summary><strong>Hayward_files/</strong></summary>
 
