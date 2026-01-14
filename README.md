@@ -3,11 +3,8 @@
 - A proof-of-concept exploration of the predictive capability of a diffusion model for alternate protein conformations.
   The focus of this mini-project remained on the preliminary methods for generating and characterising the required 
   dataset. (No model design, training or inference was done by me.)
-</details>
 
-<details><summary><strong>Rationale for this mini-project:</strong></summary>
-
-- A proof-of-c
+- Performed, part-time, over a period of 3 months from mid-July to mid-Sept 2025.
 
 </details>
 
