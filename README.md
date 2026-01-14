@@ -773,13 +773,13 @@ individual proteins:</strong></summary>
   The table below aims to clarify the difference between what PCA/ED does vs what NMA does, and the different meanings of the word 
   'mode' in each: 
   
-  | Concept/Object     | **Normal Mode (NMA)**                                                       | **Essential Mode (PCA/ED)**                                   |
-  |--------------------|-----------------------------------------------------------------------------|---------------------------------------------------------------|
-  | Matrix             | Hessian of potential ($\frac{\partial^2 \mathbf{E}}{\partial \mathbf{x}^2}$) | Covariance of coordinates \left($⟨\mathbf{xx}^{\top}⟩$\right) |
-  | Physical basis     | Hooke’s law around equilibrium                                              | Statistical sampling of observed dynamics                     |
-  | Eigenvalue meaning | $\omega^2$ is frequency $^2$, related to restoring force                    | $\lambda$ is variance (amplitude $^2$) of motion              |
-  | Time dependence    | Sinusoidal (oscillatory) motion                                             | Diffusive (non-periodic, stochastic)                          |
-  | Example            | Atom vibrates at 50 cm$^{-1}$                                               | Domain swings back and forth over time                        |
+  | Concept/Object     | **Normal Mode (NMA)**                                                                   | **Essential Mode (PCA/ED)**                        |
+  |--------------------|-----------------------------------------------------------------------------------------|----------------------------------------------------|
+  | Matrix             | Hessian of potential $\left(\frac{\partial^2 \mathbf{E}}{\partial \mathbf{x}^2}\right)$ | Covariance of coordinates $(⟨\mathbf{xx}^{\top}⟩)$ |
+  | Physical basis     | Hooke’s law around equilibrium                                                          | Statistical sampling of observed dynamics          |
+  | Eigenvalue meaning | $\omega^2$ is frequency $^2$, related to restoring force                                | $\lambda$ is variance (amplitude $^2$) of motion   |
+  | Time dependence    | Sinusoidal (oscillatory) motion                                                         | Diffusive (non-periodic, stochastic)               |
+  | Example            | Atom vibrates at 50 cm$^{-1}$                                                           | Domain swings back and forth over time             |
   
   
   'Normal modes' are oscillatory patterns determined by the energy landscape (physics-driven). <br>
