@@ -17,7 +17,7 @@
 </details>
 
 <details><summary><strong>Five different approaches to quantify conformational differences and/or dynamics of 
-individual proteins:</strong></summary><br>
+individual proteins:</strong></summary>
 
 - (Directly visualising two or more protein structures, e.g. for different models of the same NMR protein structure data, 
 would be the RCSB viewer. However, using this for overlaying protein structures is explained at [rcsb/FAQs](https://www.rcsb.org/docs/3d-viewers/mol*/faqs-scenarios#how-do-i-view-all-models-of-an-nmr-ensemble). 
