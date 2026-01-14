@@ -85,7 +85,12 @@ individual proteins:</strong></summary>
       Tables copied from DynDom webpages [DynDom](https://dyndom.cmp.uea.ac.uk/dyndom/) and scraped to CSV.
 
     - <details><summary><strong>Hayward_files/</strong></summary>
-
+      
+      - <details><summary><strong>OneDrive_1_14-01-2026/</strong></summary>
+        
+        - 239 flat files containing Cartesian coordinates of 2 protein chains identified as representing 2 different 
+        conformations (eg. `ACETA2R3_scrptPD`).
+    
       - <details><summary><strong>foldseek/</strong></summary>
 
         - <details><summary>1 subdir per PDB (e.g. 2DN1/)</summary>
