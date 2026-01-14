@@ -8,7 +8,7 @@
 
 </details>
 
-<details><summary><strong>Immediate goal: </strong></summary>
+<details><summary><strong>Immediate goal:</strong></summary>
 
 - Assemble and curate a structural dataset of proteins that are observed to populate different structures.
   For simplication and to reduce computational demand, protein structures are parsed to contain alpha-carbons only.
