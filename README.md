@@ -8,6 +8,13 @@
 
 </details>
 
+
+<details><summary><strong>Rationale for this mini-project:</strong></summary>
+
+- A proof-of-c
+
+</details>
+
 <details><summary><strong>Immediate goal:</strong></summary>
 
 - Assemble and curate a structural dataset of proteins that are observed to populate different structures.
