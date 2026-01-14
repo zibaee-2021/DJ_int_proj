@@ -8,10 +8,12 @@
 
 </details>
 
-<details><summary><strong>Immediate goal:</strong></summary><br>
+<details><summary><strong>Immediate goal:</strong></summary>
+
 - Assemble and curate a structural dataset of proteins that are observed to populate different structures.
   For simplication and to reduce computational demand, protein structures are parsed to contain alpha-carbons only.
-  I performed EDA of all NMR structures available in the RCSB.   
+
+- I performed EDA of all NMR structures available in the RCSB.   
 
 </details>
 
@@ -61,7 +63,6 @@ calculation of RMSDs and TM-scores.
 
 
 </details>
-
 
 <details><summary><strong>Directory structure and main Python scripts:</strong></summary>
 
