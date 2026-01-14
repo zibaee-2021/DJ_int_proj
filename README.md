@@ -380,11 +380,11 @@ individual proteins:</strong></summary>
     To focus on rigid-domain body movements (i.e. domain re-arrangements; hinge motions), the default value for argument 
     ` min_seq_sep` is 5. This is used to mask out any variations within 5 adjacent residues. 
     
-    | `min_seq_sep` value | What pairs are excluded (`\|i–j\| < min_seq_sep`) | Biological signal emphasised |
-    |:--------------------|:--------------------------------------------------|:------------------------------|
-    | **1–2** | Only self and immediate neighbours (peptide bonds) | Very local motions — side-chain shifts, small backbone bends |
-    | **3–5** *(default)* | Suppresses secondary-structure contacts (helical turns, β-hairpins) | Sub-domain or short-loop rearrangements |
-    | **6–10+** | Ignores most local pairs; only long-range residue interactions remain | Large-scale rigid-body domain movements or hinge motions |
+    | `min_seq_sep` value | What pairs are excluded (`\|i–j\| < min_seq_sep`)                         | Biological signal emphasised |
+    |:--------------------|:--------------------------------------------------------------------------|:------------------------------|
+    | **1–2** | Only self and immediate neighbours (peptide bonds)                        | Very local motions — side-chain shifts, small backbone bends |
+    | **3–5** *(default)* | Suppresses secondary-structure contacts (helical turns, $\beta$-hairpins) | Sub-domain or short-loop rearrangements |
+    | **6–10+** | Ignores most local pairs; only long-range residue interactions remain     | Large-scale rigid-body domain movements or hinge motions |
     
     ##### What this script can do and how to use it:
     Identify protein pairs displaying rigid-domain motion as well as the regions within the proteins that move. 
@@ -773,14 +773,13 @@ individual proteins:</strong></summary>
   The table below aims to clarify the difference between what PCA/ED does vs what NMA does, and the different meanings of the word 
   'mode' in each: 
   
-  | Concept/Object     | **Normal Mode (NMA)**                                    | **Essential Mode (PCA/ED)**                     |
-  |--------------------|----------------------------------------------------------|-------------------------------------------------|
-  | Matrix             | Hessian of potential (∂²E/∂x² $\frac{\partial^2 E}{\partial x^2}
-$)                        | Covariance of coordinates ($⟨xx^top⟩$)          |
-  | Physical basis     | Hooke’s law around equilibrium                           | Statistical sampling of observed dynamics       |
-  | Eigenvalue meaning | $\omega^2$ is frequency $^2$, related to restoring force | $\lambda$ — variance (amplitude $^2$) of motion |
-  | Time dependence    | Sinusoidal (oscillatory) motion                          | Diffusive (non-periodic, stochastic)            |
-  | Example            | Atom vibrates at 50 cm $^{-1}$                           | Domain swings back and forth over time          |
+  | Concept/Object     | **Normal Mode (NMA)**                                                       | **Essential Mode (PCA/ED)**                        |
+  |--------------------|-----------------------------------------------------------------------------|----------------------------------------------------|
+  | Matrix             | Hessian of potential ($\frac{\partial^2 \mathbf{E}}{\partial \mathbf{x}^2}$) | Covariance of coordinates ($⟨\mathbf{xx}^{\top}⟩$) |
+  | Physical basis     | Hooke’s law around equilibrium                                              | Statistical sampling of observed dynamics          |
+  | Eigenvalue meaning | $\omega^2$ is frequency $^2$, related to restoring force                    | $\lambda$ is variance (amplitude$^2$) of motion    |
+  | Time dependence    | Sinusoidal (oscillatory) motion                                             | Diffusive (non-periodic, stochastic)               |
+  | Example            | Atom vibrates at 50 cm$^{-1}$                                               | Domain swings back and forth over time             |
   
   
   'Normal modes' are oscillatory patterns determined by the energy landscape (physics-driven). <br>
