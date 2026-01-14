@@ -7,8 +7,6 @@
 - Performed, part-time, over a period of 3 months from mid-July to mid-Sept 2025.
 
 </details>
-
-
 <details><summary><strong>Rationale for this mini-project:</strong></summary>
 
 - A proof-of-c
