@@ -810,11 +810,9 @@ individual proteins:</strong></summary>
       [10]: https://www.cell.com/biophysj/fulltext/S0006-3495%2808%2970422-3?utm_source=chatgpt.com "Toward a Molecular Understanding of the Anisotropic ..."
       [11]: https://www.sciencedirect.com/science/article/pii/S0969212607001414?utm_source=chatgpt.com "Article Thorough Validation of Protein Normal Mode Analysis"
   
-  </details>
-
-    - Other Python scripts include one for sequence alignment, one for API calls for structural datasets, one for mmCIF 
-      parsing, one for generating summary stats of NMR data, one for generating the 3Di FoldSeek sequence, one for 
-      webscraping DynDom, and a general visualisation plotting script. 
+  - Other Python scripts include one for sequence alignment, one for API calls for structural datasets, one for mmCIF 
+    parsing, one for generating summary stats of NMR data, one for generating the 3Di FoldSeek sequence, one for 
+    webscraping DynDom, and a general visualisation plotting script. 
   
     - <details><summary><strong>Protein sequence alignments using MMseqs2:</strong></summary>
   
