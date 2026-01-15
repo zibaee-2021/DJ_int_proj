@@ -238,6 +238,8 @@
     the Euclidean RMSD between matched atom pairs. This is sometimes referred to as the 'Kabsch algorithm'.
     
     RMSD $= \sqrt{\dfrac{1}{n} \sum\limits_{i=1}^{n} d_i^{2}}$
+    RMSD2 $= \sqrt{\displaystyle \frac{1}{n} \sum\limits_{i=1}^{n} d_i^{2}}$
+
     where the averaging is performed over the $n$ pairs of equivalent atoms and $d_i$ is the distance between the two atoms 
     in the $i$-th pair.
     
