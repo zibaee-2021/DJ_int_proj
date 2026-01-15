@@ -810,9 +810,7 @@ individual proteins:</strong></summary>
       [10]: https://www.cell.com/biophysj/fulltext/S0006-3495%2808%2970422-3?utm_source=chatgpt.com "Toward a Molecular Understanding of the Anisotropic ..."
       [11]: https://www.sciencedirect.com/science/article/pii/S0969212607001414?utm_source=chatgpt.com "Article Thorough Validation of Protein Normal Mode Analysis"
   
-  - Other Python scripts include one for sequence alignment, one for API calls for structural datasets, one for mmCIF 
-    parsing, one for generating summary stats of NMR data, one for generating the 3Di FoldSeek sequence, one for 
-    webscraping DynDom, and a general visualisation plotting script. 
+  - <details><summary><strong>Other Python scripts:</strong></summary>
   
     - <details><summary><strong>Protein sequence alignments using MMseqs2:</strong></summary>
   
@@ -822,89 +820,90 @@ individual proteins:</strong></summary>
         https://github.com/soedinglab/MMseqs2: `conda install -c conda-forge -c bioconda mmseqs2`. 
         However, on Rocky Linux, I first installed aria2 with: `sudo dnf makecache` and `sudo dnf install aria2`.
     
-      Once installed, my script `mmseqs2.py` uses it. [MMseqs2](https://github.com/soedinglab/MMseqs2?tab=readme-ov-file) performs sequence alignments at least 100 times 
-      faster than BLAST. It is primarily designed for sequence searching using many-to-many alignments for large 
-      datasets. However, I am using here simply for sequence alignments and for relatively small datasets. I am using 
-      it partly for the learning experience.
-    
-      The output is saved to one large csv with 7 columns: query, target, evalue, pident, alnlen, qcov, tcov. 
-      2713 PDB-chains choose 2 gives over 3 million pairs: 
-      i.e. $C(n, r) = \begin{pmatrix} n \\[4pt] r \end{pmatrix} = \dfrac{n!}{r! \, (n - r)!}  = \dfrac{2713!}{2! \, (2713 - 2)!} = 3678828$
-      (Note: it could be even more if explicitly set to allow more than 1 alignment output for any given protein pair, 
-      but default setting restricts to only 1 output per pair).
-    
-      The csv only has 33074 rows. This is because the default setting will exclude low-scoring alignment pairs. 
-      This is primarily based on excluding low-scoring k-mers. (This 'k-score' is a sum of pairwise substitution scores 
-      (BLOSUM62)) (Steinegger & Söding, 2017).
-      The current version uses a default sensitivity parameter setting of 5.7 (`Sensitivity: 1.0 faster; 4.0 fast; 7.5 sensitive [5.700]`)
-      It is expected that ~99% of hits are removed by this first step. There are a number of subsequent thresholds used to 
-      further reduce the number of outputs, including ungapped alignment diagonal filter (default 15) (removing a further ~70-90% of 
-      surviving matches), E-value (default $1e^{-3}$) (removing a further ~50%).  
-    
-      `evalue`: The expectation value is a statistical measure estimating how many alignments with this score or better 
-      would be expected to occur by chance in a database of this size. Hence, an alignment with a smaller E-value is deemed 
-      to be more statistically significant than a higher E-value.<br>
-      $1e^{-45}$ is extremely significant; $1e^{-8}$ is still significant. Thus the high default of $1e^{-3}$ is only designed
-      to serve as an inclusion threshold, whereby weak but potentially homologous matches may still be evolutionarily 
-      meaningful. This high default reflects too the main intended use of MMseqs2, namely running on very large databases 
-      (millions of sequences) that could contain distant homologues, potentially sharing < 25% identity.
-      (MMseqs2's E-value of $1e^{-3}$ corresponds to BLAST's E-value of approximately $1e{-5} – 1e{-6}$ for the same dataset.)
-    
-      `pident`: The percent identity over the alignment is given by: $$\frac{\text{Number of identical residues in alignment}}{\text{alignment length}} \times 100$$
-    
-      `alnlen`: The alignment length, which is the number of aligned positions, including gaps if any.
-      (Note: MMseqs2 performs local, not global, alignments by default. This setting can be changed though.)
-    
-      `qcov` or `tcov`: Query or target coverage is percentage of residues in alignment over length of the whole query 
-      (i.e. full protein length).
-    
-      Example alignment of two very short proteins identical except for two  residues, one of the two differences 
-      is E/D. E and D are similar but non-identical; the other is a gap/K:
-      ```
-      Query :  M   A   E   –   G   Q   L   V   T   T 
-      Target:  M   A   D   K   G   Q   L   V   T   T
-    
-      alnlen = 10; 
-      qcov = 100 x (9/10) = 90%; 
-      tcov = 100 x (10/10) = 100%; 
-      pident = 100 x (8/10) = 80%;
+      - <details><summary>`mmseqs2.py`</summary>
         
-      (Note: LoL-align was not implemented here as I didn't know about it. (refx)
-      
-      ```
+          Once installed, my script `mmseqs2.py` uses it. [MMseqs2](https://github.com/soedinglab/MMseqs2?tab=readme-ov-file) performs sequence alignments at least 100 times 
+          faster than BLAST. It is primarily designed for sequence searching using many-to-many alignments for large 
+          datasets. However, I am using here simply for sequence alignments and for relatively small datasets. I am using 
+          it partly for the learning experience.
+        
+          The output is saved to one large csv with 7 columns: query, target, evalue, pident, alnlen, qcov, tcov. 
+          2713 PDB-chains choose 2 gives over 3 million pairs: 
+          i.e. $C(n, r) = \begin{pmatrix} n \\[4pt] r \end{pmatrix} = \dfrac{n!}{r! \, (n - r)!}  = \dfrac{2713!}{2! \, (2713 - 2)!} = 3678828$
+          (Note: it could be even more if explicitly set to allow more than 1 alignment output for any given protein pair, 
+          but default setting restricts to only 1 output per pair).
+        
+          The csv only has 33074 rows. This is because the default setting will exclude low-scoring alignment pairs. 
+          This is primarily based on excluding low-scoring k-mers. (This 'k-score' is a sum of pairwise substitution scores 
+          (BLOSUM62)) (Steinegger & Söding, 2017).
+          The current version uses a default sensitivity parameter setting of 5.7 (`Sensitivity: 1.0 faster; 4.0 fast; 7.5 sensitive [5.700]`)
+          It is expected that ~99% of hits are removed by this first step. There are a number of subsequent thresholds used to 
+          further reduce the number of outputs, including ungapped alignment diagonal filter (default 15) (removing a further ~70-90% of 
+          surviving matches), E-value (default $1e^{-3}$) (removing a further ~50%).  
+        
+          `evalue`: The expectation value is a statistical measure estimating how many alignments with this score or better 
+          would be expected to occur by chance in a database of this size. Hence, an alignment with a smaller E-value is deemed 
+          to be more statistically significant than a higher E-value.<br>
+          $1e^{-45}$ is extremely significant; $1e^{-8}$ is still significant. Thus the high default of $1e^{-3}$ is only designed
+          to serve as an inclusion threshold, whereby weak but potentially homologous matches may still be evolutionarily 
+          meaningful. This high default reflects too the main intended use of MMseqs2, namely running on very large databases 
+          (millions of sequences) that could contain distant homologues, potentially sharing < 25% identity.
+          (MMseqs2's E-value of $1e^{-3}$ corresponds to BLAST's E-value of approximately $1e{-5} – 1e{-6}$ for the same dataset.)
+        
+          `pident`: The percent identity over the alignment is given by: $$\frac{\text{Number of identical residues in alignment}}{\text{alignment length}} \times 100$$
+        
+          `alnlen`: The alignment length, which is the number of aligned positions, including gaps if any.
+          (Note: MMseqs2 performs local, not global, alignments by default. This setting can be changed though.)
+        
+          `qcov` or `tcov`: Query or target coverage is percentage of residues in alignment over length of the whole query 
+          (i.e. full protein length).
+        
+          Example alignment of two very short proteins identical except for two  residues, one of the two differences 
+          is E/D. E and D are similar but non-identical; the other is a gap/K:
+          ```
+          Query :  M   A   E   –   G   Q   L   V   T   T 
+          Target:  M   A   D   K   G   Q   L   V   T   T
+        
+          alnlen = 10; 
+          qcov = 100 x (9/10) = 90%; 
+          tcov = 100 x (10/10) = 100%; 
+          pident = 100 x (8/10) = 80%;
+            
+          (Note: LoL-align was not implemented here as I didn't know about it. (refx)
+          ```
 
     - <details><summary><strong>Generate NMR datasets:</strong></summary>
   
-      `api_callr.py`:<br>
-      Contains RESTful API calls, copy-pasted from the RCSB site. I give very detailed information on this in the docstring
-      at the top of the script itself. Called by `nmr_dataset`.
+        - <details><summary>`api_callr.py`:</summary>
+          Contains RESTful API calls, copy-pasted from the RCSB site. I give very detailed information on this in the docstring
+          at the top of the script itself. Called by `nmr_dataset`.
     
-      `cif_parsr.py`:<br>
-      A trimmed down, modified copy of the mmCIF parser script from my [MSc project](https://github.com/zibaee-2021/MSc_2024_project).
-      Called by `nmr_dataset`.
+        - <details><summary>`cif_parsr.py`:</summary>
+          A trimmed down, modified copy of the mmCIF parser script from my [MSc project](https://github.com/zibaee-2021/MSc_2024_project).
+          Called by `nmr_dataset`.
    
-      `nmr_dataset.py` <br>
-      Generates dataset of raw and parsed structure files, via calling `api_callr.py` and `cif_parsr.py`.
+        - <details><summary>`nmr_dataset.py`:</summary>
+          Generates dataset of raw and parsed structure files, via calling `api_callr.py` and `cif_parsr.py`.
     
     - <details><summary><strong>Generate summary stats of NMR datasets:</strong></summary>
   
-      `pdb_model_stats.py`:<br>
-      Compile and/or calculate the following data into one document:
-      - From mmCIF files:
-        - deposition year for each PDBid
-        - total number of chains for each PDBid. 
-        - From PDBid_chains .lst file:
-          - number of protein chains per PDBid.
-        - From parsed SSV files:
-          - number of models per PDBid_chain.
-          - number of alpha carbons per PDBid_chain.
-        - Calculate sequence identity by MMseqs2 between:
-          - every chain of each PDBid from list.
-          - every PDBid_chain with every other.
-        - Calculate RMSD for each model against the average of those models.
-        - Calculate TM-score for homologous PDBchains. (Although, all vs all might be done and included anyway).
+        - <details><summary>`pdb_model_stats.py`:</summary>
+          Compile and/or calculate the following data into one document:
+          - From mmCIF files:
+            - deposition year for each PDBid
+            - total number of chains for each PDBid. 
+            - From PDBid_chains .lst file:
+              - number of protein chains per PDBid.
+          - From parsed SSV files:
+            - number of models per PDBid_chain.
+            - number of alpha carbons per PDBid_chain.
+          - Calculate sequence identity by MMseqs2 between:
+              - every chain of each PDBid from list.
+              - every PDBid_chain with every other.
+          - Calculate RMSD for each model against the average of those models.
+          - Calculate TM-score for homologous PDBchains. (Although, all vs all might be done and included anyway).
     
-      Uses `plotter.py` to generate visualisations of the stats.
+        Uses `plotter.py` to generate visualisations of the stats.
 
     - <details><summary><strong>Generate 3Di sequences using FoldSeek:</strong></summary>
   
