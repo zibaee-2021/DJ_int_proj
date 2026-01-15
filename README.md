@@ -768,115 +768,113 @@ individual proteins:</strong></summary>
     | **GNM (Gaussian Network Model)**         | (N \times N) Laplacian            | Scalar participation / correlation patterns of residues           | **No** — isotropic, sign structure only                      | Predicted relative flexibility and correlated/anti-correlated regions                                      |
     | **Spectral clustering of graphs / DDMs** | (N \times N) Laplacian            | Relational partitions and collective groupings                    | **No** — partitions, not displacement vectors                | Identification of moving blocks, hinges, and collective rearrangement patterns                             |
   
+    The table below aims to clarify the difference between what PCA/ED does vs what NMA does, and the different meanings of the word 
+    'mode' in each: 
+  
+    | Concept/Object     | **Normal Mode (NMA)**                                                                   | **Essential Mode (PCA/ED)**                        |
+    |--------------------|-----------------------------------------------------------------------------------------|----------------------------------------------------|
+    | Matrix             | Hessian of potential $\left(\frac{\partial^2 \mathbf{E}}{\partial \mathbf{x}^2}\right)$ | Covariance of coordinates $(⟨\mathbf{xx}^{\top}⟩)$ |
+    | Physical basis     | Hooke’s law around equilibrium                                                          | Statistical sampling of observed dynamics          |
+    | Eigenvalue meaning | $\omega^2$ is frequency $^2$, related to restoring force                                | $\lambda$ is variance (amplitude $^2$) of motion   |
+    | Time dependence    | Sinusoidal (oscillatory) motion                                                         | Diffusive (non-periodic, stochastic)               |
+    | Example            | Atom vibrates at 50 cm $^{-1}$                                                          | Domain swings back and forth over time             |
+
+    'Normal modes' are oscillatory patterns determined by the energy landscape (physics-driven). <br>
+    'Essential modes' are statistical patterns determined by the trajectory ensemble (data-driven).
+
+    - <details><summary>Experiental validation of the utility of DDM, PCA-ED and NMA for protein dynamics:</summary>
+  
+      | Method / family                                                                        | Representative validation paper                                                                                                                      | Experimental observable(s) used                                                                                            | What was validated (in practice)                                                                                                                                                                                                                                                                 |
+      | -------------------------------------------------------------------------------------- |------------------------------------------------------------------------------------------------------------------------------------------------------| -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+      | **Distance-Difference Matrices (DDMs)** on pairs/ensembles of crystal structures       | Rashin et al. (2009) ([PMC][1])                                                                                                                      | Large set of **pairs of independently solved X-ray structures** (RNase A, myoglobin, etc.)                                 | Uses DDMs over **1014 structure pairs** to quantify coordinate uncertainty vs genuine conformational change; shows that DDM patterns + empirically derived thresholds separate noise-level differences from functionally meaningful motions.                                                     |
+      | **DDMs for ensembles / families + link to dynamics & sequence**                        | Friedland et al. (2009), ([PLOS][2])                                                                                                                 | **NMR RDCs** for ubiquitin, plus many **crystal structures** of ubiquitin and homologs                                     | Builds conformational ensembles whose **Cα DDMs** match RDC-derived dynamics and the diversity seen in crystal structures and sequence families; validates that DDM-captured structural variation corresponds to experimentally measured solution dynamics.                                      |
+      | **PCA / Essential Dynamics (ED) on MD trajectories**                                   | Amadei et al. (1993), ([PubMed][3])                                                                                                                  | MD simulations benchmarked against known **X-ray structures** and their functional conformational changes                  | Introduces ED (PCA of covariance) and shows that **a small number of PCs** capture the large-amplitude motions associated with known conformational changes (e.g. HIV-1 protease, lysozyme); demonstrates that ED modes map onto experimentally established functional motions.                  |
+      | **PCA of native structural ensembles** (many experimental structures rather than MD)   | Yang et al. (2009), ([OUP Academic][4])                                                                                                              | **Multiple crystal structures / NMR models** for the same protein or family                                                | Performs PCA on ensembles of experimentally determined structures and shows that leading PCs correspond to **functional motions inferred from different liganded states**, supporting PCA/ED as a way to extract biologically relevant dynamics directly from experimental structure ensembles.  |
+      | **All-atom NMA with empirical force fields**                                           | Tama & Sanejouand (2001), ([PubMed][5])                | Pairs of **open/closed (or apo/holo) X-ray structures** for 20 proteins                                                    | Performs NMA around one experimental structure with a simple potential and shows that **linear combinations of a few low-frequency modes** reproduce the experimentally observed open↔closed transitions for many proteins, i.e. low modes encode functional conformational changes.             |
+      | **Isotropic Elastic Network Model / Gaussian Network Model (GNM)** – B-factor matching | Bahar et al. (1997), ([ScienceDirect][6])  | **X-ray B-factors** from multiple crystal structures                                                                       | Introduces the (scalar) ENM/GNM and shows that predicted residue mean-square fluctuations **correlate well with experimental B-factors** for a set of proteins, despite the extreme coarse-graining to Cα nodes and a single γ parameter.                                                        |
+      | **GNM vs hydrogen-exchange protection**                                                | Bahar et al. (1998), ([ACS Publications][7])   | **HX protection factors** (native-state H/D exchange), X-ray structures                                                    | Uses GNM to compute cooperative fluctuations and shows that predicted mobility patterns **correlate with HX protection**: residues in dynamically protected cores (low fluctuation in GNM) have low HX rates, linking ENM fluctuations to solution dynamics.                                     |
+      | **Refined GNM for precise B-factor prediction**                                        | Erman et al. (2006), ([PMC][8])                                 | **B-factors** for a diverse protein set                                                                                    | Systematically tunes and extends GNM and reports **best-case correlation ≈0.66** between predicted and experimental B-factors across many proteins, arguing that ENMs provide quantitatively useful fluctuation profiles at near-atomic resolution.                                              |
+      | **Anisotropic Network Model (ANM)** – directional ENM                                  | Atilgan et al. (2001), ([ScienceDirect][9])                | **Sets of X-ray structures** exhibiting domain motions; some comparison to MD                                              | Introduces ANM (3N×3N Hessian) and shows that low-frequency modes describe **observed hinge-bending and domain motions** seen in experimental open/closed structures and in MD trajectories, i.e. ENM with directionality reproduces functional deformation patterns.                            |
+      | **Coarse-grained ENMs vs anisotropic experimental data**                               | Eyal & Bahar (2008), ([Cell][10])                            | Anisotropic B-factors / diffuse scattering and structural data for multiple proteins                                       | Demonstrates that **coarse-grained ENMs reproduce directionality and anisotropy** of experimental fluctuations (not just amplitudes), strengthening the case that ENMs capture the essential backbone of solution-like dynamics encoded in the structure.                                        |
+      | **NMA vs Essential Dynamics (PCA) – cross-validation**                                 | Rueda et al. (2007), ([ScienceDirect][11]) | **MD trajectories** that themselves are validated against experimental structures & observables in the original MD studies | Compares deformation subspaces from coarse-grained NMA and ED for a large protein set; finds that the **low-frequency NMA subspace closely matches the ED subspace** when enough modes are included, validating NMA as a good surrogate for MD-derived (and experimentally calibrated) dynamics. |
+    
+      [1]: https://pmc.ncbi.nlm.nih.gov/articles/PMC2777169/?utm_source=chatgpt.com "Protein flexibility: coordinate uncertainties and ..."
+      [2]: https://journals.plos.org/ploscompbiol/article?id=10.1371%2Fjournal.pcbi.1000393 "A Correspondence Between Solution-State Dynamics of an Individual Protein and the Sequence and Conformational Diversity of its Family | PLOS Computational Biology"
+      [3]: https://pubmed.ncbi.nlm.nih.gov/8108382/?utm_source=chatgpt.com "Essential dynamics of proteins"
+      [4]: https://academic.oup.com/bioinformatics/article/25/5/606/182911?utm_source=chatgpt.com "Principal component analysis of native ensembles of ..."
+      [5]: https://pubmed.ncbi.nlm.nih.gov/11287673/?utm_source=chatgpt.com "Conformational change of proteins arising from normal ..."
+      [6]: https://www.sciencedirect.com/science/article/pii/S1359027897000242?utm_source=chatgpt.com "Direct evaluation of thermal fluctuations in proteins using a ..."
+      [7]: https://pubs.acs.org/doi/10.1021/bi9720641?utm_source=chatgpt.com "Correlation between Native-State Hydrogen Exchange and ..."
+      [8]: https://pmc.ncbi.nlm.nih.gov/articles/PMC1630469/?utm_source=chatgpt.com "The Gaussian Network Model: Precise Prediction of Residue ..."
+      [9]: https://www.sciencedirect.com/science/article/pii/S000634950176033X?utm_source=chatgpt.com "Anisotropy of Fluctuation Dynamics of Proteins with an ..."
+      [10]: https://www.cell.com/biophysj/fulltext/S0006-3495%2808%2970422-3?utm_source=chatgpt.com "Toward a Molecular Understanding of the Anisotropic ..."
+      [11]: https://www.sciencedirect.com/science/article/pii/S0969212607001414?utm_source=chatgpt.com "Article Thorough Validation of Protein Normal Mode Analysis"
+  
   </details>
+
+    - Other Python scripts include one for sequence alignment, one for API calls for structural datasets, one for mmCIF 
+      parsing, one for generating summary stats of NMR data, one for generating the 3Di FoldSeek sequence, one for 
+      webscraping DynDom, and a general visualisation plotting script. 
   
-  The table below aims to clarify the difference between what PCA/ED does vs what NMA does, and the different meanings of the word 
-  'mode' in each: 
+    - <details><summary><strong>Protein sequence alignments using MMseqs2:</strong></summary>
   
-  | Concept/Object     | **Normal Mode (NMA)**                                                                   | **Essential Mode (PCA/ED)**                        |
-  |--------------------|-----------------------------------------------------------------------------------------|----------------------------------------------------|
-  | Matrix             | Hessian of potential $\left(\frac{\partial^2 \mathbf{E}}{\partial \mathbf{x}^2}\right)$ | Covariance of coordinates $(⟨\mathbf{xx}^{\top}⟩)$ |
-  | Physical basis     | Hooke’s law around equilibrium                                                          | Statistical sampling of observed dynamics          |
-  | Eigenvalue meaning | $\omega^2$ is frequency $^2$, related to restoring force                                | $\lambda$ is variance (amplitude $^2$) of motion   |
-  | Time dependence    | Sinusoidal (oscillatory) motion                                                         | Diffusive (non-periodic, stochastic)               |
-  | Example            | Atom vibrates at 50 cm$^{-1}$                                                           | Domain swings back and forth over time             |
-  
-  
-  'Normal modes' are oscillatory patterns determined by the energy landscape (physics-driven). <br>
-  'Essential modes' are statistical patterns determined by the trajectory ensemble (data-driven).
-  
-  - <details><summary>Experiental validation of the utility of DDM, PCA-ED and NMA for protein dynamics:</summary>
-  
-    | Method / family                                                                        | Representative validation paper                                                                                                                      | Experimental observable(s) used                                                                                            | What was validated (in practice)                                                                                                                                                                                                                                                                 |
-    | -------------------------------------------------------------------------------------- |------------------------------------------------------------------------------------------------------------------------------------------------------| -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-    | **Distance-Difference Matrices (DDMs)** on pairs/ensembles of crystal structures       | Rashin et al. (2009) ([PMC][1])                                                                                                                      | Large set of **pairs of independently solved X-ray structures** (RNase A, myoglobin, etc.)                                 | Uses DDMs over **1014 structure pairs** to quantify coordinate uncertainty vs genuine conformational change; shows that DDM patterns + empirically derived thresholds separate noise-level differences from functionally meaningful motions.                                                     |
-    | **DDMs for ensembles / families + link to dynamics & sequence**                        | Friedland et al. (2009), ([PLOS][2])                                                                                                                 | **NMR RDCs** for ubiquitin, plus many **crystal structures** of ubiquitin and homologs                                     | Builds conformational ensembles whose **Cα DDMs** match RDC-derived dynamics and the diversity seen in crystal structures and sequence families; validates that DDM-captured structural variation corresponds to experimentally measured solution dynamics.                                      |
-    | **PCA / Essential Dynamics (ED) on MD trajectories**                                   | Amadei et al. (1993), ([PubMed][3])                                                                                                                  | MD simulations benchmarked against known **X-ray structures** and their functional conformational changes                  | Introduces ED (PCA of covariance) and shows that **a small number of PCs** capture the large-amplitude motions associated with known conformational changes (e.g. HIV-1 protease, lysozyme); demonstrates that ED modes map onto experimentally established functional motions.                  |
-    | **PCA of native structural ensembles** (many experimental structures rather than MD)   | Yang et al. (2009), ([OUP Academic][4])                                                                                                              | **Multiple crystal structures / NMR models** for the same protein or family                                                | Performs PCA on ensembles of experimentally determined structures and shows that leading PCs correspond to **functional motions inferred from different liganded states**, supporting PCA/ED as a way to extract biologically relevant dynamics directly from experimental structure ensembles.  |
-    | **All-atom NMA with empirical force fields**                                           | Tama & Sanejouand (2001), ([PubMed][5])                | Pairs of **open/closed (or apo/holo) X-ray structures** for 20 proteins                                                    | Performs NMA around one experimental structure with a simple potential and shows that **linear combinations of a few low-frequency modes** reproduce the experimentally observed open↔closed transitions for many proteins, i.e. low modes encode functional conformational changes.             |
-    | **Isotropic Elastic Network Model / Gaussian Network Model (GNM)** – B-factor matching | Bahar et al. (1997), ([ScienceDirect][6])  | **X-ray B-factors** from multiple crystal structures                                                                       | Introduces the (scalar) ENM/GNM and shows that predicted residue mean-square fluctuations **correlate well with experimental B-factors** for a set of proteins, despite the extreme coarse-graining to Cα nodes and a single γ parameter.                                                        |
-    | **GNM vs hydrogen-exchange protection**                                                | Bahar et al. (1998), ([ACS Publications][7])   | **HX protection factors** (native-state H/D exchange), X-ray structures                                                    | Uses GNM to compute cooperative fluctuations and shows that predicted mobility patterns **correlate with HX protection**: residues in dynamically protected cores (low fluctuation in GNM) have low HX rates, linking ENM fluctuations to solution dynamics.                                     |
-    | **Refined GNM for precise B-factor prediction**                                        | Erman et al. (2006), ([PMC][8])                                 | **B-factors** for a diverse protein set                                                                                    | Systematically tunes and extends GNM and reports **best-case correlation ≈0.66** between predicted and experimental B-factors across many proteins, arguing that ENMs provide quantitatively useful fluctuation profiles at near-atomic resolution.                                              |
-    | **Anisotropic Network Model (ANM)** – directional ENM                                  | Atilgan et al. (2001), ([ScienceDirect][9])                | **Sets of X-ray structures** exhibiting domain motions; some comparison to MD                                              | Introduces ANM (3N×3N Hessian) and shows that low-frequency modes describe **observed hinge-bending and domain motions** seen in experimental open/closed structures and in MD trajectories, i.e. ENM with directionality reproduces functional deformation patterns.                            |
-    | **Coarse-grained ENMs vs anisotropic experimental data**                               | Eyal & Bahar (2008), ([Cell][10])                            | Anisotropic B-factors / diffuse scattering and structural data for multiple proteins                                       | Demonstrates that **coarse-grained ENMs reproduce directionality and anisotropy** of experimental fluctuations (not just amplitudes), strengthening the case that ENMs capture the essential backbone of solution-like dynamics encoded in the structure.                                        |
-    | **NMA vs Essential Dynamics (PCA) – cross-validation**                                 | Rueda et al. (2007), ([ScienceDirect][11]) | **MD trajectories** that themselves are validated against experimental structures & observables in the original MD studies | Compares deformation subspaces from coarse-grained NMA and ED for a large protein set; finds that the **low-frequency NMA subspace closely matches the ED subspace** when enough modes are included, validating NMA as a good surrogate for MD-derived (and experimentally calibrated) dynamics. |
+      - <details><summary><strong>Installing MMseqs2:</strong></summary>
+        
+        Installed on MacOS and Rocky Linux within activated conda env, and according to 
+        https://github.com/soedinglab/MMseqs2: `conda install -c conda-forge -c bioconda mmseqs2`. 
+        However, on Rocky Linux, I first installed aria2 with: `sudo dnf makecache` and `sudo dnf install aria2`.
     
-    [1]: https://pmc.ncbi.nlm.nih.gov/articles/PMC2777169/?utm_source=chatgpt.com "Protein flexibility: coordinate uncertainties and ..."
-    [2]: https://journals.plos.org/ploscompbiol/article?id=10.1371%2Fjournal.pcbi.1000393 "A Correspondence Between Solution-State Dynamics of an Individual Protein and the Sequence and Conformational Diversity of its Family | PLOS Computational Biology"
-    [3]: https://pubmed.ncbi.nlm.nih.gov/8108382/?utm_source=chatgpt.com "Essential dynamics of proteins"
-    [4]: https://academic.oup.com/bioinformatics/article/25/5/606/182911?utm_source=chatgpt.com "Principal component analysis of native ensembles of ..."
-    [5]: https://pubmed.ncbi.nlm.nih.gov/11287673/?utm_source=chatgpt.com "Conformational change of proteins arising from normal ..."
-    [6]: https://www.sciencedirect.com/science/article/pii/S1359027897000242?utm_source=chatgpt.com "Direct evaluation of thermal fluctuations in proteins using a ..."
-    [7]: https://pubs.acs.org/doi/10.1021/bi9720641?utm_source=chatgpt.com "Correlation between Native-State Hydrogen Exchange and ..."
-    [8]: https://pmc.ncbi.nlm.nih.gov/articles/PMC1630469/?utm_source=chatgpt.com "The Gaussian Network Model: Precise Prediction of Residue ..."
-    [9]: https://www.sciencedirect.com/science/article/pii/S000634950176033X?utm_source=chatgpt.com "Anisotropy of Fluctuation Dynamics of Proteins with an ..."
-    [10]: https://www.cell.com/biophysj/fulltext/S0006-3495%2808%2970422-3?utm_source=chatgpt.com "Toward a Molecular Understanding of the Anisotropic ..."
-    [11]: https://www.sciencedirect.com/science/article/pii/S0969212607001414?utm_source=chatgpt.com "Article Thorough Validation of Protein Normal Mode Analysis"
-  
-  ---
-  Other scripts for sequence alignment, API calls for structural datasets, mmCIF parsing, summary stats of NMR data, 3Di FoldSeek alphabets, webscraping DynDom & general visualisation plotting script: 
-  
-  - <details><summary><strong>Protein sequence alignments using MMseqs2:</strong></summary>
-  
-    `mmseqs2.py`:<br>
-    [MMseqs2](https://github.com/soedinglab/MMseqs2?tab=readme-ov-file) performs sequence alignments at least 100 times 
-    faster than BLAST. It is primarily designed for sequence searching using many-to-many alignments for large datasets.
-    However, I am using here simply for sequence alignments and for relatively small datasets. I am using it partly for the 
-    learning experience.
+      Once installed, my script `mmseqs2.py` uses it. [MMseqs2](https://github.com/soedinglab/MMseqs2?tab=readme-ov-file) performs sequence alignments at least 100 times 
+      faster than BLAST. It is primarily designed for sequence searching using many-to-many alignments for large 
+      datasets. However, I am using here simply for sequence alignments and for relatively small datasets. I am using 
+      it partly for the learning experience.
     
-    The output is saved to one large csv with 7 columns: query, target, evalue, pident, alnlen, qcov, tcov. 
-    2713 PDB-chains choose 2 gives over 3 million pairs: 
-    i.e. $C(n, r) = \begin{pmatrix} n \\[4pt] r \end{pmatrix} = \dfrac{n!}{r! \, (n - r)!}  = \dfrac{2713!}{2! \, (2713 - 2)!} = 3678828$
-    (Note: it could be even more if explicitly set to allow more than 1 alignment output for any given protein pair, but default setting 
-    restricts to only 1 output per pair).
+      The output is saved to one large csv with 7 columns: query, target, evalue, pident, alnlen, qcov, tcov. 
+      2713 PDB-chains choose 2 gives over 3 million pairs: 
+      i.e. $C(n, r) = \begin{pmatrix} n \\[4pt] r \end{pmatrix} = \dfrac{n!}{r! \, (n - r)!}  = \dfrac{2713!}{2! \, (2713 - 2)!} = 3678828$
+      (Note: it could be even more if explicitly set to allow more than 1 alignment output for any given protein pair, 
+      but default setting restricts to only 1 output per pair).
     
-    The csv only has 33074 rows. This is because the default setting will exclude low-scoring alignment pairs. 
-    This is primarily based on excluding low-scoring k-mers. (This 'k-score' is a sum of pairwise substitution scores 
-    (BLOSUM62)) (Steinegger & Söding, 2017).
-    The current version uses a default sensitivity parameter setting of 5.7 (`Sensitivity: 1.0 faster; 4.0 fast; 7.5 sensitive [5.700]`)
-    It is expected that ~99% of hits are removed by this first step. There are a number of subsequent thresholds used to 
-    further reduce the number of outputs, including ungapped alignment diagonal filter (default 15) (removing a further ~70-90% of 
-    surviving matches), E-value (default $1e^{-3}$) (removing a further ~50%).  
+      The csv only has 33074 rows. This is because the default setting will exclude low-scoring alignment pairs. 
+      This is primarily based on excluding low-scoring k-mers. (This 'k-score' is a sum of pairwise substitution scores 
+      (BLOSUM62)) (Steinegger & Söding, 2017).
+      The current version uses a default sensitivity parameter setting of 5.7 (`Sensitivity: 1.0 faster; 4.0 fast; 7.5 sensitive [5.700]`)
+      It is expected that ~99% of hits are removed by this first step. There are a number of subsequent thresholds used to 
+      further reduce the number of outputs, including ungapped alignment diagonal filter (default 15) (removing a further ~70-90% of 
+      surviving matches), E-value (default $1e^{-3}$) (removing a further ~50%).  
     
-    `evalue`: The expectation value is a statistical measure estimating how many alignments with this score or better 
-    would be expected to occur by chance in a database of this size. Hence, an alignment with a smaller E-value is deemed 
-    to be more statistically significant than a higher E-value.<br>
-    $1e^{-45}$ is extremely significant; $1e^{-8}$ is still significant. Thus the high default of $1e^{-3}$ is only designed
-    to serve as an inclusion threshold, whereby weak but potentially homologous matches may still be evolutionarily 
-    meaningful. This high default reflects too the main intended use of MMseqs2, namely running on very large databases 
-    (millions of sequences) that could contain distant homologues, potentially sharing < 25% identity.
-    (MMseqs2's E-value of $1e^{-3}$ corresponds to BLAST's E-value of approximately $1e{-5} – 1e{-6}$ for the same dataset.)
+      `evalue`: The expectation value is a statistical measure estimating how many alignments with this score or better 
+      would be expected to occur by chance in a database of this size. Hence, an alignment with a smaller E-value is deemed 
+      to be more statistically significant than a higher E-value.<br>
+      $1e^{-45}$ is extremely significant; $1e^{-8}$ is still significant. Thus the high default of $1e^{-3}$ is only designed
+      to serve as an inclusion threshold, whereby weak but potentially homologous matches may still be evolutionarily 
+      meaningful. This high default reflects too the main intended use of MMseqs2, namely running on very large databases 
+      (millions of sequences) that could contain distant homologues, potentially sharing < 25% identity.
+      (MMseqs2's E-value of $1e^{-3}$ corresponds to BLAST's E-value of approximately $1e{-5} – 1e{-6}$ for the same dataset.)
     
-    `pident`: The percent identity over the alignment is given by: $$\frac{\text{Number of identical residues in alignment}}{\text{alignment length}} \times 100$$
+      `pident`: The percent identity over the alignment is given by: $$\frac{\text{Number of identical residues in alignment}}{\text{alignment length}} \times 100$$
     
-    `alnlen`: The alignment length, which is the number of aligned positions, including gaps if any.
-    (Note: MMseqs2 performs local, not global, alignments by default. This setting can be changed though.)
+      `alnlen`: The alignment length, which is the number of aligned positions, including gaps if any.
+      (Note: MMseqs2 performs local, not global, alignments by default. This setting can be changed though.)
     
-    `qcov` or `tcov`: Query or target coverage is percentage of residues in alignment over length of the whole query 
-    (i.e. full protein length).
+      `qcov` or `tcov`: Query or target coverage is percentage of residues in alignment over length of the whole query 
+      (i.e. full protein length).
     
-    Example alignment of two very short proteins identical except for 2 residues, one of the two differences is a similar 
-    but still non-dentical (E/D); the other is a gap/K:
-    ```
-    Query :  M   A   E   –   G   Q   L   V   T   T 
-    Target:  M   A   D   K   G   Q   L   V   T   T
+      Example alignment of two very short proteins identical except for two  residues, one of the two differences 
+      is E/D. E and D are similar but non-identical; the other is a gap/K:
+      ```
+      Query :  M   A   E   –   G   Q   L   V   T   T 
+      Target:  M   A   D   K   G   Q   L   V   T   T
     
-    - alnlen = 10; 
-    - qcov = 100 x (9/10) = 90%; 
-    - tcov = 100 x (10/10) = 100%; 
-    - pident = 100 x (8/10) = 80%;
-    
-    (Note: LoL-align was not implemented here as I didn't know about it. (refx)
-     
-    
-    ```
-    
-    Installing MMseqs2: <br>
-    Installed on MacOS and Rocky Linux within activated conda env, and according to 
-    https://github.com/soedinglab/MMseqs2: `conda install -c conda-forge -c bioconda mmseqs2`. 
-    However, on Rocky Linux, I first installed aria2 with: `sudo dnf makecache` and `sudo dnf install aria2`.
-    
-    ---
+      alnlen = 10; 
+      qcov = 100 x (9/10) = 90%; 
+      tcov = 100 x (10/10) = 100%; 
+      pident = 100 x (8/10) = 80%;
+        
+      (Note: LoL-align was not implemented here as I didn't know about it. (refx)
+      
+      ```
+
     - <details><summary><strong>Generate NMR datasets:</strong></summary>
   
       `api_callr.py`:<br>
@@ -909,29 +907,30 @@ individual proteins:</strong></summary>
         - Calculate TM-score for homologous PDBchains. (Although, all vs all might be done and included anyway).
     
       Uses `plotter.py` to generate visualisations of the stats.
+
+    - <details><summary><strong>Generate 3Di sequences using FoldSeek:</strong></summary>
   
+      [FoldSeek](https://github.com/steineggerlab/foldseek) compresses structures into a 20-state 3Di alphabet and applies 
+      MMseqs2-style searches (refx). It converts 3D structure search into sequence search without losing sensitivity. 
+      3Di alphabets are designed to encode tertiary (and sometimes secondary structure), reducing redundant information 
+      between consecutive positions, such that they may represent longer range structure patterns. It is a discrete 
+      representation of tertiary/secondary strucure information for each residue, produced based on VQ-VAE clustering.<br> 
+      My initial motivation for using it here was to generate the 3Di alphabet of protein sequences, without necessarily 
+      proceeding to any subsequent large-scale search (though the same code and output files from this initial preparatory 
+      part would be useable for any subsequent searches if needed in future. And, as with MMseqs2 in `mmseqs2.py`, I am using 
+      Foldseek here partly for the learning experience.)
+
+    - <details><summary><strong>Scrape DynDom webserver:</strong></summary>
+
+      `DynDom_reader.py` ...
+      Written to scrape the dataset from the html page of the DynDom webserver. May not be needed now as superior source of 
+      dataset was kindly emailed to me by Prof Steven Hayward.  
   
-  - <details><summary><strong>Generate 3Di sequences using FoldSeek:</strong></summary>
+    - <details><summary><strong>Visualise data:</strong></summary>
+      `plotter.py` ...
   
-    [FoldSeek](https://github.com/steineggerlab/foldseek) compresses structures into a 20-state 3Di alphabet and applies 
-    MMseqs2-style searches (refx). It converts 3D structure search into sequence search without losing sensitivity. 
-    3Di alphabets are designed to encode tertiary (and sometimes secondary structure), reducing redundant information 
-    between consecutive positions, such that they may represent longer range structure patterns. It is a discrete 
-    representation of tertiary/secondary strucure information for each residue, produced based on VQ-VAE clustering.<br> 
-    My initial motivation for using it here was to generate the 3Di alphabet of protein sequences, without necessarily 
-    proceeding to any subsequent large-scale search (though the same code and output files from this initial preparatory 
-    part would be useable for any subsequent searches if needed in future. And, as with MMseqs2 in `mmseqs2.py`, I am using 
-    Foldseek here partly for the learning experience.)<br>
-  
-  
-  `DynDom_reader.py` ...
-  Written to scrape the dataset from the html page of the DynDom webserver. May not be needed now as superior source of 
-  dataset was kindly emailed to me by Prof Steven Hayward.  
-  
-  `plotter.py` ...
-  
-  Most of the functions here are called from `pdb_model_stats.py` although from code variably commented out, in the
-  scope of that script's main execution block.
+      Most of the functions here are called from `pdb_model_stats.py` although from code variably commented out, in the
+      scope of that script's main execution block.
   
   </details>
 
@@ -1023,32 +1022,29 @@ Tools:
 </details>
 
 <details><summary><strong>Good data practice</strong></summary>
-Two approaches that I consider to be "good dataset practice" are what I'm referring to below as `'data-as-code'`
-and `'dataset versioning'`:
+I describe two approaches that I arrived one considering how to best manage the process of data colleciton, curation 
+and update. I refer to it as "good dataset practice", which I attempt to achieve by 2 approaches that I consider  
+valuable for reproducibility. refer to as `'data-as-code'` and `'dataset versioning'`. These may well be terms already employed and have formal definitions
 
-<details><summary>'Data-as-code' mindset:</summary>
+- <details><summary>'Data-as-code' mindset:</summary>
 
-Coming from traditional wet-lab science, but also from software development in industry, the notions of 
-reproducibility (lab experiments), and version control (software development) are hard-wired into me.
-
-This led me to place some emphasis on the quality (including readability and documentation) of code responsible for 
-reading in the data, parsing, curating and writing it. (Also the case for the MSc research project).
-This helps with reproducibility in terms of providing clearer **provenance** and **visibility** of the dataset.  
-It also employs a standard approach to version control, namely of the code.
-
-This is not intended to replace straightforward downloading of data that's then passed around and re-used. 
-Instead, I place emphasis on the value of maintaining **both** this single download & reuse approach, as well as 
+This is not intended to completely replace straightforward downloading of data that's then passed around and re-used. 
+Instead, I place emphasis on the value of maintaining **both** this single download & reuse approach, as well as the
 'data-as-code' approach. They both have use.
 
 <details><summary>Dataset 'versioning':</summary>
 
-Although tools exist for versioning data, (such as Flyway, for SQL databases), here the approach taken is to 
-make use of simple documentation, naming and numbering of dataset versions. 
-This is again to facilitate clearer provenance and visibility of the dataset.
-Here is what it might look like: [Dataset_version_specifications.md](src/unused_dataset_prune_and_versioning/Dataset_version_specifications.md)
+Dataset versioning is commonplace. For example in Bioinformatics data sources like the PDB, RefSeq, AlphaFold DB, etc.
 
-I consider both the data-as-code and versioning of datasets approaches to be beneficial, to enable reproducibility and 
-external scrutiny of the datasets.
+Here it includes not only a version number but the details of the parameters used to generate it.
+I did not employ it here as it was not the immediate priority, but I briefly demonstrated how it might look using 
+simple flat documentation file (i.e. .md file). 
+It would facilitate clearer provenance of the dataset version, so that reproducing any particular dataset would be 
+relatively trivial.
+It also serves to highlight the number of permutations, particularly where a dataset incorporates the use of 
+non-identical protein sequences, deemed homologous enough, but with different enough folded structures to warrant 
+inclusion in the project. Here is what it might look like: [Dataset_version_specifications.md](src/unused_dataset_prune_and_versioning/Dataset_version_specifications.md)
+
 It also lends itself to the development of a benchmark dataset. 
 
 </details>
