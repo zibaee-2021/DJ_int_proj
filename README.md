@@ -1042,9 +1042,7 @@ It also serves to highlight the number of permutations, particularly where a dat
 non-identical protein sequences, deemed homologous enough, but with different enough folded structures to warrant 
 inclusion in the project. Here is what it might look like: [Dataset_version_specifications.md](src/unused_dataset_prune_and_versioning/Dataset_version_specifications.md)
 
-It also lends itself to the development of a benchmark dataset. 
-
-</details>
+It also lends itself to the development of a benchmark dataset.
 
 <details><summary>Use of AI for code generation:</summary>
 
