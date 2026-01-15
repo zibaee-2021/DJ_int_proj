@@ -1085,7 +1085,6 @@ All unused skeleton scripts in [unused_DL_model_training](src/unused_DL_model_tr
   - [diff_distance_matrix.py](src/diff_distance_matrix.py), [DynDom_reader.py](src/DynDom_reader.py), [essential_dynamics.py](src/essential_dynamics.py), [foldseek.py](src/foldseek.py), [mmseqs2.py](src/mmseqs2.py), [plotter.py](src/plotter.py), [tm_aligner.py](src/tm_aligner.py)
 - GenAI was used for writing the clustering & visualisations in [RMSD.py](src/RMSD.py)
 
-</details>
 
 
 
