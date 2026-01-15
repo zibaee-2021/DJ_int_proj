@@ -929,8 +929,8 @@ individual proteins:</strong></summary>
   
       Most of the functions here are called from `pdb_model_stats.py` although from code variably commented out, in the
       scope of that script's main execution block.
-  
-  </details>
+    
+    </details>
 
 <details><summary><strong>Discussion:</strong></summary>
 
