@@ -236,8 +236,7 @@
     A lower RMSD indicates a higher degree of structural similarity between two protein structures.
     `calculate_rmsd()` uses Biopython's `SVDSuperimposer()`, which uses optimal least-squares superposition, giving 
     the Euclidean RMSD between matched atom pairs. This is sometimes referred to as the 'Kabsch algorithm'.
-    
-    RMSD $= \sqrt{\dfrac{1}{n} \sum\limits_{i=1}^{n} d_i^{2}}$
+
     RMSD2 $= \sqrt{\displaystyle \frac{1}{n} \sum\limits_{i=1}^{n} d_i^{2}}$
 
     where the averaging is performed over the $n$ pairs of equivalent atoms and $d_i$ is the distance between the two atoms 
