@@ -1018,32 +1018,39 @@ Tools:
 
 </details>
 
-<details><summary><strong>Good data practice</strong></summary>
-I describe two approaches that I arrived one considering how to best manage the process of data colleciton, curation 
-and update. I refer to it as "good dataset practice", which I attempt to achieve by 2 approaches that I consider  
-valuable for reproducibility. refer to as `'data-as-code'` and `'dataset versioning'`. These may well be terms already employed and have formal definitions
+<details><summary><strong>Data generation & versioning</strong></summary>
+Considerations on how best to manage the potentially complicated process of generating, collecting, curating and 
+updating data that would ultimately lead to inputs for costly and protracted model-training regimes led me to two 
+particular approaches, all of which might come under the description of 'good dataset practice'.<br>  
+I refer to them as 'data-as-code' and 'dataset versioning'. 
 
+- <details><summary>Dataset versioning:</summary>    
+  The use of dataset versioning is alredy commonplace. For example in bioinformatics data sources like the PDB, RefSeq, 
+  AlphaFold DB, etc.
+  However, my use of this term is intended to include, not only a version number assigned to each variant of a dataset, 
+  but each of the parameters used to subsequently process it in this codebase, in preparation for model training.<br>
+  I did not employ this method here because generating a baseline dataset, rather a range of variants, was the 
+  immediate priority. I did however briefly demonstrate how it might look using a simple flat document (i.e. .md file).
+  Here is what it might look like: [Dataset_version_specifications.md](src/unused_dataset_prune_and_versioning/Dataset_version_specifications.md)
+  This is intended to remove ambiguity from data provenance, reducing the risk of unnecessary errors in reproducibility. 
+  It also serves to highlight the number of permutations, particularly where a dataset incorporates the use of 
+  non-identical protein sequences. For exmaple, proteins sharing sufficient sequence identity, above some given threhold 
+  parameter, which fold into different enough tertiary structures, could be included and would thereby help increase 
+  the dataset size. 
+  
 - <details><summary>'Data-as-code' mindset:</summary>
+  This is not intended to replace simple manual downloads of data, which would then be stored, passed around and 
+  re-used. Indeed, all subsequent processing, pruning and filtering of the dataset constitutes a major part of the 
+  data-as-code methodology. So whether the initial data download is manual or programmatic is not important here.
+  (Indeed using a generic API call that simply retrieves the latest copy of some dataset would require programmatically
+  annotating it with the version label or a timestamp.)<br>
 
-This is not intended to completely replace straightforward downloading of data that's then passed around and re-used. 
-Instead, I place emphasis on the value of maintaining **both** this single download & reuse approach, as well as the
-'data-as-code' approach. They both have use.
+  The full implementation of dataset versioning and data-as-code would involve storing parameters for each version 
+  number, in a yaml file, with the version number set as an argument in the calling function, at runtime.
+  At runtime, a particular set of data would be read in from a previously downloaded copy (manually or via API) or 
+  directly by a new API call and then processed according to parameters in the yaml file.
 
-<details><summary>Dataset 'versioning':</summary>
-
-Dataset versioning is commonplace. For example in Bioinformatics data sources like the PDB, RefSeq, AlphaFold DB, etc.
-
-Here it includes not only a version number but the details of the parameters used to generate it.
-I did not employ it here as it was not the immediate priority, but I briefly demonstrated how it might look using 
-simple flat documentation file (i.e. .md file). 
-It would facilitate clearer provenance of the dataset version, so that reproducing any particular dataset would be 
-relatively trivial.
-It also serves to highlight the number of permutations, particularly where a dataset incorporates the use of 
-non-identical protein sequences, deemed homologous enough, but with different enough folded structures to warrant 
-inclusion in the project. Here is what it might look like: [Dataset_version_specifications.md](src/unused_dataset_prune_and_versioning/Dataset_version_specifications.md)
-
-It also lends itself to the development of a benchmark dataset.
-
+</details>
 <details><summary>Use of AI for code generation:</summary>
 
 This is the first codebase in which I have made wholescale use of generative AI (GenAI) for generating groups of 
