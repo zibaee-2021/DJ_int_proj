@@ -237,9 +237,7 @@
     `calculate_rmsd()` uses Biopython's `SVDSuperimposer()`, which uses optimal least-squares superposition, giving 
     the Euclidean RMSD between matched atom pairs. This is sometimes referred to as the 'Kabsch algorithm'.
 
-    $$
-    \mathrm{RMSD} = \sqrt{\frac{1}{n}\sum\limits_{i=1}^{n} d_i^{2}}
-    $$
+    $$\mathrm{RMSD} = \sqrt{\frac{1}{n}\sum\limits_{i=1}^{n} d_i^{2}}$$<br>
 
     where the averaging is performed over the $n$ pairs of equivalent atoms and $d_i$ is the distance between the two atoms 
     in the $i$-th pair.
@@ -286,12 +284,12 @@
   
   - <details><summary><strong>Template modeling score (TM-score):</strong></summary>
   
-    TM-score uses nonlinear weighting of atomic distances:<br>
+    TM-score uses nonlinear weighting of atomic distances:<br><br>
     $$\text{TM-score} = \max \left[ 
     \frac{1}{L_{target}} 
     \sum\limits_{i=1}^{L_{aligned}} 
     \frac{1}{1 + \left( \frac{D_i}{D_0(L_{target})} \right)^2}
-    \right]$$ 
+    \right]$$<br>
     <br>where $d_i$ is distance between aligned residues $i$ and $d_0$ is a normalisation factor that depends on the chain 
     length.
   
