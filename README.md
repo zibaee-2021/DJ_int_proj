@@ -18,8 +18,7 @@
 
 </details>
 
-<details><summary><strong>Four different approaches to quantify conformational differences and/or dynamics of 
-individual proteins:</strong></summary>
+<details><summary><strong>4 distinct quantitations of protein dynamics:</strong></summary>
 
 - (Directly visualising structures of two or more models of a protein for which has NMR data has been deposited, can be
   done in-browser, using the freely-available RCSB viewer. How to overlay protein structures is explained at 
@@ -236,9 +235,9 @@ individual proteins:</strong></summary>
     different models of the same NMR structure and so it was used here.
     A lower RMSD indicates a higher degree of structural similarity between two protein structures.
     `calculate_rmsd()` uses Biopython's `SVDSuperimposer()`, which uses optimal least-squares superposition, giving 
-    the Euclidean RMSD between matched atom pairs. This is the Kabsch algorithm.
+    the Euclidean RMSD between matched atom pairs. This is sometimes referred to as the 'Kabsch algorithm'.
     
-    $\mathrm{RMSD} = \sqrt{\dfrac{1}{n} \sum\limits_{i=1}^{n} d_i^{2}}$
+    RMSD $= \sqrt{\dfrac{1}{n} \sum\limits_{i=1}^{n} d_i^{2}}$
     where the averaging is performed over the $n$ pairs of equivalent atoms and $d_i$ is the distance between the two atoms 
     in the $i$-th pair.
     
