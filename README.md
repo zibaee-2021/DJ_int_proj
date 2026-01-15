@@ -68,7 +68,7 @@
 
 </details>
 
-<details><summary><strong>Directory structure and main Python scripts:</strong></summary><br>
+<details><summary><strong>Data files and Python scripts:</strong></summary><br>
 
 - <details><summary><strong>data/</strong></summary>
 
