@@ -6,13 +6,15 @@
 
 - Performed, part-time, over a period of 3 months from mid-July to mid-Sept 2025.
 
-- <details><summary><strong>Immediate goal:</strong></summary>
+</details>
 
-  - Assemble and curate a dataset of protein structures that are observed to populate different conformations.
-    For simplication and to reduce computational demand, protein structures are parsed to contain alpha-carbons only.
+<details><summary><strong>Immediate goal:</strong></summary>
 
-  - The main activity included exploratory data analysis of all NMR structures available in the RCSB, as well as Python 
-    implementations of different methods for characterising protein dynamics.
+- Assemble and curate a dataset of protein structures that are observed to populate different conformations.
+  For simplication and to reduce computational demand, protein structures are parsed to contain alpha-carbons only.
+
+- The main activity included exploratory data analysis of all NMR structures available in the RCSB, as well as Python 
+  implementations of different methods for characterising protein dynamics.
 
 </details>
 
