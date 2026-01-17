@@ -52,11 +52,11 @@
     could be complementary to the RMSD/TM-score method. They included: the calculation of difference-distance matrices 
     (DDM); principal component analysis (PCA) for 'essential dynamics' (ED); Normal Mode Analysis (NMA).<br>
     The table below summarises these methods (including 2 different forms for calculating PCA for ED). <br>
-    <strong>I go into much greater detail of each method in the `Data files and Python scripts/src/` section below.</strong>
+    <strong>For detailed explanations of each method, go to the `Data files and Python scripts/src/` section below.</strong>
     
     - Note: A short time later, I was intruiged to find this combination of methods being incorporated into a new 
-    software package ('EnsembleFlex'), in a very recent publication (Schneider et al. 2025). I haven't made a studied it 
-    to compare it, but it might potentially make the code I've put together for this mini-project somewhat redundant!
+    software package ('EnsembleFlex'), in a very recent publication (Schneider et al. 2025). I haven't looked into it, 
+    but it is possible that it makes the code I've put together for this mini-project somewhat redundant!
     
   - <details><summary>Table of methods implemented here for quantitatively characterising structural variants and dynamics:</summary> 
   
