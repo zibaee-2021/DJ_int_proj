@@ -28,8 +28,8 @@
   protein structures for a single protein. Some groupings that are distinct, albeit with unclear boundaries between 
   them, include general flexibility/mobility, naturally-occuring ensemble populations, ligand-induced conformational 
   change, and non-native conformational changes. Thus, characterising protein dynamics is often not straightforward.<br> 
-  Two commonly-used methods for quantifying structural differences between identical protein sequences include the 
-  calculation of RMSDs and TM-scores. 
+  One commonly-used method for quantifying structural differences between identical protein sequences involves the 
+  calculation of RMSDs. The same method, using variant of this method replaces the calculation RMSDs with that of TM-scores. 
 
   - <details><summary><strong>RMSD and TM-score matrices and clustering:</strong></summary> 
 
