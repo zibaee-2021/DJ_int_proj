@@ -802,15 +802,15 @@
   
   - <details><summary><strong>Other Python scripts:</strong></summary><br>
   
-    - <details><summary><strong>Protein sequence alignments using MMseqs2:</strong></summary>
+    - <details><summary><strong>Protein sequence alignments using MMseqs2:</strong></summary><br>
   
-      - <details><summary><strong>Installing MMseqs2:</strong></summary>
+      - <details><summary><strong>Installing MMseqs2:</strong></summary><br>
         
         Installed on MacOS and Rocky Linux within activated conda env, and according to 
         https://github.com/soedinglab/MMseqs2: `conda install -c conda-forge -c bioconda mmseqs2`. 
         However, on Rocky Linux, I first installed aria2 with: `sudo dnf makecache` and `sudo dnf install aria2`.
     
-      - <details><summary>`mmseqs2.py`</summary>
+      - <details><summary>`mmseqs2.py`</summary><br>
         
           Once installed, my script `mmseqs2.py` uses it. [MMseqs2](https://github.com/soedinglab/MMseqs2?tab=readme-ov-file) performs sequence alignments at least 100 times 
           faster than BLAST. It is primarily designed for sequence searching using many-to-many alignments for large 
@@ -862,22 +862,22 @@
           (Note: LoL-align was not implemented here as I didn't know about it. (refx)
           ```
 
-    - <details><summary><strong>Generate NMR datasets:</strong></summary>
+    - <details><summary><strong>Generate NMR datasets:</strong></summary><br>
   
-        - <details><summary>`api_callr.py`:</summary>
+        - <details><summary>`api_callr.py`:</summary><br>
           Contains RESTful API calls, copy-pasted from the RCSB site. I give very detailed information on this in the docstring
           at the top of the script itself. Called by `nmr_dataset`.
     
-        - <details><summary>`cif_parsr.py`:</summary>
+        - <details><summary>`cif_parsr.py`:</summary><br>
           A trimmed down, modified copy of the mmCIF parser script from my [MSc project](https://github.com/zibaee-2021/MSc_2024_project).
           Called by `nmr_dataset`.
    
-        - <details><summary>`nmr_dataset.py`:</summary>
+        - <details><summary>`nmr_dataset.py`:</summary><br>
           Generates dataset of raw and parsed structure files, via calling `api_callr.py` and `cif_parsr.py`.
     
-    - <details><summary><strong>Generate summary stats of NMR datasets:</strong></summary>
+    - <details><summary><strong>Generate summary stats of NMR datasets:</strong></summary><br>
   
-        - <details><summary>`pdb_model_stats.py`:</summary>
+        - <details><summary>`pdb_model_stats.py`:</summary><br>
           Compile and/or calculate the following data into one document:
           - From mmCIF files:
             - deposition year for each PDBid
@@ -895,7 +895,7 @@
     
         Uses `plotter.py` to generate visualisations of the stats.
 
-    - <details><summary><strong>Generate 3Di sequences using FoldSeek:</strong></summary>
+    - <details><summary><strong>Generate 3Di sequences using FoldSeek:</strong></summary><br>
   
       [FoldSeek](https://github.com/steineggerlab/foldseek) compresses structures into a 20-state 3Di alphabet and applies 
       MMseqs2-style searches (refx). It converts 3D structure search into sequence search without losing sensitivity. 
@@ -907,13 +907,13 @@
       part would be useable for any subsequent searches if needed in future. And, as with MMseqs2 in `mmseqs2.py`, I am using 
       Foldseek here partly for the learning experience.)
 
-    - <details><summary><strong>Scrape DynDom webserver:</strong></summary>
+    - <details><summary><strong>Scrape DynDom webserver:</strong></summary><br>
 
       `DynDom_reader.py` ...
       Written to scrape the dataset from the html page of the DynDom webserver. May not be needed now as superior source of 
       dataset was kindly emailed to me by Prof Steven Hayward.  
   
-    - <details><summary><strong>Visualise data:</strong></summary>
+    - <details><summary><strong>Visualise data:</strong></summary><br>
       `plotter.py` ...
   
       Most of the functions here are called from `pdb_model_stats.py` although from code variably commented out, in the
@@ -921,7 +921,7 @@
     
 </details>
 
-<details><summary><strong>Discussion:</strong></summary>
+<details><summary><strong>Discussion:</strong></summary><br>
 
 All proteins are mobile, ranging from molecular vibrations on femtosecond timescales, to protein-specific tertiary and 
 quarternary motions. Conformational variations have been reported from early on in the field of structural biology, such as where 
@@ -949,7 +949,7 @@ of a proof-of-concept project. Furthermore, such a rule is already not adhered t
 structure prediction, such as AlphaFold, which is heavily dependent on multiple sequence alignments.)
 
 </details>
-<details><summary><strong>References:</strong></summary>
+<details><summary><strong>References:</strong></summary><br>
 
 Protein dynamics:
 
@@ -996,11 +996,11 @@ Normal Mode Analysis:
 
 Recent work on protein mobility and its computation:
 - EnsembleFlex: Protein structure ensemble analysis made easy. M. Schneider et al. Structure 2025. 33: 1781–1792.
-
+---
 Datasets:
 - A comprehensive and non-redundant database of protein domain movements. Bioinformatics 2005. G. Qi, et al. 21(12): 2832-2838.
   (https://dyndom.cmp.uea.ac.uk/dyndom/main.jsp)
-
+---
 Tools:
 - Fast and accurate protein structure search with Foldseek. Nat Biotechnol 2024. M. van Kempen, et al. 42, 243–246.
 - §
