@@ -376,8 +376,10 @@
     The relative effectiveness of using different cluster numbers is calculated by the silhouette score metric.  
     The silhouette score calculates how well the graph-defined clusters (i.e. output of the spectral clustering step) are 
     actually separated in feature space. In `compute_ddms()`, the silhouette scores using 2, 3 or 4 clusters are calculated
-    and compared, in order to find which one produces the best clustering.<br>
-    $$s_i = \frac{b_i - a_i}{\max(a_i, b_i)},$$<br> 
+    and compared, in order to find which one produces the best clustering.<br><br>
+  
+    $$s_i = \frac{b_i - a_i}{\max(a_i, b_i)},$$<br>
+  
     where $a_i$ is the average distance to points in the same cluster, and $b_i$ is the smallest average distance to 
     points in the nearest other cluster.
     
