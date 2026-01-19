@@ -1008,40 +1008,43 @@ Tools:
 
 </details>
 
-<details><summary><strong>Data generation & versioning</strong></summary>
-Considerations on how best to manage the potentially complicated process of generating, collecting, curating and 
-updating data that would ultimately lead to inputs for costly and protracted model-training regimes led me to two 
-particular approaches, all of which might come under the description of 'good dataset practice'.<br>  
-I refer to them as 'data-as-code' and 'dataset versioning'. 
+<details><summary><strong>Data generation & versioning</strong></summary><br>
+The dataset being constructed are intended for model-training regimes, that are protracted and costly by nature.
+As such, the best ways to manage the potentially complicated process of generating, collecting, curating and 
+updating this dataset deserve attention and considered thought. I arrived at two particular approaches, all of which 
+might come under the description of 'good dataset practice'. I refer to them as 'data-as-code' and 'dataset versioning'. 
 
-- <details><summary>Dataset versioning:</summary>    
-  The use of dataset versioning is alredy commonplace. For example in bioinformatics data sources like the PDB, RefSeq, 
+- <details><summary>Dataset versioning:</summary><br>    
+  The use of dataset versioning is already commonplace. For example in bioinformatics, data sources like the PDB, RefSeq, 
   AlphaFold DB, etc.
-  However, my use of this term is intended to include, not only a version number assigned to each variant of a dataset, 
-  but each of the parameters used to subsequently process it in this codebase, in preparation for model training.<br>
-  I did not employ this method here because generating a baseline dataset, rather a range of variants, was the 
-  immediate priority. I did however briefly demonstrate how it might look using a simple flat document (i.e. .md file).
-  Here is what it might look like: [Dataset_version_specifications.md](src/unused_dataset_prune_and_versioning/Dataset_version_specifications.md)
-  This is intended to remove ambiguity from data provenance, reducing the risk of unnecessary errors in reproducibility. 
+  However, my use of this term is intended to include, not only to a static data entity but to each of the parameters 
+  used to subsequently process it in this codebase, in preparation for model training.<br>
+  I did not employ this method here because generating a baseline dataset, rather a range of variants of updates, was 
+  the immediate priority. I did however briefly demonstrate how it might look using a simple flat document, [Dataset_version_specifications.md](src/unused_dataset_prune_and_versioning/Dataset_version_specifications.md).
+  The benefit of this approach is to remove ambiguity from data provenance, reducing the risk of unnecessary errors in reproducibility. 
   It also serves to highlight the number of permutations, particularly where a dataset incorporates the use of 
-  non-identical protein sequences. For exmaple, proteins sharing sufficient sequence identity, above some given threhold 
-  parameter, which fold into different enough tertiary structures, could be included and would thereby help increase 
+  non-identical protein sequences. For example, proteins sharing sufficient sequence identity, above some given threshold 
+  parameter, which fold into different 'enough' tertiary structures, could be included and would thereby help increase 
   the dataset size. 
   
-- <details><summary>'Data-as-code' mindset:</summary>
-  This is not intended to replace simple manual downloads of data, which would then be stored, passed around and 
-  re-used. Indeed, all subsequent processing, pruning and filtering of the dataset constitutes a major part of the 
-  data-as-code methodology. So whether the initial data download is manual or programmatic is not important here.
-  (Indeed using a generic API call that simply retrieves the latest copy of some dataset would require programmatically
-  annotating it with the version label or a timestamp.)<br>
+- <details><summary>'Data-as-code' mindset:</summary><br>
+  A straightforward manual download of data, which is then stored, passed around and re-used is common practice. 
+  However, once downloaded, the dataset must undergo significant processing, pruning and filtering. This is not feature 
+  engineering per se but simply getting extracting, parsing, and filtering the data into the form required.
+  This processing which serves as a precise link between the raw download and the processed ready-to-use dataset is 
+  what I mean by 'data-as-code'. The code is inextricably tied to the dataset and can therefore be considered a part of 
+  the dataset. It is not to draw a distinction between programmatic, rather than manual, data downloads. 
+  (And indeed, using a generic API call that simply retrieves the latest copy of some dataset might then require 
+  additional attention in terms of annotating it with the version number if no metadata is automatically 
+  included with the download.)<br>
 
-  The full implementation of dataset versioning and data-as-code would involve storing parameters for each version 
-  number, in a yaml file, with the version number set as an argument in the calling function, at runtime.
-  At runtime, a particular set of data would be read in from a previously downloaded copy (manually or via API) or 
-  directly by a new API call and then processed according to parameters in the yaml file.
+  The full implementation of both dataset versioning and data-as-code would be assigned to a single version number. All 
+  parameters required for specifiying the exact download and processing are mapped to this version number. These would be
+  stored, for example, in a yaml file. The version number would passed as an argument in the calling function at 
+  runtime, and the data download/reading in and processing would be performed accordingly.
 
 </details>
-<details><summary>Use of AI for code generation:</summary>
+<details><summary>Use of AI for code generation:</summary><br>
 
 This is the first codebase in which I have made wholescale use of generative AI (GenAI) for generating groups of 
 fully written functions. 
