@@ -951,57 +951,60 @@ structure prediction, such as AlphaFold, which is heavily dependent on multiple 
 </details>
 <details><summary><strong>References:</strong></summary><br>
 
-Protein dynamics:
+- <details><summary>Protein dynamics:</summary>
 
-- Conformational substates in proteins. H. Frauenfelder, F. Parak & R.D. Young, Ann. Rev. of Biophys. & Biophysical Chem. 1988, 17:451–479.
-- Dynamical transition of myoglobin revealed by inelastic neutron scattering. W. Doster, S. Cusack & W. Petry. Nature 1989, 337: 754–756.
-- Mechanisms of Virus Membrane Fusion Proteins. M. Kielian. Ann. Rev. of Virology 2014, 1:171-189.
+  - Conformational substates in proteins. H. Frauenfelder, F. Parak & R.D. Young, Ann. Rev. of Biophys. & Biophysical Chem. 1988, 17:451–479.
+  - Dynamical transition of myoglobin revealed by inelastic neutron scattering. W. Doster, S. Cusack & W. Petry. Nature 1989, 337: 754–756.
+  - Mechanisms of Virus Membrane Fusion Proteins. M. Kielian. Ann. Rev. of Virology 2014, 1:171-189.
 
-Generative (Diffusion) Models and protein structural ensembles:
+- <details><summary>Generative (Diffusion) Models and protein structural ensembles:</summary>
 
-- Structure prediction of alternative protein conformations. Bryant & Noé. Nature Comm. 2024. 15: 7328.
-- Scalable emulation of protein equilibrium ensembles with generative deep learning. S. Lewis et al. 
-- Learning Biophysical Dynamics with Protein Language Models. C. Hou et al. 
+  - Structure prediction of alternative protein conformations. Bryant & Noé. Nature Comm. 2024. 15: 7328.
+  - Scalable emulation of protein equilibrium ensembles with generative deep learning. S. Lewis et al. 
+  - Learning Biophysical Dynamics with Protein Language Models. C. Hou et al. 
 
-Identifying and/or quantifying structural variations:
-- RMSD: 
-  - A solution for the best rotation to relate two sets of vectors. W. Kabsch. Acta Cryst. A. 1976. 32: 922-923.
-- TM-score:
-  - Scoring function for automated assessment of protein structure template quality. Y. Zhang & J. Skolnick. Proteins 2004. 57 (4): 702–710.
-- GDT:
-  - Processing and evaluation of predictions in CASP4. A. Zemla et al. Proteins 2001. Suppl. 5: 13-21.
+- <details><summary>Identifying and/or quantifying structural variations:</summary>
 
-- Distance matrix:
-  - DC. Phillips (1970). In British Biochemistry, Past and Present (Goodwin, T. W., ed.), pp. 11-28.
-  - A Novel Approach to Calculation of Conformation: Distance Geometry. GM. Crippen. J. Comp. Phys. 1977. 24: 96-107.
-  - Effects of Distance Constraints on Macromolecular Conformation. TF. Havel et al. Biopolymers 1979. 18:73-81.
-  - Assessment of template based protein structure predictions in CASP9. V. Mariani. Proteins 2011. 79 (Suppl 10):37–58.
-  - Difference distance matrix:
-    - Rigid Domains in Proteins: An Algorithmic Approach to Their Identification. WL. Nichols et al. Proteins 1995. 23: 38-48.
+  - RMSD: 
+    - A solution for the best rotation to relate two sets of vectors. W. Kabsch. Acta Cryst. A. 1976. 32: 922-923.
+  - TM-score:
+    - Scoring function for automated assessment of protein structure template quality. Y. Zhang & J. Skolnick. Proteins 2004. 57 (4): 702–710.
+  - GDT:
+    - Processing and evaluation of predictions in CASP4. A. Zemla et al. Proteins 2001. Suppl. 5: 13-21.
 
-Essential Dynamics:
+  - Distance matrix:
+    - DC. Phillips (1970). In British Biochemistry, Past and Present (Goodwin, T. W., ed.), pp. 11-28.
+    - A Novel Approach to Calculation of Conformation: Distance Geometry. GM. Crippen. J. Comp. Phys. 1977. 24: 96-107.
+    - Effects of Distance Constraints on Macromolecular Conformation. TF. Havel et al. Biopolymers 1979. 18:73-81.
+    - Assessment of template based protein structure predictions in CASP9. V. Mariani. Proteins 2011. 79 (Suppl 10):37–58.
+    - Difference distance matrix:
+      - Rigid Domains in Proteins: An Algorithmic Approach to Their Identification. WL. Nichols et al. Proteins 1995. 23: 38-48.
 
-- Karplus, M.; Jushick, J. N. Macromolecules 1981, 14, 325-332.
-- Collective Motions in Proteins: A Covariance Analysis of Atomic Fluctuations in Molecular Dynamics and Normal Mode Simulations. Ichiye T. & Karplus. M. Proteins 1991. 11: 205-217.
-- Essential Dynamics of Proteins. Amadei A. et al. Proteins 1993. 17: 412-425.
-- PCA of native ensembles of biomolecular structures (PCA_NEST): insights into functional dynamics. Yang et al. Bioinformatics 2009. 25(5): 606–614.
-- Principal Component Analysis: A Method for Determining the Essential Dynamics of Proteins. David C.C. & Jacobs D.J. Methods Mol. Biol. 2014. 1084: 193–226.
+  - Essential Dynamics:
 
-Normal Mode Analysis:
+  - Karplus, M.; Jushick, J. N. Macromolecules 1981, 14, 325-332.
+  - Collective Motions in Proteins: A Covariance Analysis of Atomic Fluctuations in Molecular Dynamics and Normal Mode Simulations. Ichiye T. & Karplus. M. Proteins 1991. 11: 205-217.
+  - Essential Dynamics of Proteins. Amadei A. et al. Proteins 1993. 17: 412-425.
+  - PCA of native ensembles of biomolecular structures (PCA_NEST): insights into functional dynamics. Yang et al. Bioinformatics 2009. 25(5): 606–614.
+  - Principal Component Analysis: A Method for Determining the Essential Dynamics of Proteins. David C.C. & Jacobs D.J. Methods Mol. Biol. 2014. 1084: 193–226.
 
-- Normal Mode Analysis as a Routine Part of a Structural Investigation. JA. Bauer et al. Molecules 2019. 24: 3293-3312.
-- Dynamics of a Small Globular Protein in Terms of Low-Frequency Vibrational-Modes. Go, N. et al. PNAS 1983. 80: 3696–3700.
-- The normal modes of a protein: Native bovine pancreatic trypsin inhibitor. Levitt, M. et al. Int. J. Quant. Chem. 1983. 24: 181–199. 
-- Harmonic dynamics of proteins: Normal modes and fluctuations in bovine pancreatic trypsin inhibitor. Brooks, B. & Karplus, M. PNAS 1983. 80: 6571–6575. 
+  - Normal Mode Analysis:
 
-Recent work on protein mobility and its computation:
-- EnsembleFlex: Protein structure ensemble analysis made easy. M. Schneider et al. Structure 2025. 33: 1781–1792.
+    - Normal Mode Analysis as a Routine Part of a Structural Investigation. JA. Bauer et al. Molecules 2019. 24: 3293-3312.
+    - Dynamics of a Small Globular Protein in Terms of Low-Frequency Vibrational-Modes. Go, N. et al. PNAS 1983. 80: 3696–3700.
+    - The normal modes of a protein: Native bovine pancreatic trypsin inhibitor. Levitt, M. et al. Int. J. Quant. Chem. 1983. 24: 181–199. 
+    - Harmonic dynamics of proteins: Normal modes and fluctuations in bovine pancreatic trypsin inhibitor. Brooks, B. & Karplus, M. PNAS 1983. 80: 6571–6575. 
+
+- Recent work on protein mobility and its computation:
+  - EnsembleFlex: Protein structure ensemble analysis made easy. M. Schneider et al. Structure 2025. 33: 1781–1792.
 ---
-Datasets:
-- A comprehensive and non-redundant database of protein domain movements. Bioinformatics 2005. G. Qi, et al. 21(12): 2832-2838.
-  (https://dyndom.cmp.uea.ac.uk/dyndom/main.jsp)
+- <details><summary>Datasets:</summary>
+
+  - A comprehensive and non-redundant database of protein domain movements. Bioinformatics 2005. G. Qi, et al. 21(12): 2832-2838.
+    (https://dyndom.cmp.uea.ac.uk/dyndom/main.jsp)
 ---
-Tools:
+- <details><summary>Tools:</summary>
+
 - Fast and accurate protein structure search with Foldseek. Nat Biotechnol 2024. M. van Kempen, et al. 42, 243–246.
 - §
 - LoL-align: sensitive and fast probabilistic protein structure alignment. bioRxiv 2025.11.24.690091. L. Reifenrath, et al. 
