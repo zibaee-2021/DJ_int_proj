@@ -232,7 +232,7 @@
 
 - <details><summary><strong>src/</strong></summary><br>
 
-  - <details><summary><strong>Root mean-squared deviation (RMSD):</strong></summary>
+  - <details><summary><strong>Root mean-squared deviation (RMSD):</strong></summary><br>
     
     A long-established and intuitive method which calculates a scalar measure of the difference between two sets of 
     atomic coordinates (Kabsch 1976). RMSD is suited to comparing pairs of alpha-carbon coordinates belonging to identical sequences, as is the case for 
@@ -259,8 +259,8 @@
     > 10 Å = Almost certainly structurally unrelated.
     ```
     All computations are carried out in `RMSD.py`.<br>
-    The main functions of use in the RMSD.py script are calc_rmsds_matrix_of_models() and calculate_rmsd(). 
-    Many of the same calculations are performed in _calc_rmsds_and_stats().  
+    The main functions of use in the RMSD.py script are `calc_rmsds_matrix_of_models()` and `calculate_rmsd()`. 
+    Many of the same calculations are performed in `_calc_rmsds_and_stats()`.  
     
     For clustering and visualisation of RMSDs that provide a route to identifying and selecting ensembles of conformational 
     variants, pass an RMSD matrix to `dendrogram()`. This uses `scipy.cluster.hierarchy.linkage` function to build a 
@@ -286,7 +286,7 @@
     RMSD is useful. Unlike RMSD, TM-score does not penalise domain motion, so it is more useful for other, more subtle  
     conformational variations.
   
-  - <details><summary><strong>Template modeling score (TM-score):</strong></summary>
+  - <details><summary><strong>Template modeling score (TM-score):</strong></summary><br>
   
     TM-score uses nonlinear weighting of atomic distances:<br><br>
     $$\text{TM-score} = \max \left[ 
