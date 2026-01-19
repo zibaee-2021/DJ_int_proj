@@ -605,10 +605,10 @@
                 └── anisotropic network model (ANM) — anisotropic ENM
     
     | Model    | Matrix size    | Eigenvector contains           |
-    | -------- | -------------- |--------------------------------|
-    | Full NMA      | (3N \times 3N)   | 3D displacement vectors (i.e. direction of motion) |
+    |----------|----------------|--------------------------------|
+    | Full NMA | (3N \times 3N) | 3D displacement vectors (i.e. direction of motion) |
     | ANM      | (3N \times 3N) | 3D displacement vectors (i.e. direction of motion)       |
-    | GNM | (N \times N) | scalar participation per residue |
+    | GNM      | (N \times N)   | scalar participation per residue |
     
     NMA provides the mathematical machinery; ENMs specify a particular harmonic potential used in NMA. 
     GNMs are an isotropic ENM producing a scalar Laplacian. ANMs are an anisotropic ENM producing a full 3Nx3N Hessian.
