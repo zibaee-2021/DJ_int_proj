@@ -1013,39 +1013,42 @@ structure prediction, such as AlphaFold, which is heavily dependent on multiple 
 </details>
 
 <details><summary><strong>Data generation & versioning</strong></summary><br>
-The dataset being constructed are intended for model-training regimes, that are protracted and costly by nature.
-As such, the best ways to manage the potentially complicated process of generating, collecting, curating and 
-updating this dataset deserve attention and considered thought. I arrived at two particular approaches, all of which 
-might come under the description of 'good dataset practice'. I refer to them as 'data-as-code' and 'dataset versioning'. 
+The dataset(s) are intended for model-training regimens, which are protracted and costly by nature.
+As such, optimal approaches for managing the potentially complicated process of generating, collecting, curating and 
+updating datasets deserve attention and considered thought. This could be referred to as 'good dataset practice'. 
+This led me to two aspects that I describe as 'data-as-code' and 'dataset versioning'. 
 
 - <details><summary>Dataset versioning:</summary><br>    
   The use of dataset versioning is already commonplace. For example in bioinformatics, data sources like the PDB, RefSeq, 
-  AlphaFold DB, etc.
-  However, my use of this term is intended to include, not only to a static data entity but to each of the parameters 
+  AlphaFold DB, etc, all have version numbers.
+  However, my use of this term is intended to apply, not only to a static data entity, but to each of the parameters 
   used to subsequently process it in this codebase, in preparation for model training.<br>
   I did not employ this method here because generating a baseline dataset, rather a range of variants of updates, was 
-  the immediate priority. I did however briefly demonstrate how it might look using a simple flat document, [Dataset_version_specifications.md](src/unused_dataset_prune_and_versioning/Dataset_version_specifications.md).
-  The benefit of this approach is to remove ambiguity from data provenance, reducing the risk of unnecessary errors in reproducibility. 
+  the immediate priority. I did however briefly demonstrate how it might look, using a simple flat document: 
+  [Dataset_version_specifications.md](src/unused_dataset_prune_and_versioning/Dataset_version_specifications.md).
+  The benefit of this approach is to remove ambiguity from data provenance, reducing the risk of unnecessary errors in 
+  reproducibility. 
   It also serves to highlight the number of permutations, particularly where a dataset incorporates the use of 
   non-identical protein sequences. For example, proteins sharing sufficient sequence identity, above some given threshold 
-  parameter, which fold into different 'enough' tertiary structures, could be included and would thereby help increase 
-  the dataset size. 
+  parameter, which have been observed to fold into different 'enough' tertiary structures, could be included and would 
+  thereby help increase the dataset size. 
   
 - <details><summary>'Data-as-code' mindset:</summary><br>
   A straightforward manual download of data, which is then stored, passed around and re-used is common practice. 
-  However, once downloaded, the dataset must undergo significant processing, pruning and filtering. This is not feature 
-  engineering per se but simply getting extracting, parsing, and filtering the data into the form required.
-  This processing which serves as a precise link between the raw download and the processed ready-to-use dataset is 
-  what I mean by 'data-as-code'. The code is inextricably tied to the dataset and can therefore be considered a part of 
-  the dataset. It is not to draw a distinction between programmatic, rather than manual, data downloads. 
-  (And indeed, using a generic API call that simply retrieves the latest copy of some dataset might then require 
-  additional attention in terms of annotating it with the version number if no metadata is automatically 
-  included with the download.)<br>
+  However, once downloaded, the dataset must undergo significant processing as already mentioned above. 
+  This is not 'feature engineering' per se but the basic extraction, parsing, and filtering of data to produce the 
+  required input.
+  This processing is what I mean by 'data-as-code', because the code is inextricably tied to the dataset and should, in 
+  my opinion, be considered a *part* of the dataset. To be clear, it is not to draw a distinction between programmatic, 
+  rather than manual, data downloads. (And indeed, using a programmatic download, via a generic API call that simply 
+  retrieves the latest copy of some dataset would require annotation with the version number if no metadata is 
+  automatically included with the download.)<br>
 
-  The full implementation of both dataset versioning and data-as-code would be assigned to a single version number. All 
-  parameters required for specifiying the exact download and processing are mapped to this version number. These would be
-  stored, for example, in a yaml file. The version number would passed as an argument in the calling function at 
-  runtime, and the data download/reading in and processing would be performed accordingly.
+  The full implementation of both dataset versioning and data-as-code would be assigned to a single version number. 
+  All parameters required for specifiying the exact download and processing would be mapped to this version number,
+  stored, for example, in a yaml file. The version number would be passed as an argument from the calling function such 
+  that downloading (or reading in) the data and the subsequent processing steps, according to the parameters for that 
+  version number, would all be specified at runtime.
 
 </details>
 <details><summary>Use of AI for code generation:</summary><br>
