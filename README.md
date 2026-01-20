@@ -923,17 +923,19 @@
 
 <details><summary><strong>Discussion:</strong></summary><br>
 
-All proteins are mobile, ranging from molecular vibrations on femtosecond timescales, to protein-specific tertiary and 
-quarternary motions. Conformational variations have been reported from early on in the field of structural biology, such as where 
-haemoglobin undergoes conformational changes upon binding oxygen.
-Larger movements on the scale of a few to tens of Angstroms are observed for whole domains moving about hinge regions, 
-and on potentially slower timescales of milliseconds to seconds, such as for surface proteins of enveloped viruses in 
-membrane fusion events. 
-
+All proteins are mobile, from molecular vibrations on femtosecond timescales, to protein-specific tertiary and 
+quarternary motions that span a range of timescales from microseconds to seconds. 
+From early on in the field of structural biology, haemoglobin was observed to undergo a structural change upon binding 
+oxygen. 
 "... a protein cannot be said to have "a" secondary structure but exists mainly as a group of structures not too 
 different from one another in free energy, but frequently differing considerably in energy and entropy. In fact the 
 molecule must be conceived as trying out every possible structure ..." 
 K.U. Linderstrømn-Lang & J.A. Schellman, Enzymes 1959, 1:443
+
+Multi-Angstrom movements are observed for whole domains about hinge regions, (example and reference).
+Surface proteins of enveloped viruses in membrane fusion events (review reference). 
+
+
 
 I find no mention of 'essential dynamics', normal mode analysis or difference distance matrices in either 
 Bryant & Noé 2024 (ref X) or Lewis et al. 2025 (ref X).
