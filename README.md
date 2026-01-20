@@ -1018,11 +1018,11 @@ As such, optimal approaches for managing the potentially complicated process of 
 updating datasets deserve attention and considered thought. This could be referred to as 'good data practice'. 
 This led me to two aspects that I describe as 'data-as-code' and 'dataset versioning'.<br><br>
 
-- <details><summary>'Data-as-code' mindset:</summary><br>
+- <details><summary>Data-as-code:</summary><br>
   A straightforward manual download of data, which is then stored, passed around and re-used is common practice. 
-  However, once downloaded, the dataset must undergo significant processing - as already mentioned above. 
-  This is not 'feature engineering' per se but the basic extraction, parsing, and filtering of data to produce the 
-  required input.
+  However, once downloaded, here as in many cases of machine learning projects, the data must undergo significant 
+  processing before it is ready to be used the input dataset. 
+  It is the extraction, parsing, and filtering of data. This is more rudimentary than 'feature engineering'. 
   This processing is what I mean by 'data-as-code', because the code is inextricably tied to the dataset and should, in 
   my opinion, be considered a *part* of the dataset. To be clear, it is not to draw a distinction between programmatic, 
   rather than manual, data downloads. (And indeed, using a programmatic download, via a generic API call that simply 
@@ -1039,10 +1039,11 @@ This led me to two aspects that I describe as 'data-as-code' and 'dataset versio
   [Dataset_version_specifications.md](src/unused_dataset_prune_and_versioning/Dataset_version_specifications.md).
   The benefit of this approach is to remove ambiguity from data provenance, reducing the risk of unnecessary errors in 
   reproducibility. 
-  It also serves to highlight the number of permutations, particularly where a dataset incorporates the use of 
-  non-identical protein sequences. For example, proteins sharing sufficient sequence identity, above some given threshold 
-  parameter, which have been observed to fold into different 'enough' tertiary structures, could be included and would 
-  thereby help increase the dataset size. 
+  It also serves to highlight the number of permutations from which a single selection must be made. The number of 
+  permutations woulc increase further if the dataset were to incorporate the use of non-identical protein sequences. 
+  For example, proteins sharing sufficient sequence identity (above some given threshold, such as 30 %), which have 
+  been observed to fold into different 'enough' tertiary structures, could be included and would thereby help increase 
+  the dataset size. 
 
 The full implementation of both dataset versioning and data-as-code would be assigned to a single version number. 
 All parameters required for specifiying the exact download and processing would be mapped to this version number,
