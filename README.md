@@ -1054,13 +1054,14 @@ version number, would all be specified at runtime.
 </details>
 <details><summary>Use of AI for code generation:</summary><br>
 
-This is the first codebase in which I have made wholescale use of generative AI (GenAI) for generating groups of 
-fully written functions. 
+This is the first codebase in which I have made wholesale use of generative AI (GenAI) for building groups of 
+fully-written functions. 
 My previous usage of GenAI, in MSc project, had been limited to replace StackOverFlow/Google searches for complicated 
-Pandas and NumPy operations, Matplotlib functions, regex and a few API calls and webscrapes. This could be described as 
-"vibe coding". 
+Pandas and NumPy operations, Matplotlib functions, regex and a few API calls and webscrapes, all of which might be 
+referred to as "vibe coding". 
 
-However, in this mini-project, I have made significant use of GenAI, writing prompts that provide:
+However, in this mini-project, I have written prompts that provide the following, in a format that might be referred to 
+as "agentic AI":
 - detailed descriptions of the overall goal; 
 - plenty of context;
 - (sometimes) guidance on the implementation details I want to see used. 
@@ -1092,8 +1093,3 @@ All unused skeleton scripts in [unused_DL_model_training](src/unused_DL_model_tr
   - [atlas.py](src/unused_MD_scripts/atlas.py)
   - [diff_distance_matrix.py](src/diff_distance_matrix.py), [DynDom_reader.py](src/DynDom_reader.py), [essential_dynamics.py](src/essential_dynamics.py), [foldseek.py](src/foldseek.py), [mmseqs2.py](src/mmseqs2.py), [plotter.py](src/plotter.py), [tm_aligner.py](src/tm_aligner.py)
 - GenAI was used for writing the clustering & visualisations in [RMSD.py](src/RMSD.py)
-
-
-
-
-
