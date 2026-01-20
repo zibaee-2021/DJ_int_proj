@@ -1012,10 +1012,10 @@ structure prediction, such as AlphaFold, which is heavily dependent on multiple 
 
 </details>
 
-<details><summary><strong>Data generation & versioning</strong></summary><br>
+<details><summary><strong>'Good data practice'</strong></summary><br>
 The dataset(s) are intended for model-training regimens, which are protracted and costly by nature.
 As such, optimal approaches for managing the potentially complicated process of generating, collecting, curating and 
-updating datasets deserve attention and considered thought. This could be referred to as 'good dataset practice'. 
+updating datasets deserve attention and considered thought. This could be referred to as 'good data practice'. 
 This led me to two aspects that I describe as 'data-as-code' and 'dataset versioning'.<br><br>
 
 - <details><summary>'Data-as-code' mindset:</summary><br>
