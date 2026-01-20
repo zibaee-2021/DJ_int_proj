@@ -1016,7 +1016,7 @@ structure prediction, such as AlphaFold, which is heavily dependent on multiple 
 The dataset(s) are intended for model-training regimens, which are protracted and costly by nature.
 As such, optimal approaches for managing the potentially complicated process of generating, collecting, curating and 
 updating datasets deserve attention and considered thought. This could be referred to as 'good dataset practice'. 
-This led me to two aspects that I describe as 'data-as-code' and 'dataset versioning'.<br>
+This led me to two aspects that I describe as 'data-as-code' and 'dataset versioning'.<br><br>
 
 - <details><summary>'Data-as-code' mindset:</summary><br>
   A straightforward manual download of data, which is then stored, passed around and re-used is common practice. 
@@ -1027,7 +1027,7 @@ This led me to two aspects that I describe as 'data-as-code' and 'dataset versio
   my opinion, be considered a *part* of the dataset. To be clear, it is not to draw a distinction between programmatic, 
   rather than manual, data downloads. (And indeed, using a programmatic download, via a generic API call that simply 
   retrieves the latest copy of some dataset would require annotation with the version number if no metadata is 
-  automatically included with the download.)<br>
+  automatically included with the download.)
   
 - <details><summary>Dataset versioning:</summary><br>    
   The use of dataset versioning is already commonplace. For example in bioinformatics, data sources like the PDB, RefSeq, 
