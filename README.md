@@ -972,7 +972,8 @@ structure prediction, such as AlphaFold, which is heavily dependent on multiple 
   - GDT:
     - Processing and evaluation of predictions in CASP4. A. Zemla et al. Proteins 2001. Suppl. 5: 13-21.
 
-  - Distance matrix:
+  - <details><summary>Distance matrix:</summary>
+    
     - DC. Phillips (1970). In British Biochemistry, Past and Present (Goodwin, T. W., ed.), pp. 11-28.
     - A Novel Approach to Calculation of Conformation: Distance Geometry. GM. Crippen. J. Comp. Phys. 1977. 24: 96-107.
     - Effects of Distance Constraints on Macromolecular Conformation. TF. Havel et al. Biopolymers 1979. 18:73-81.
@@ -980,15 +981,15 @@ structure prediction, such as AlphaFold, which is heavily dependent on multiple 
     - Difference distance matrix:
       - Rigid Domains in Proteins: An Algorithmic Approach to Their Identification. WL. Nichols et al. Proteins 1995. 23: 38-48.
 
-  - Essential Dynamics:
+  - <details><summary>Essential Dynamics:</summary>s
 
-  - Karplus, M.; Jushick, J. N. Macromolecules 1981, 14, 325-332.
-  - Collective Motions in Proteins: A Covariance Analysis of Atomic Fluctuations in Molecular Dynamics and Normal Mode Simulations. Ichiye T. & Karplus. M. Proteins 1991. 11: 205-217.
-  - Essential Dynamics of Proteins. Amadei A. et al. Proteins 1993. 17: 412-425.
-  - PCA of native ensembles of biomolecular structures (PCA_NEST): insights into functional dynamics. Yang et al. Bioinformatics 2009. 25(5): 606–614.
-  - Principal Component Analysis: A Method for Determining the Essential Dynamics of Proteins. David C.C. & Jacobs D.J. Methods Mol. Biol. 2014. 1084: 193–226.
+    - Karplus, M.; Jushick, J. N. Macromolecules 1981, 14, 325-332.
+    - Collective Motions in Proteins: A Covariance Analysis of Atomic Fluctuations in Molecular Dynamics and Normal Mode Simulations. Ichiye T. & Karplus. M. Proteins 1991. 11: 205-217.
+    - Essential Dynamics of Proteins. Amadei A. et al. Proteins 1993. 17: 412-425.
+    - PCA of native ensembles of biomolecular structures (PCA_NEST): insights into functional dynamics. Yang et al. Bioinformatics 2009. 25(5): 606–614.
+    - Principal Component Analysis: A Method for Determining the Essential Dynamics of Proteins. David C.C. & Jacobs D.J. Methods Mol. Biol. 2014. 1084: 193–226.
 
-  - Normal Mode Analysis:
+  - <details><summary>Normal Mode Analysis:</summary>
 
     - Normal Mode Analysis as a Routine Part of a Structural Investigation. JA. Bauer et al. Molecules 2019. 24: 3293-3312.
     - Dynamics of a Small Globular Protein in Terms of Low-Frequency Vibrational-Modes. Go, N. et al. PNAS 1983. 80: 3696–3700.
