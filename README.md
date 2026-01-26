@@ -938,17 +938,17 @@ methodologies supported this notion. This even included by use of X-ray diffract
 A different form of structural change was observed by X-ray crystallography, namely upon the binding of a ligand.
 (Perutz 1968). 
 It has since become well-established that all proteins are intrinsically dynamic and that they exhibit motions spanning 
-many orders of magnitude in time, from molecular bond vibrations on femtosecond timescales 
-(Vos & Martin 1999) to protein-specific tertiary and quaternary conformational motions occurring on 
-microsecond to second timescales (Henzler-Wildman & Kern 2007).
+many orders of magnitude in time, from molecular bond vibrations on femtosecond timescales (Vos & Martin 1999) to 
+protein-specific tertiary and quaternary conformational motions occurring on microsecond to second timescales 
+(Henzler-Wildman & Kern 2007).
 
 As can be seen from the table below, the amplitude of different types of motion correlates with time frame over which 
 they occur, (albeit over a smaller range, at about 4 versus 12 orders of magnitude).   
 
-Larger movements on the scale of 100s of Angstroms have been observed for some proteins such as the surface proteins of 
-enveloped viruses in membrane fusion events (review reference). 
-It is less straightforward to quantify magnitude of motion for fully disordered proteins, as there is no fixed frame of 
-reference. 
+Amongst the largest motions include those of viral fusion proteins reaching over 100 Ångströms, though these might be 
+considered a different class of motion all together, involving global topological rearrangements, rather than small 
+scale domain motions about flexible hinge regions. Finally, the motions of fully disordered proteins can be of large 
+scale but is less straightforward to quantify, with no fixed frame of reference. 
 
 | Motion          | What changes                     | Typical size              | Typical timescale                   |
 | --------------- | -------------------------------- |---------------------------|-------------------------------------|
@@ -983,72 +983,71 @@ a prelimiary multiple sequence alignment. albeit with the use of attention mecha
 
 - <details><summary>Protein dynamics:</summary>
 
-  - Protein structure and enzymatic activity. K.U. Linderstrøm-Lang & J.A. Schellman.  Enzymes (1959), 1:443. (Book)
-  - Frauenfelder, H., Petsko, G. & Tsernoglou, D. Temperature-dependent X-ray diffraction as a probe of protein structural dynamics. Nature 280, 558–563 (1979).
-  - Three-dimensional Fourier synthesis of horse oxyhaemoglobin at 2.8 Å resolution: The Atomic Model. M. Perutz, H. Muirhead, J. Cox. et al. Nature 1968, 219:131–139.
-  - Femtosecond processes in proteins. M.H. Vos & J.L. Martin. Biochim Biophys Acta (1999), 21;1411(1):1-20.
-  - Dynamic personalities of proteins. K. Henzler-Wildman & D. Kern. Nature (2007), 450:964–972.
+  - KU. Linderstrøm-Lang & JA. Schellman. Enzymes (1959) 1:443. Protein structure and enzymatic activity.
+  - H. Frauenfelder, G. Petsko & D. Tsernoglou. Nature (1979) 280, 558–563. Temperature-dependent X-ray diffraction as a probe of protein structural dynamics. 
+  - M. Perutz, H. Muirhead, J. Cox. et al. Nature (1968) 219:131–139. Three-dimensional Fourier synthesis of horse oxyhaemoglobin at 2.8 Å resolution: The Atomic Model. 
+  - MH. Vos & J.L. Martin. Biochim. Biophys. Acta (1999), 21;1411(1):1-20. Femtosecond processes in proteins. 
+  - K. Henzler-Wildman & D. Kern. Nature (2007), 450:964–972. Dynamic personalities of proteins. 
 - 
-  - Proteins: Structures and Molecular Properties. T.E. Creighton, 2nd ed., W.H. Freeman, 1993.
-  - Infrared and Raman Spectra of Polyatomic Molecules. G. Herzberg, Van Nostrand, New York, 1945.
-  - 
-  - Conformational substates in proteins. H. Frauenfelder, F. Parak & R.D. Young, Ann. Rev. of Biophys. & Biophysical Chem. 1988, 17:451–479.
-  - 
-  - Dynamical transition of myoglobin revealed by inelastic neutron scattering. W. Doster, S. Cusack & W. Petry. Nature 1989, 337: 754–756.
-  - Mechanisms of Virus Membrane Fusion Proteins. M. Kielian. Ann. Rev. of Virology 2014, 1:171-189.
+  - TE. Creighton, 2nd ed., WH. Freeman (1993). Proteins: Structures and Molecular Properties. 
+  - G. Herzberg, Van Nostrand, New York (1945). Infrared and Raman Spectra of Polyatomic Molecules. 
+  -
+  - H. Frauenfelder, F. Parak & RD. Young. Ann. Rev. of Biophys. & Biophysical Chem. (1988) 17:451–479. Conformational substates in proteins.
+  - W. Doster, S. Cusack & W. Petry. Nature (1989) 337: 754–756. Dynamical transition of myoglobin revealed by inelastic neutron scattering. 
+  - S. Harrison. Nat Struct Mol Biol (2008) 15, 690–698. Viral membrane fusion. 
 
 - <details><summary>Generative (Diffusion) Models and protein structural ensembles:</summary>
 
-  - Structure prediction of alternative protein conformations. Bryant & Noé. Nature Comm. 2024. 15: 7328.
-  - Scalable emulation of protein equilibrium ensembles with generative deep learning. S. Lewis et al. 
-  - Learning Biophysical Dynamics with Protein Language Models. C. Hou et al. 
+  - Bryant & Noé. Nature Comm. (2024) 15: 7328. Structure prediction of alternative protein conformations. 
+  - S. Lewis et al. ..... TODO ... Scalable emulation of protein equilibrium ensembles with generative deep learning.  
+  - C. Hou et al. .... TODO... Learning Biophysical Dynamics with Protein Language Models.  
 
 - <details><summary>Identifying and/or quantifying structural variations:</summary>
 
   - RMSD: 
-    - A solution for the best rotation to relate two sets of vectors. W. Kabsch. Acta Cryst. A. 1976. 32: 922-923.
+    - W. Kabsch. Acta Cryst. A. (1976) 32: 922-923. A solution for the best rotation to relate two sets of vectors. 
   - TM-score:
-    - Scoring function for automated assessment of protein structure template quality. Y. Zhang & J. Skolnick. Proteins 2004. 57 (4): 702–710.
+    - Y. Zhang & J. Skolnick. Proteins (2004) 57 (4): 702–710. Scoring function for automated assessment of protein structure template quality. 
   - GDT:
-    - Processing and evaluation of predictions in CASP4. A. Zemla et al. Proteins 2001. Suppl. 5: 13-21.
+    - A. Zemla et al. Proteins (2001) Suppl. 5: 13-21. Processing and evaluation of predictions in CASP4. 
 
   - <details><summary>Distance matrix:</summary>
     
-    - DC. Phillips (1970). In British Biochemistry, Past and Present (Goodwin, T. W., ed.), pp. 11-28.
-    - A Novel Approach to Calculation of Conformation: Distance Geometry. GM. Crippen. J. Comp. Phys. 1977. 24: 96-107.
-    - Effects of Distance Constraints on Macromolecular Conformation. TF. Havel et al. Biopolymers 1979. 18:73-81.
-    - Assessment of template based protein structure predictions in CASP9. V. Mariani. Proteins 2011. 79 (Suppl 10):37–58.
+    - DC. Phillips (1970). In British Biochemistry, Past and Present (Goodwin, TW., ed.), pp. 11-28.
+    - GM. Crippen. J. Comp. Phys. (1977) 24: 96-107. A Novel Approach to Calculation of Conformation: Distance Geometry. 
+    - TF. Havel et al. Biopolymers (1979) 18:73-81. Effects of Distance Constraints on Macromolecular Conformation. 
+    - V. Mariani. Proteins (2011) 79 (Suppl 10):37–58. Assessment of template based protein structure predictions in CASP9. 
     - Difference distance matrix:
-      - Rigid Domains in Proteins: An Algorithmic Approach to Their Identification. WL. Nichols et al. Proteins 1995. 23: 38-48.
+    - WL. Nichols et al. Proteins (1995) 23: 38-48. Rigid Domains in Proteins: An Algorithmic Approach to Their Identification. 
 
   - <details><summary>Essential Dynamics:</summary>s
 
-    - Karplus, M.; Jushick, J. N. Macromolecules 1981, 14, 325-332.
-    - Collective Motions in Proteins: A Covariance Analysis of Atomic Fluctuations in Molecular Dynamics and Normal Mode Simulations. Ichiye T. & Karplus. M. Proteins 1991. 11: 205-217.
-    - Essential Dynamics of Proteins. Amadei A. et al. Proteins 1993. 17: 412-425.
-    - PCA of native ensembles of biomolecular structures (PCA_NEST): insights into functional dynamics. Yang et al. Bioinformatics 2009. 25(5): 606–614.
-    - Principal Component Analysis: A Method for Determining the Essential Dynamics of Proteins. David C.C. & Jacobs D.J. Methods Mol. Biol. 2014. 1084: 193–226.
+    - M. Karplus & JN. Jushick. Macromolecules (1981) 14, 325-332.
+    - T. Ichiye & M. Karplus. Proteins (1991) 11: 205-217. Collective Motions in Proteins: A Covariance Analysis of Atomic Fluctuations in Molecular Dynamics and Normal Mode Simulations. 
+    - A. Amadei et al. Proteins (1993) 17: 412-425. Essential Dynamics of Proteins. 
+    - Yang et al. Bioinformatics (2009) 25(5): 606–614. PCA of native ensembles of biomolecular structures (PCA_NEST): insights into functional dynamics. 
+    - CC. David & DJ. Jacobs. Methods Mol. Biol. (2014) 1084: 193–226. Principal Component Analysis: A Method for Determining the Essential Dynamics of Proteins. 
 
   - <details><summary>Normal Mode Analysis:</summary>
 
-    - Normal Mode Analysis as a Routine Part of a Structural Investigation. JA. Bauer et al. Molecules 2019. 24: 3293-3312.
-    - Dynamics of a Small Globular Protein in Terms of Low-Frequency Vibrational-Modes. Go, N. et al. PNAS 1983. 80: 3696–3700.
-    - The normal modes of a protein: Native bovine pancreatic trypsin inhibitor. Levitt, M. et al. Int. J. Quant. Chem. 1983. 24: 181–199. 
-    - Harmonic dynamics of proteins: Normal modes and fluctuations in bovine pancreatic trypsin inhibitor. Brooks, B. & Karplus, M. PNAS 1983. 80: 6571–6575. 
+    - JA. Bauer et al. Molecules (2019) 24: 3293-3312. Normal Mode Analysis as a Routine Part of a Structural Investigation. 
+    - N. Go et al. PNAS (1983) 80: 3696–3700. Dynamics of a Small Globular Protein in Terms of Low-Frequency Vibrational-Modes.
+    - M. Levitt et al. Int. J. Quant. Chem. (1983) 24: 181–199. The normal modes of a protein: Native bovine pancreatic trypsin inhibitor.  
+    - B. Brooks & M. Karplus. PNAS (1983) 80: 6571–6575. Harmonic dynamics of proteins: Normal modes and fluctuations in bovine pancreatic trypsin inhibitor.  
 
 - Recent work on protein mobility and its computation:
-  - EnsembleFlex: Protein structure ensemble analysis made easy. M. Schneider et al. Structure 2025. 33: 1781–1792.
+  - M. Schneider et al. Structure (2025) 33: 1781–1792. EnsembleFlex: Protein structure ensemble analysis made easy. 
 ---
 - <details><summary>Datasets:</summary>
 
-  - A comprehensive and non-redundant database of protein domain movements. Bioinformatics 2005. G. Qi, et al. 21(12): 2832-2838.
+  - G. Qi, et al. Bioinformatics (2005) 21(12): 2832-2838. A comprehensive and non-redundant database of protein domain movements. 
     (https://dyndom.cmp.uea.ac.uk/dyndom/main.jsp)
 ---
 - <details><summary>Tools:</summary>
 
-- Fast and accurate protein structure search with Foldseek. Nat Biotechnol 2024. M. van Kempen, et al. 42, 243–246.
-- §
-- LoL-align: sensitive and fast probabilistic protein structure alignment. bioRxiv 2025.11.24.690091. L. Reifenrath, et al. 
+- M. van Kempen, et al. Nat. Biotechnol. (2024) 42, 243–246. Fast and accurate protein structure search with Foldseek. 
+- 
+- L. Reifenrath, et al. bioRxiv 2025.11.24.690091. LoL-align: sensitive and fast probabilistic protein structure alignment.   
 
 </details>
 
