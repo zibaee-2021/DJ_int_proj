@@ -6,6 +6,9 @@
 
 - Performed, part-time, over a period of 3 months from mid-July to mid-Sept 2025.
 
+- Some inspiration for the project can be attributed to Bryant & Noé 2024 (ref X) and Lewis et al. 2025 (ref X). 
+  - TODO
+
 </details>
 
 <details><summary><strong>Immediate goal:</strong></summary>
@@ -15,6 +18,8 @@
 
 - The main activity included exploratory data analysis of all NMR structures available in the RCSB, as well as Python 
   implementations of different methods for characterising protein dynamics.
+
+
 
 </details>
 
@@ -507,7 +512,7 @@
     graph clustering.)  
     
     For each mode, `essential_dynamics_pca()` then calculates root-mean-squared deviation (RMSD) amplitudes for each residue, 
-    in angstroms. It's important to note that while it's technically correct to refer to this as a 'RMSD', it's not the 
+    in Ångströms. It's important to note that while it's technically correct to refer to this as a 'RMSD', it's not the 
     same RMSD metric used widely in modern structural biology. While it is mathematically still a root-mean squared 
     displacement calculation, it is the RMSD *amplitude per residue for a given mode*. This is more akin to the older 
     (PCA/ED 1990s) application of calculating the RMSD for a single structure compared to a mean of several structures, as 
@@ -702,7 +707,7 @@
     modes. They are modelled as small harmonic oscillations around an equilibrium structure. 
     A less computationally-demanding but very effective version of this is called the Elastic/Gaussian Network Model (REF X). 
     This model treats the protein instead as a harmonic oscillator, a graph where edges are springs connecting alpha-carbon 
-    atoms within a cutoff distance, e.g. 10 Angstrom.  
+    atoms within a cutoff distance, e.g. 10 Ångströms.  
     Like calculating the essential dynamics, it outputs the protein's modes and their amplitudes.   
     
     Here, the Python implementation of NMA is done with an ENM potential of the GNM type.
@@ -923,39 +928,72 @@
 
 <details><summary><strong>Discussion:</strong></summary><br>
 
-All proteins are mobile, from molecular vibrations on femtosecond timescales, to protein-specific tertiary and 
-quarternary motions that span a range of timescales from microseconds to seconds. 
-From early on in the field of structural biology, haemoglobin was observed to undergo a structural change upon binding 
-oxygen. 
-"... a protein cannot be said to have "a" secondary structure but exists mainly as a group of structures not too 
-different from one another in free energy, but frequently differing considerably in energy and entropy. In fact the 
-molecule must be conceived as trying out every possible structure ..." 
-K.U. Linderstrømn-Lang & J.A. Schellman, Enzymes 1959, 1:443
+  - <details><summary>Protein dynamics</summary><br>
 
-Multi-Angstrom movements are observed for whole domains about hinge regions, (example and reference).
-Surface proteins of enveloped viruses in membrane fusion events (review reference). 
+A decade before X-ray diffraction of protein crystals revealed the Cartesian coordinates of a protein at atomic 
+resolution, hydrogen-deuterium exchange experiments led to the proposal that proteins might exist at thermodynamic 
+ensembles, with continuous interconversion between conformational states, and that any experimentally-observed structure 
+might represent an average of those structures (Linderstrømn-Lang & Schellman 1959). In subsequent decades a number of 
+methodologies supported this notion. This even included by use of X-ray diffraction studies (Frauenfelder et al 1979).
+A different form of structural change was observed by X-ray crystallography, namely upon the binding of a ligand.
+(Perutz 1968). 
+It has since become well-established that all proteins are intrinsically dynamic and that they exhibit motions spanning 
+many orders of magnitude in time, from molecular bond vibrations on femtosecond timescales 
+(Vos & Martin 1999) to protein-specific tertiary and quaternary conformational motions occurring on 
+microsecond to second timescales (Henzler-Wildman & Kern 2007).
+
+As can be seen from the table below, the amplitude of different types of motion correlates with time frame over which 
+they occur, (albeit over a smaller range, at about 4 versus 12 orders of magnitude).   
+
+Larger movements on the scale of 100s of Angstroms have been observed for some proteins such as the surface proteins of 
+enveloped viruses in membrane fusion events (review reference). 
+It is less straightforward to quantify magnitude of motion for fully disordered proteins, as there is no fixed frame of 
+reference. 
+
+| Motion          | What changes                     | Typical size              | Typical timescale                   |
+| --------------- | -------------------------------- |---------------------------|-------------------------------------|
+| Bond stretching | Bond length                      | **0.005–0.01 Å**          | **10–100 fs** (10^{-14}–10^{-13} s) |
+| Libration       | Bond / group orientation         | **0.01–0.05 Å (projected)** | **0.1–10 ps** (10^{-13}–10^{-11} s) |
+| Rotamer jump    | Rotameric state (χ angles)       | **0.5–1 Å**               | **10 ps – 10 ns**                   |
+| Loop motion     | Backbone conformation / position | **1–10+ Å**               | **ns – ms (or slower)**             |
+
+  - <details><summary>Diffusion models</summary><br>
 
 
+  - <details><summary>Diffusion models</summary><br>
 
-I find no mention of 'essential dynamics', normal mode analysis or difference distance matrices in either 
+
+I find no mention of 'essential dynamics', 'normal mode analysis' or 'difference distance matrices' in either 
 Bryant & Noé 2024 (ref X) or Lewis et al. 2025 (ref X).
-However, I am re-assured that use of these old methods is not flawed, as examples of their use is just now starting to 
-re-appear in the literature and, in particular, in conjunction with deep learning (at least for pLMs (ref x))).
-Some recent publications that incorporate several of the computations include: (refs xx) 
+However, the use of these old methods might indeed start to feature again in the study of protein dynamics, even with
+the advent of deep neural networks. One reason for this supposition is that some have just started to re-appear in the 
+literature and, in particular, in conjunction with deep learning (at least for pLMs (ref x))). 
 
-(Does this challenge the notion that any form of end-to-end deep learning should completely exclude anything
+More broadly, it goes against the notion that any form of end-to-end deep learning should completely exclude anything
 resembling 'manual' feature engineering, i.e. that all representation learning should be done entirely 'from scratch' 
-(which can include use of pre-trained models which were trained without manual feature engineering)?
-I would guess it's probably not a good idea to force any restrictions on design in the preliminary exploratory stages 
-of a proof-of-concept project. Furthermore, such a rule is already not adhered to in deep learning pipelines of protein 
-structure prediction, such as AlphaFold, which is heavily dependent on multiple sequence alignments.)
+(which can include use of pre-trained models which themselves were trained without manual feature engineering).
+There is no compelling reason to restrict the training and prediction pipeline, particularly in the preliminary 
+exploratory stages of a proof-of-concept project. Furthermore, such a rule is already not adhered to in well-established
+and accurate deep learning pipelines of protein structure prediction, such as AlphaFold, which is heavily dependent on 
+a prelimiary multiple sequence alignment. albeit with the use of attention mechanisms.
+
 
 </details>
 <details><summary><strong>References:</strong></summary><br>
 
 - <details><summary>Protein dynamics:</summary>
 
+  - Protein structure and enzymatic activity. K.U. Linderstrøm-Lang & J.A. Schellman.  Enzymes (1959), 1:443. (Book)
+  - Frauenfelder, H., Petsko, G. & Tsernoglou, D. Temperature-dependent X-ray diffraction as a probe of protein structural dynamics. Nature 280, 558–563 (1979).
+  - Three-dimensional Fourier synthesis of horse oxyhaemoglobin at 2.8 Å resolution: The Atomic Model. M. Perutz, H. Muirhead, J. Cox. et al. Nature 1968, 219:131–139.
+  - Femtosecond processes in proteins. M.H. Vos & J.L. Martin. Biochim Biophys Acta (1999), 21;1411(1):1-20.
+  - Dynamic personalities of proteins. K. Henzler-Wildman & D. Kern. Nature (2007), 450:964–972.
+- 
+  - Proteins: Structures and Molecular Properties. T.E. Creighton, 2nd ed., W.H. Freeman, 1993.
+  - Infrared and Raman Spectra of Polyatomic Molecules. G. Herzberg, Van Nostrand, New York, 1945.
+  - 
   - Conformational substates in proteins. H. Frauenfelder, F. Parak & R.D. Young, Ann. Rev. of Biophys. & Biophysical Chem. 1988, 17:451–479.
+  - 
   - Dynamical transition of myoglobin revealed by inelastic neutron scattering. W. Doster, S. Cusack & W. Petry. Nature 1989, 337: 754–756.
   - Mechanisms of Virus Membrane Fusion Proteins. M. Kielian. Ann. Rev. of Virology 2014, 1:171-189.
 
