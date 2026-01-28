@@ -271,7 +271,8 @@
     variants, pass an RMSD matrix to `dendrogram()`. This uses `scipy.cluster.hierarchy.linkage` function to build a 
     hierarchical clustering tree (a linkage/dendrogram) from the distances. The linkage matrix it generates is then 
     visualised via`scipy.cluster.hierarchy.dendrogram` function.
-    (.........Show example screenshot of dendrogram here........)
+    ![Dendrogram of RMSD matrix for the 24 models of chain A of PDB 1A0N](readme_images/dndrgrm_RMSD.png)
+
     
     The same linkage matrix can be re-used for a different view (via `seaborn.clustermap()`).
     (.........Show example screenshot of corresponding heatmap here........)
