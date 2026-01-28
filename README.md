@@ -270,13 +270,13 @@
     For clustering and visualisation of RMSDs that provide a route to identifying and selecting ensembles of conformational 
     variants, pass an RMSD matrix to `dendrogram()`. This uses `scipy.cluster.hierarchy.linkage` function to build a 
     hierarchical clustering tree (a linkage/dendrogram) from the distances. The linkage matrix it generates is then 
-    visualised via`scipy.cluster.hierarchy.dendrogram` function, for example:<br><br>
+    visualised via`scipy.cluster.hierarchy.dendrogram` function. For example:<br><br>
     ![Dendrogram of hierarchical clustering of RMSD matrix for the 25 models of chain A of PDB 1A0N](readme_images/RMSDdndrgrm_1A0N_A.png)
 
-    The same linkage matrix can be re-used for a different view (via `seaborn.clustermap()`), for example:<br><br>
+    The same linkage matrix can be re-used for a different visualisation, using `seaborn.clustermap()`. For example:<br><br>
     ![Heatmap of hierarchical clustering of RMSD matrix for the 25 models of chain A of PDB 1A0N](readme_images/RMSDheatmp_1A0N_A.png) ... replace..TODO
     
-    For a direct visualisation of the RMSD matrix without any clustering or pre-processing, use `contour_map()`, for example:<br><br>
+    For a direct visualisation of the RMSD matrix without any clustering or pre-processing, using `contour_map()`. For example:<br><br>
     ![RMSD matrix for the 25 models of chain A of PDB 1A0N](readme_images/RMSDcntrmap_1A0N_A.png)
 
 
