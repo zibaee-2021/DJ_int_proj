@@ -418,8 +418,9 @@
   - <details><summary><strong>Essential dynamics (ED):</strong></summary><br>
   
     Information related to the collective motions in proteins can be extracted by principal component anaIysis (PCA) of the 
-    Cartesian coordinates, given a number of models. This was introduced in 1981 
-    
+    covariance matrices of Cartesian coordinates, given a sufficient number of models (such as from an MD trajectory or NMR data).
+    (Karplus & Kushick 1981, Hawyard et al 1993, Amadei et al 1993).
+
     The goal is to find orthogonal directions (aka 'modes') that maximise variance of the data. Compelling evidence for the 
     application of PCA in identifying dynamic regions within proteins has long since been presented, both in terms of its 
     correspondence with published NMR as well as X-ray structures of proteins crystallised in different conformations. 
@@ -441,8 +442,8 @@
         - kernel PCA, which 
     
     The main function in this script is `essential_dynamics_pca()`. It begins by aligning the Cartesian coordinates of 
-    atleast 2, but ideally many more ($\geq 10-20$), models of a protein (in `align_all_to_ref()` using SVD, in the same 
-    way as for RMSD).
+    atleast 2 models, but ideally many more ($\geq$ 10-20 models), of a protein (via `align_all_to_ref()` which uses 
+    SVD in the same way as used for calculating RMSDs).
     This is followed by a covariance computation and eigenvalue decomposition (in `pca_evd()`). Prior to the covariance 
     computation, the data matrix is row-centered and, optionally, normalised (in `build_data_matrix()`) which would convert 
     it into a correlation matrix once the covariance computation has been performed on it. Thus, there is a choice between 
@@ -457,7 +458,7 @@
     
     $$\mathbf{C} = \frac{1}{M - 1} (\mathbf{X} - \bar{\mathbf{X}})^{\mathsf{T}} (\mathbf{X} - \bar{\mathbf{X}})$$<br>
            where $\mathbf{C}$ is the covariance matrix
-    and $\bar{\mathbf{X}} = \begin{bmatrix} \bar{x}_1 & \bar{x}_2 & \cdots & \bar{x}_p \end{bmatrix}$
+    and $$\bar{\mathbf{X}} = \begin{bmatrix} \bar{x}_1 & \bar{x}_2 & \cdots & \bar{x}_p \end{bmatrix}$$
   
     where $\mathbf{C}$ is the covariance matrix
     $$\bar{\mathbf{X}} = \begin{bmatrix} \bar{x}_1 & \bar{x}_2 & \cdots & \bar{x}_p \end{bmatrix}$$
@@ -1024,6 +1025,7 @@ a prelimiary multiple sequence alignment. albeit with the use of attention mecha
     - M. Karplus & JN. Jushick. Macromolecules (1981) 14, 325-332.
     - T. Ichiye & M. Karplus. Proteins (1991) 11: 205-217. Collective Motions in Proteins: A Covariance Analysis of Atomic Fluctuations in Molecular Dynamics and Normal Mode Simulations. 
     - A. Amadei et al. Proteins (1993) 17: 412-425. Essential Dynamics of Proteins. 
+    - S. Hayward et al. Mol. Biol. (1993) 234, 1207-1217. Effect of Solvent on Collective Motions in Globular Protein
     - Yang et al. Bioinformatics (2009) 25(5): 606–614. PCA of native ensembles of biomolecular structures (PCA_NEST): insights into functional dynamics. 
     - CC. David & DJ. Jacobs. Methods Mol. Biol. (2014) 1084: 193–226. Principal Component Analysis: A Method for Determining the Essential Dynamics of Proteins. 
 
