@@ -254,7 +254,6 @@
     The units of the calculated RMSD value are the same as the units of the input coordinates, i.e. Ångströms.<br>
     
     ```
-    (Note: Some of the wording is from CGT4o)
     0 Å = Exactly identical. The exact same structure.
     < 1 Å = Essentially identical, only minor coordinate fluctuations.
     1-2 Å = Very similar, typically same fold, possibly different side-chain conformations.
@@ -304,7 +303,7 @@
     length.
   
     ```
-    (CGT4o) TM-score and interpretation:
+    TM-score and interpretation:
     1.0 = Perfect structural match (identical structures);
     0.8 = Often considered nearly identical structures (small conformational shifts only);
     0.5 = Typically indicates same fold;
