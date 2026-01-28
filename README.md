@@ -6,7 +6,7 @@
 
 - Performed, part-time, over a period of 3 months from mid-July to mid-Sept 2025.
 
-- Some inspiration for the project can be attributed to Bryant & Noé 2024 (ref X) and Lewis et al. 2025 (ref X). 
+- Inspiration for the project can be attributed to Bryant & Noé 2024 and Lewis et al. 2025. 
   - TODO
 
 </details>
@@ -960,11 +960,10 @@ scale but is less straightforward to quantify, with no fixed frame of reference.
   - <details><summary>Diffusion models</summary><br>
 
 
-  - <details><summary>Diffusion models</summary><br>
+  - <details><summary>Protein dynamics and deep learning</summary><br>
 
-
-I find no mention of 'essential dynamics', 'normal mode analysis' or 'difference distance matrices' in either 
-Bryant & Noé 2024 (ref X) or Lewis et al. 2025 (ref X).
+Focusing on the methods implemented here, I've not found mentions of 'essential dynamics', 'normal mode analysis' or 
+'difference distance matrices' in either of the publications that serve as Bryant & Noé 2024 or Lewis et al. 2025.
 However, the use of these old methods might indeed start to feature again in the study of protein dynamics, even with
 the advent of deep neural networks. One reason for this supposition is that some have just started to re-appear in the 
 literature and, in particular, in conjunction with deep learning (at least for pLMs (ref x))). 
