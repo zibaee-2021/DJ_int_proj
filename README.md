@@ -460,6 +460,7 @@
            where $\mathbf{C}$ is the covariance matrix and $\bar{\mathbf{X}} = (\bar{x}_1,\; \bar{x}_2,\; \cdots,\; \bar{x}_p)$
   
 
+and $$\bar{\mathbf{X}} = \begin{bmatrix} \bar{x}_1 & \bar{x}_2 & \cdots & \bar{x}_p \end{bmatrix}$$
 
     where $\mathbf{C}$ is the covariance matrix
     $$\bar{\mathbf{X}} = \begin{bmatrix} \bar{x}_1 & \bar{x}_2 & \cdots & \bar{x}_p \end{bmatrix}$$
