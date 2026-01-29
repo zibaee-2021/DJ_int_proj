@@ -519,9 +519,9 @@
     graph clustering.)  
     
     For each mode, `essential_dynamics_pca()` then calculates root-mean-squared deviation (RMSD) amplitudes for each residue, 
-    in Ångströms. It's important to note that while it's technically correct to refer to this as a 'RMSD', it's not the 
-    same RMSD metric used widely in modern structural biology. While it is mathematically still a root-mean squared 
-    displacement calculation, it is the RMSD *amplitude per residue for a given mode*. This is more akin to the older 
+    in Ångströms. It's important to note that while it's technically correct to refer to this as the 'RMSD', it's not exactly the 
+    same RMSD metric widely used in modern structural biology. Mathematically, it is still a root-mean squared 
+    displacement calculation, however it is the RMSD *amplitude per residue for a given mode*. This is more akin to the older 
     (PCA/ED 1990s) application of calculating the RMSD for a single structure compared to a mean of several structures, as 
     opposed to a pairwise comparison of two sets of coordinates, used for measuring the difference between two models or 
     trajectories of a protein. 
