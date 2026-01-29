@@ -77,7 +77,7 @@
 
 </details>
 
-<details><summary><strong>Data files and Python scripts (bulk of detailed description in `src/` subdir):</strong></summary><br>
+<details><summary><strong>Data files and Python scripts $\leftarrow$ bulk of detail in `src/` subdir)</strong></summary><br>
 
 - <details><summary><strong>data/</strong></summary>
 
