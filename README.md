@@ -456,8 +456,9 @@
     script would be able to focus, approximately, on these two different types of protein dynamics. The default setting 
     though is to use the 'raw' covariance matrix, rather than the correlation matrix.<br> 
     <p align="center">
-    $\mathbf{C} = \frac{1}{M - 1} (\textbf{X} - \bar{\mathbf{X}})^{\mathsf{T}} (\mathbf{X} - \bar{\mathbf{X}})$<br>
+    $\text{C}\textbf{C}\text{\textbf{C}} = \frac{1}{M - 1} (\textbf{X} - \bar{\mathbf{X}})^{\mathsf{T}} (\mathbf{X} - \bar{\mathbf{X}})$<br>
     </p>
+    
     where $\mathbf{C}$ is the covariance matrix,<br>
     $M$ is the number of NMR models (or frames in MD trajectory),<br>
     $\bar{\mathbf{X}} = (\bar{x}_1 ,\; \bar{x}_2, \; \cdots, \; \bar{x}_p)$,<br> 
