@@ -245,9 +245,9 @@
     A lower RMSD indicates a higher degree of structural similarity between two protein structures.
     `calculate_rmsd()` uses Biopython's `SVDSuperimposer()`, which uses optimal least-squares superposition, giving 
     the Euclidean RMSD between matched atom pairs. This is sometimes referred to as the 'Kabsch algorithm'.
-
-    $$\mathrm{RMSD} = \sqrt{\frac{1}{n}\sum\limits_{i=1}^{n} d_i^{2}}$$
-
+    <p align="center">
+    $\mathrm{RMSD} = \sqrt{\frac{1}{n}\sum\limits_{i=1}^{n} d_i^{2}}$
+    </p>
     where the averaging is performed over the $n$ pairs of equivalent atoms and $d_i$ is the distance between the two atoms 
     in the $i$-th pair.
     
@@ -294,12 +294,14 @@
   - <details><summary><strong>Template modeling score (TM-score):</strong></summary><br>
   
     TM-score uses nonlinear weighting of atomic distances:<br><br>
-    $$\text{TM-score} = \max \left[ 
+    <p align="center">
+    $\text{TM-score} = \max \left[ 
     \frac{1}{L_{target}} 
     \sum\limits_{i=1}^{L_{aligned}} 
     \frac{1}{1 + \left( \frac{D_i}{D_0(L_{target})} \right)^2}
-    \right]$$<br>
-    <br>where $d_i$ is distance between aligned residues $i$ and $d_0$ is a normalisation factor that depends on the chain 
+    \right]$
+    </p>
+    where $d_i$ is distance between aligned residues $i$ and $d_0$ is a normalisation factor that depends on the chain 
     length.
   
     ```
@@ -382,9 +384,9 @@
     The silhouette score calculates how well the graph-defined clusters (i.e. output of the spectral clustering step) are 
     actually separated in feature space. In `compute_ddms()`, the silhouette scores using 2, 3 or 4 clusters are calculated
     and compared, in order to find which one produces the best clustering.<br><br>
-  
-    $$s_i = \frac{b_i - a_i}{\max(a_i, b_i)},$$<br>
-  
+    <p align="center">
+    $s_i = \frac{b_i - a_i}{\max(a_i, b_i)},$
+    </p>
     where $a_i$ is the average distance to points in the same cluster, and $b_i$ is the smallest average distance to 
     points in the nearest other cluster.
     
@@ -456,30 +458,28 @@
     script would be able to focus, approximately, on these two different types of protein dynamics. The default setting 
     though is to use the 'raw' covariance matrix, rather than the correlation matrix.<br> 
     <p align="center">
-    $\textbf{C} = \frac{1}{M - 1} (\textbf{X} - \bar{\textbf{X}})^{\Top}} (\textbf{X} - \bar{\textbf{X}})$<br>
+    $\textbf{C} = \frac{1}{M - 1} (\textbf{X} - \bar{\textbf{X}})^{\top} (\textbf{X} - \bar{\textbf{X}})$<br>
     </p>
     
     where $\textbf{C}$ is the covariance matrix,<br>
     $M$ is the number of NMR models (or frames in MD trajectory),<br>
     $\bar{\textbf{X}} = (\bar{x}_1 ,\; \bar{x}_2, \; \cdots, \; \bar{x}_p)$,<br> 
-    $\bar{x}_i = \frac{1}{M}\sum\limits_{k=1}^{M} x_i^{(k)}$ which is the mean of the Cartesian coordinate for atom $i$ across $k$ NMR models (or frames in MD trajectory).
-    So $\textbf{X} - \bar{\textbf{X}}$ converts locations to fluctuations, and covariance of this encodes how atoms move together in space. 
-
-
-    where $\mathbf{C}$ is the covariance matrix
-    $$\bar{\mathbf{X}} = \begin{bmatrix} \bar{x}_1 & \bar{x}_2 & \cdots & \bar{x}_p \end{bmatrix}$$
+    $\bar{x}_i = \frac{1}{M}\sum\limits_{k=1}^{M} x_i^{(k)}$ which is the mean of the Cartesian coordinate for atom $i$ across $k$ NMR models (or frames in MD trajectory).<br>
+    So, $\textbf{X} - \bar{\textbf{X}}$ converts locations to fluctuations, and the covariance of this encodes how atoms move together in space. 
 
     (For the correlation matrix, the normalisation and covariance computation can be done in either order. In the script,
-    the normalisation is done first, followed by the covariance computation. The maths formula below show it done the other 
-    way round. They give the same result because matrix $\mathbf{D}$ being diagonal and positive definite.)
-    $$\mathbf{R} = \mathbf{D}^{-1} \mathbf{C} \, \mathbf{D}^{-1}$$
-    $$\mathbf{D} = \mathrm{diag}(\sigma_1, \sigma_2, \ldots, \sigma_p),
-    \quad \sigma_i = \sqrt{C_{ii}}$$
-    where $\mathbf{R}$ is the correlation matrix, 
-    $\mathbf{D}$ is the scaling matrix,
-    and $\sigma$ is the standard deviation. <br>
+    the normalisation is done first, followed by the covariance computation. In the formula below, it is done the other 
+    way round, but gives the same result because matrix $\textbf{D}$ is diagonal and positive definite.)
+    <p align="center">
+    $\textbf{R} = \textbf{D}^{-1} \textbf{C} \, \textbf{D}^{-1}$
+    $\textbf{D} = \mathrm{diag}(\sigma_1, \sigma_2, \ldots, \sigma_p),
+    \quad \sigma_i = \sqrt{C_{ii}}$
+    </p>
+    where $\textbf{R}$ is the correlation matrix,<br> 
+    $\textbf{D}$ is the scaling matrix,<br>
+    and $\sigma$ is the standard deviation.<br>
     Equivalent, per-element format (as the Python in `build_data_matrix()`): 
-    $$R_{ij} = \frac{C_{ij}}{\sigma_i \, \sigma_j}$$
+    $R_{ij} = \frac{C_{ij}}{\sigma_i \, \sigma_j}$
     
     The eigendecomposition is done (by numpy built-in function) producing the eigenvalue(s), each of which tells you how 
     much an ensemble fluctuates along that mode; and the corresponding eigenvector(s) (of shape 3N, where N is the number of 
@@ -526,11 +526,12 @@
     opposed to a pairwise comparison of two sets of coordinates, used for measuring the difference between two models or 
     trajectories of a protein. 
     
-    $$A_i(r) \;=\; \sqrt{\lambda_i}\,\|\mathbf{v}_{i,r}\|
+    <p align="center">
+    $A_i(r) \;=\; \sqrt{\lambda_i}\,\|\textbf{v}_{i,r}\|
     \;=\;
-    \sqrt{\lambda_i\left( v_{i,r_x}^2 + v_{i,r_y}^2 + v_{i,r_z}^2 \right)}$$
-    
-    Where $\mathbf{v}_i$ is eigenvector $i$ (unitless shape) and $\lambda_i$ is the variance (Å$^2$).<br> 
+    \sqrt{\lambda_i\left( v_{i,r_x}^2 + v_{i,r_y}^2 + v_{i,r_z}^2 \right)}$
+    </p>
+    where $\textbf{v}_i$ is eigenvector $i$ (unitless shape) and $\lambda_i$ is the variance (Å$^2$).<br> 
     Yielding $A_i(r)$, the displacement amplitude (Å) of residue $r$, along eigenvector $i$.
     
     Before returning, `essential_dynamics_pca()` offers the option to perform kernel PCA (kPCA). Unlike applying 
@@ -667,34 +668,38 @@
     It is based on the combination of the potential energy, kinetic energy and equations of motion. 
     The potential energy of the system $V(q)$, (which is reduced to only include the second term of a Taylor series), 
     can be written as:
-    $$V(q)=\tfrac{1}{2}\left(\frac{\partial^{2}V}{\partial q_i\,\partial q_j}\right)^{0}\,\eta_i\,\eta_j
-    = \tfrac{1}{2}\,\eta_i\,V_{ij}\,\eta_j \,,$$
+    <p align="center">
+    $V(q)=\tfrac{1}{2}\left(\frac{\partial^{2}V}{\partial q_i\,\partial q_j}\right)^{0}\,\eta_i\,\eta_j
+    = \tfrac{1}{2}\,\eta_i\,V_{ij}\,\eta_j \,,$
+    </p>
     Where $V_{ij}$ is the Hessian matrix (i.e. second derivatives of the potential with respect to the components of 
     the system). $V_{ij}$ contains information about how the position of one component of the system are tied to changes in 
     others. 
     
     The kinetic energy $T(q)$ can be written as:
-    
-    $$T(q) = \tfrac{1}{2} M \frac{d^{2}\eta_{i}}{dt^{2}},$$
-    
+    <p align="center">
+    $T(q) = \tfrac{1}{2} M \frac{d^{2}\eta_{i}}{dt^{2}},$
+    </p>
     where $M$ is mass of each particle.  
     The entire equation of motion can be written as their equivalence:
-    
-    $$\tfrac{1}{2} M \frac{d^{2}\eta_{i}}{dt^{2}} + \tfrac{1}{2} \eta_{i} V_{ij} \eta_{j} = 0.$$
+    <p align="center">
+    $\tfrac{1}{2} M \frac{d^{2}\eta_{i}}{dt^{2}} + \tfrac{1}{2} \eta_{i} V_{ij} \eta_{j} = 0.$
+    </p>
     
     One solution of the equation of motion above is the oscillatory equation:
-    
-    $$\eta_i = a_{ik} \cos(\omega_k t + \delta_k),$$
-    
+    <p align="center">
+    $\eta_i = a_{ik} \cos(\omega_k t + \delta_k),$
+    </p>
     where $a_{ik}$ is the amplitude of oscillation, $\omega_k$ is the frequency,  
     and $\delta_k$ is a phase factor.  
     Substitute into preceding equation, and the entire equation of motion can be rewritten as standard eigenvalue equation:
-    
-    $$V A = \lambda A.$$
-    where matrix $A$ contains the $A_k$ eigenvectors of the Hessian matrix $V$, which are the normal mode vectors and 
-    describe in which direction and how far each atom moves wrt the others. The $\lambda_k$ eigenvalues give the square of 
-    the frequencies at which all atoms involved in each mode vibrate. (This does not give absolute amplitude of 
-    displacements).
+    <p align="center">
+    $\textbf{V} \textbf{A} = \lambda \textb{A}.$
+    </p>
+    where matrix $\textbf{A}$ contains the $\textbf{A}_k$ eigenvectors of the Hessian matrix $\textbf{V}$, which are 
+    the normal mode vectors and describe in which direction and how far each atom moves wrt the others. The $\lambda_k$ 
+    eigenvalues give the square of the frequencies at which all atoms involved in each mode vibrate. (This does not 
+    give absolute amplitude of displacements).
     
     For each normal mode, the corresponding eigenvector provides the shape of its oscillation (i.e. the relative directions
     (x,y,z) of motion for each atom; while the corresponding eigenvalue provides its frequency. In theory, you would be able 
@@ -732,7 +737,7 @@
     2. The eigendecomposition for non-zero modes, via `_gnm_modes()`:<br>
     The Laplacian matrix is symmetric and positive semi-definite (PSD) by definition. Symmetry alone gives us nice spectral 
     properties. Specifically, it is guaranteed to have real eigenvalues, orthogonal eigenvectors and orthogonal 
-    diagonalisation: $\Gamma=\mathbf{U}\Lambda\mathbf{U}^{\top}$<br> 
+    diagonalisation: $\Gamma=\textbf{U}\Lambda\textbf{U}^{\top}$<br> 
     Being PSD guarantees: all eigenvalues are non-negative; the existence of zero modes; and physical stability.
     The guarantee of physical stability reaffirms the point that our starting point was an assumption that the coordinates 
     are for a protein conformation that is in a local minimum. So we essentially encode that assumption explicitly by using 
@@ -765,7 +770,7 @@
     | **Full all-atom NMA (Hessian)**          | (3N \times 3N)                    | Per-atom 3D displacement vectors from a physics-based force field | **Yes** — full atomic ((\Delta x,\Delta y,\Delta z))         | Predicted small-amplitude 3D displacement vectors for every atom; vibrational directions around a minimum  |
     | **ANM (Anisotropic Network Model)**      | (3N \times 3N)                    | Per-residue 3D displacement vectors (coarse-grained)              | **Yes** — residue-level directions                           | Predicted collective 3D directions of residue motion (hinges, domain rotations)                            |
     | **PCA / Essential Dynamics (MD or NMR)** | (3N \times 3N) covariance         | Dominant directions of *observed* Cartesian variance              | **Yes** — but data-driven, not predictive                    | Dominant *observed* displacement directions sampled experimentally or in MD                                |
-    | **Cartesian displacement analysis (two structures)** | none (direct subtraction) | (\Delta \mathbf{r}_i) vectors      | **Yes**                              | Exact per-residue displacement vectors between two aligned conformations                                   |
+    | **Cartesian displacement analysis (two structures)** | none (direct subtraction) | (\Delta \textbf{r}_i) vectors      | **Yes**                              | Exact per-residue displacement vectors between two aligned conformations                                   |
     | **Difference–Distance Matrix (DDM)**     | (N \times N) (pairwise distances) | Complete internal geometric change between structures             | **Implicitly yes** — internal geometry only, no global frame | Complete information about which internal distances change and by how much; no Cartesian directions        |
     | **GNM (Gaussian Network Model)**         | (N \times N) Laplacian            | Scalar participation / correlation patterns of residues           | **No** — isotropic, sign structure only                      | Predicted relative flexibility and correlated/anti-correlated regions                                      |
     | **Spectral clustering of graphs / DDMs** | (N \times N) Laplacian            | Relational partitions and collective groupings                    | **No** — partitions, not displacement vectors                | Identification of moving blocks, hinges, and collective rearrangement patterns                             |
@@ -775,7 +780,7 @@
   
     | Concept/Object     | **Normal Mode (NMA)**                                                                   | **Essential Mode (PCA/ED)**                        |
     |--------------------|-----------------------------------------------------------------------------------------|----------------------------------------------------|
-    | Matrix             | Hessian of potential $\left(\frac{\partial^2 \mathbf{E}}{\partial \mathbf{x}^2}\right)$ | Covariance of coordinates $(⟨\mathbf{xx}^{\top}⟩)$ |
+    | Matrix             | Hessian of potential $\left(\frac{\partial^2 \textbf{E}}{\partial \textbf{x}^2}\right)$ | Covariance of coordinates $(⟨\textbf{xx}^{\top}⟩)$ |
     | Physical basis     | Hooke’s law around equilibrium                                                          | Statistical sampling of observed dynamics          |
     | Eigenvalue meaning | $\omega^2$ is frequency $^2$, related to restoring force                                | $\lambda$ is variance (amplitude $^2$) of motion   |
     | Time dependence    | Sinusoidal (oscillatory) motion                                                         | Diffusive (non-periodic, stochastic)               |
@@ -852,7 +857,7 @@
           (millions of sequences) that could contain distant homologues, potentially sharing < 25% identity.
           (MMseqs2's E-value of $1e^{-3}$ corresponds to BLAST's E-value of approximately $1e{-5} – 1e{-6}$ for the same dataset.)
         
-          `pident`: The percent identity over the alignment is given by: $$\frac{\text{Number of identical residues in alignment}}{\text{alignment length}} \times 100$$
+          `pident`: The percent identity over the alignment is given by: $\frac{\text{Number of identical residues in alignment}}{\text{alignment length}} \times 100$
         
           `alnlen`: The alignment length, which is the number of aligned positions, including gaps if any.
           (Note: MMseqs2 performs local, not global, alignments by default. This setting can be changed though.)
