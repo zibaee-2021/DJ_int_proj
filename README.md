@@ -456,8 +456,13 @@
     script would be able to focus, approximately, on these two different types of protein dynamics. The default setting 
     though is to use the 'raw' covariance matrix, rather than the correlation matrix. 
     
-    $$\mathbf{C} = \frac{1}{M - 1} (\mathbf{X} - \bar{\mathbf{X}})^{\mathsf{T}} (\mathbf{X} - \bar{\mathbf{X}})$$<br>
-           where $\mathbf{C}$ is the covariance matrix and $\bar{\mathbf{X}} = (\bar{x}_1 ,\; \bar{x}_2, \; \cdots, \; \bar{x}_p)$
+    $$\mathbf{C} = \frac{1}{M - 1} (\mathrm{\mathbf{X}} - \bar{\mathbf{X}})^{\mathsf{T}} (\mathbf{X} - \bar{\mathbf{X}})$$<br>
+    where $\mathbf{C}$ is the covariance matrix,<br>
+    $M$ is the number of NMR models (or frames in MD trajectory),<br>
+    $\bar{\mathbf{X}} = (\bar{x}_1 ,\; \bar{x}_2, \; \cdots, \; \bar{x}_p)$,<br> 
+    $\bar{x}_i = \frac{1}{M}\sum\limits_{k=1}^{M} x_i^{(k)}$ which is the mean of the Cartesian coordinate for atom $i$ across $k$ NMR models (or frames in MD trajectory).
+    So $\mathbf{X} - \bar{\mathbf{X}}$ converts locations to fluctuations, and covariance of this encodes how atoms move together in space. 
+
 
     where $\mathbf{C}$ is the covariance matrix
     $$\bar{\mathbf{X}} = \begin{bmatrix} \bar{x}_1 & \bar{x}_2 & \cdots & \bar{x}_p \end{bmatrix}$$
