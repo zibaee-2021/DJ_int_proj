@@ -77,7 +77,7 @@
 
 </details>
 
-<details><summary><strong>Data files and Python scripts:</strong></summary><br>
+<details><summary><strong>Data files and Python scripts (bulk of detailed description in `src/` subdir):</strong></summary><br>
 
 - <details><summary><strong>data/</strong></summary>
 
