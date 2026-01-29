@@ -303,9 +303,9 @@
     </p>
     where $d_i$ is distance between aligned residues $i$ and $d_0$ is a normalisation factor that depends on the chain 
     length.
-  
+
+    TM-score $\in [0, 1]$:
     ```
-    TM-score and interpretation:
     1.0 = Perfect structural match (identical structures);
     0.8 = Often considered nearly identical structures (small conformational shifts only);
     0.5 = Typically indicates same fold;
