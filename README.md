@@ -248,7 +248,7 @@
     <p align="center">
     $\mathrm{RMSD} = \sqrt{\frac{1}{n}\sum\limits_{i=1}^{n} d_i^{2}}$
     </p>
-    where the averaging is performed over the $n$ pairs of equivalent atoms and $d_i$ is the distance between the two atoms 
+    where the averaging is performed over the $n$ pairs of equivalent atoms and $d_i$ is the Euclidean distance between the two atoms 
     in the $i$-th pair.
     
     The units of the calculated RMSD value are the same as the units of the input coordinates, i.e. Ångströms.<br>
@@ -262,12 +262,11 @@
     > 6 Å = Likely different structures; may be different folds entirely.
     > 10 Å = Almost certainly structurally unrelated.
     ```
-    All computations are carried out in `RMSD.py`.<br>
-    The main functions of use in the RMSD.py script are `calc_rmsds_matrix_of_models()` and `calculate_rmsd()`. 
-    Many of the same calculations are performed in `_calc_rmsds_and_stats()`.  
+    All computations are carried out in `RMSD.py`:<br>
+    The main functions of use in the `RMSD.py` script are `calc_rmsds_matrix_of_models()` and `calculate_rmsd()`.
     
     For clustering and visualisation of RMSDs that provide a route to identifying and selecting ensembles of conformational 
-    variants, pass an RMSD matrix to `dendrogram()`. This uses `scipy.cluster.hierarchy.linkage` function to build a 
+    variants, an RMSD matrix is passed to `dendrogrm()`. This uses `scipy.cluster.hierarchy.linkage` function to build a 
     hierarchical clustering tree (a linkage/dendrogram) from the distances. The linkage matrix it generates is then 
     visualised via`scipy.cluster.hierarchy.dendrogram` function. For example:<br><br>
     ![Dendrogram of hierarchical clustering of RMSD matrix for the 25 models of chain A of PDB 1A0N](readme_images/RMSDdndrgrm_1A0N_A.png)
@@ -285,80 +284,84 @@
     
     RMSD is good for local variations. It is very succeptible to minor mobile regions (i.e. disordered regions). 
     It would be a poor choice if the aim was to find proteins that have completely different structures, rather than also 
-    identifying those displaying domains motions whereby the structure of the domain is stable but its position changes, 
-    e.g. about a hinge region. So, because this is one of the forms of conformational variation of interest here, 
-    RMSD is useful. Unlike RMSD, TM-score does not penalise domain motion, so it is more useful for other, more subtle  
-    conformational variations.
+    identifying those displaying domain motions whereby the structure of the domain is stable but its position changes, 
+    e.g. about a hinge region. So, because this (i.e. rigid-domain repositioning about a hinge) is one of the forms of 
+    conformational variation of interest here, RMSD is useful. Unlike RMSD, TM-score does not penalise domain motion, 
+    so it is more useful for other, more subtle conformational variations.
   
-  - <details><summary><strong>Template modeling score (TM-score):</strong></summary><br>
+    - <details><summary><strong>Template modeling score (TM-score):</strong></summary><br>
   
-    Template modeling score (TM-score) can be used in a similar way to RMSDs, though it is designed to be less sensitive
-    to protein lengths than RMSD (Y. Zhang & J. Skolnick 2004). The algorithm tries different rotations, translations, 
-    and residue correspondences. The reported TM-score is the highest (i.e. best) value found.<br> 
-    TM-score uses nonlinear weighting of atomic distances, calculated as follows:<br><br>
-    <p align="center">
-    $\text{TM-score} = \max \left[ 
-    \frac{1}{L_{target}} 
-    \sum\limits_{i=1}^{L_{aligned}} 
-    \frac{1}{1 + \left( \frac{D_i}{D_0(L_{target})} \right)^2}
-    \right]$
-    </p>
-    where $L_{target}$ is the number of residues in the target protein structure,<br>
-    $L_{aligned}$ is the number of aligned residue pairs,<br>
-    $D_i$ is the Euclidean distance (Å) between two aligned residues, $i$, after superposition,<br>
-    $D_0(L_{target}$ is a normalisation factor that depends on the chain length. (This sets the distance at which a 
-    residue pair’s contribution begins to drop off significantly.)
-
-    TM-score $\in [0, 1]$:
-    ```
-    1.0 = Perfect structural match (identical structures);
-    0.8 = Often considered nearly identical structures (small conformational shifts only);
-    0.5 = Typically indicates same fold;
-    0.2–0.5 = Partial/topological similarity;
-    < 0.2 ≈ Random similarity.
-    ```
+      Template modeling score (TM-score) can be used in a similar way to RMSDs, though it is designed to be less sensitive
+      to protein lengths than RMSD (Zhang & Skolnick 2004). The algorithm tries different rotations, translations, 
+      and residue correspondences. The reported TM-score is the highest (i.e. best) value found.<br> 
+      TM-score uses nonlinear weighting of atomic distances, calculated as follows:<br><br>
+      <p align="center">
+      $\text{TM-score} = \max \left[ 
+      \frac{1}{L_{target}} 
+      \sum\limits_{i=1}^{L_{aligned}} 
+      \frac{1}{1 + \left( \frac{D_i}{D_0(L_{target})} \right)^2}
+      \right]$
+      </p>
+      where $L_{target}$ is the number of residues in the target protein structure,<br>
+      $L_{aligned}$ is the number of aligned residue pairs,<br>
+      $D_i$ is the Euclidean distance (Å) between two aligned residues, $i$, after superposition,<br>
+      $D_0(L_{target}$ is a normalisation factor that depends on the chain length. (This sets the distance at which a 
+      residue pair’s contribution begins to drop off significantly.)
+      
+      ```
+      TM-score:
+      1.0 = Perfect structural match (identical structures).
+      0.8 = Often considered nearly identical structures (small conformational shifts only).
+      0.5 = Typically indicates same fold.
+      0.2–0.5 = Partial/topological similarity.
+      < 0.2 ≈ Random similarity.
+      ```
     
-    I opted to include the TM-score because it seems to complement the RMSD calculations, detecting conformational 
-    variations that RMSD pays less attention to (like small deviations of 3-4 Å), while ignoring large rearrangements 
-    (like domain motions moving 10 Å) that RMSD penalises heavily. Unlike RMSD, TM-score is independent of the protein size.
+      I opted to include the TM-score because it seems to complement the RMSD calculations, detecting different forms of 
+      conformational variations which RMSD pays less attention to (like small deviations of 3-4 Å), while ignoring 
+      large rearrangements (like domain motions moving 10 Å) that RMSD penalises heavily. 
+      Unlike RMSD, TM-score is independent of the protein size.
     
-    The 'over-sensitivity' of RMSD to domain motions was part of the reason a different metric was used for CASP (i.e GDT).
-    (Zemla et al. 2003, ref x). (GDT was not replaced by TM-score for reasons of consistency with previous CASP competitions.)  
+      The 'over-sensitivity' of RMSD to domain motions was part of the reason a different metric was used for CASP 
+      (i.e GDT) (Zemla et al. 2001). (GDT was not replaced with TM-score for reasons of consistency with previous CASP 
+      competitions.)  
     
-    All computations are carried out in `tm_aligner.py` and are self-explanatory.<br>
-    ##### Installing TM-align:<br>
-    Installed according to github instructions: https://zhanggroup.org/TM-align/ <br>
-    Rocky Linux: Compile TMalign.cpp with `g++ -O3 -ffast-math -lm -o TMalign TMalign.cpp`. <br> 
-    (Note: `-static` command was left out for both Rocky Linux and Mac).<br>
-    Mac: in `basic_fun.h` on line 10 `// #include <malloc.h> //` is replaced by `#include <stdlib.h>` which was already 
-    on line 6. So, after commenting out `include <malloc.h>` and then compiling, I deleted all other files including 
-    `basic_fun.h`.<br>
-    The TMalign compiled binary executable file (along with the TMalign.cpp and TMalign.h files) are located in 
-    `src/TMalign_exe/Darwin` or `src/TMalign_exe/Linux`. `tm_aligner.py` detects which OS it's running on before building 
-    the correct relative path.
+      All computations are carried out in `tm_aligner.py` and are self-explanatory.<br>
+      ##### Installing TM-align:<br>
+      Installed according to github instructions: https://zhanggroup.org/TM-align/ <br>
+      Rocky Linux: Compile TMalign.cpp with `g++ -O3 -ffast-math -lm -o TMalign TMalign.cpp`. <br> 
+      (Note: `-static` command was left out for both Rocky Linux and Mac).<br>
+      Mac: in `basic_fun.h` on line 10 `// #include <malloc.h> //` is replaced by `#include <stdlib.h>` which was already 
+      on line 6. So, after commenting out `include <malloc.h>` and then compiling, I deleted all other files including 
+      `basic_fun.h`.<br>
+      The TMalign compiled binary executable file (along with the TMalign.cpp and TMalign.h files) are located in 
+      `src/TMalign_exe/Darwin` or `src/TMalign_exe/Linux`. `tm_aligner.py` detects which OS it's running on before building 
+      the correct relative path.
   
   - <details><summary><strong>Difference distance matrix (DDM):</strong></summary><br>
   
     A distance matrix is a simple and intuitive method for representing protein structure by calculating the relative 
-    distance of atoms from one another (Crippen 1977). It is pre-dated by the 'distance map', which is essentially the same 
-    thing (DC. Phillips (1970). In British Biochemistry, Past and Present (Goodwin, T. W., ed.), pp. 11-28). 
-    And the distance matrix is a precursor to the 'contact map' (Havel et al. 1979) and the 'local distance difference 
-    test' (lDDT) (Mariani et al. 2011), both of which are just functions of the same distance geometry measurements).
-    By its very nature, a distance matrix is rotationally and translationally invariant. Another way of saying this is that: it is 
-    "invariant under the Euclidean group E(3)". As such, there is no point in performing a superimposition of the two 
-    protein conformers being compared (which for example, you do need in RMSD calculations). 
+    distance of atoms from one another (Crippen 1977). It is pre-dated by the 'distance map', which is essentially the 
+    same thing (Phillips 1970). The distance matrix is a precursor to the widely-adopted 'contact map' method 
+    (Havel et al. 1979) and the 'local distance difference test' (lDDT) (Mariani et al. 2011), both of which are just 
+    functions of the same distance geometry measurements).
+    By its very nature, a distance matrix is rotationally and translationally invariant. Another way of saying this is 
+    that: it is "invariant under the Euclidean group E(3)". As such, there is no point in performing a superimposition 
+    of the two protein conformers being compared (which for example, you do need in RMSD calculations).<br> 
     
-    Two distance matrices are calculated - one for each of the two protein chains that you want to compare to each other. 
+    The method is based on the comparison of the Cartesian coordinates of two, otherwise identical, proteins. 
+    For example, two NMR models of a protein structure. A distance matrix is calculated for each of these two structures. 
     The absolute value of their arithmetic difference is the 'difference-distance matrix' (DDM). 
-    This matrix can be used to locate mobile rigid domains (Nichols et al. 1995).
-    The DDM is processed here to help identify and label distinct protein conformational ensembles, via the appropriate 
+    This DDM can now be used to locate mobile rigid domains (Nichols et al. 1995).
+    The DDM is processed here to help identify and label distinct protein conformational ensembles, via an appropriate 
     processing and clustering algorithm, described below. 
     
     All computations are carried out in `diff_distance_matrix.py`.<br>
     The main functions are `compute_ddms(pidc_pdf)` and `analyse_ddms()`.<br> 
     `compute_ddms(pidc_pdf)` takes a parsed mmCIF of a single NMR protein chain, read from an already parsed copy as an 
-    .ssv file. This contains all the NMR models for the protein chain, and is read into a Pandas dataframe ('pidc_pdf'). 
-    It outputs the DDM for all NMR models of the one given protein chain. 
+    .ssv file. This contains all the NMR models for that protein chain, and is read into a Pandas dataframe ('pidc_pdf'). 
+    It computes the DDMs of all-vs-all NMR model pairs for a given protein chain, i.e each DDM is the difference between 
+    one pair of NMR models.  
     The subsequent clustering is done via converting the DDM data into a graph and is performed by the other main function 
     in `diff_distance_matrix.py` which is called `analyse_ddms()`. 
     It uses spectral clustering which essentially constructs Laplacian eigenmaps and uses them as the feature space for 
