@@ -9,26 +9,45 @@
 </details>
 
 <details><summary></summary>
-  Inspiration for the project can be attributed to Bryant & Noé 2024 and Lewis et al. 2025.
+  Inspiration for the project can be attributed to two papers in particular: Bryant & Noé Nature Comm. 2024 and 
+  Lewis et al. Science 2025. 
+  (Note: Frank Noé authors both papers. He's the senior author in the Science paper with 17 others, and is one of the 
+  two authors in the Nature Comm. paper with Patrick Bryant).
 
 - <details><summary>Bryant & Noé 2024</summary></details>
   
-  - Pulling pre-predicted structures from AlphaFoldDB yields only one protein structure, albeit accompanied by 
-    per-residue confidence metrics (pLDDT).
-  - Performing inference with AlphaFold is unavailable as a service, but is reported by Bryant & Noé to potentially 
-    output different structure predictions each time. It is concluded that may simply be down to memorisation of these 
-    different structures which will have been included together in the same training dataset.
-  - Bryant & Noé 2024 address this directly by assembling stratified training/test datasets. The protein dataset 
+  - Retrieved pre-predicted structures from AlphaFoldDB yields only one protein structure, albeit accompanied by 
+    per-residue confidence metrics (pLDDT). However, performing inference with AlphaFold (though not available as a 
+    service) is reported by Bryant & Noé to potentially output different predicted structures, each time it is run. 
+    This might suggest AlphaFold has learned the underlying structural propensities of amino acid sequences some of
+    which are observed to populate more than one structure. 
+    However, Bryant & Noé point out that this could simply be down to the neural network memorising these different 
+    structures because they form part of the same dataset used to train the model.
+  - Bryant & Noé 2024 address this directly by assembling stratified training/test datasets instead. The protein dataset 
     includes a proportion that have more than 1 deposited structure - which is based on a TM-score threshold of 0.8. 
-    Crucially they split these up, between training and test datasets, such that accurate predictions of alternative
-    structures cannot be attributed to memorising them during training.
-  - They were able to train a deep neural network to accurately predict about half of their multi-conformation proteins 
-    dataset, using TM-score (>0.8) as an accuracy metric. 
-  -  
-
+    Crucially they split these multi-structure proteins up, between training and test datasets, such that accurate 
+    predictions of alternative structures cannot be attributed to memorising them during training.
+  - They report that this strategy led to accurate predictions for about half of their multi-conformation proteins 
+    dataset. Accurately predicted structures were deemed to be so accourding to the TM-score of >0.8 between the 
+    predicted alternate structure and the PDB-deposited structure (which was not included in the training set). 
+  
 - <details><summary>Lewis et al 2025</summary></details>
 
-  -  
+  - Lewis et al. also attempt to address the goal of predicting alternative protein structures, but in this much 
+    larger study, the full AlphaFold database is used, after being clustered and augmented according to likely protein 
+    dynamics, Further training includes structures from molecular dynamics simulations, and finally fine-tuned on 
+    protein stability-related metrics. The model is an Evoformer-based neural network and sampling is
+    performed by a denoising part of a diffusion model, which is conditioned on the trained Evoformer-based model.
+
+  - Each protein sequence would then be 'sampled', meaning starting from random Gaussian noise, 50 steps of denoising 
+    conditioned on the trained Evoformer-based neural network, is performed to output a distrubtion of Cartesian 
+    coordinates for the given protein sequence. 
+  - In a similar vein to Bryant & Noé 2024, the test set included proteins that were dissimilar to those in the training
+    set. Predictions of observed conformational changes achieved success rates between 55 and 90% and included large domain 
+    motions, local unfolding transitions, and the formation of cryptic binding pockets. BioEMu effectively emulated equilibrium 
+    distributons of MD simulations of protein folding and confomational transitions, accurately and more rapidly. It 
+    effectively emulated equilibrum ensembles of small proteins from the perspective of how mutations effect protein 
+    stabilities.
 
 
 </details>
