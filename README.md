@@ -6,15 +6,38 @@
 
 - Performed, part-time, over a period of 3 months from mid-July to mid-Sept 2025.
 
-- Inspiration for the project can be attributed to Bryant & Noé 2024 and Lewis et al. 2025. 
-  - TODO
+</details>
+
+<details><summary></summary>
+  Inspiration for the project can be attributed to Bryant & Noé 2024 and Lewis et al. 2025.
+
+- <details><summary>Bryant & Noé 2024</summary></details>
+  
+  - Pulling pre-predicted structures from AlphaFoldDB yields only one protein structure, albeit accompanied by 
+    per-residue confidence metrics (pLDDT).
+  - Performing inference with AlphaFold is unavailable as a service, but is reported by Bryant & Noé to potentially 
+    output different structure predictions each time. It is concluded that may simply be down to memorisation of these 
+    different structures which will have been included together in the same training dataset.
+  - Bryant & Noé 2024 address this directly by assembling stratified training/test datasets. The protein dataset 
+    includes a proportion that have more than 1 deposited structure - which is based on a TM-score threshold of 0.8. 
+    Crucially they split these up, between training and test datasets, such that accurate predictions of alternative
+    structures cannot be attributed to memorising them during training.
+  - They were able to train a deep neural network to accurately predict about half of their multi-conformation proteins 
+    dataset, using TM-score (>0.8) as an accuracy metric. 
+  -  
+
+- <details><summary>Lewis et al 2025</summary></details>
+
+  -  
+
 
 </details>
 
 <details><summary><strong>Immediate goal:</strong></summary>
 
 - Assemble and curate a dataset of protein structures that are observed to populate different conformations.
-  For simplication and to reduce computational demand, protein structures are parsed to contain alpha-carbons only.
+  For simplication, as well as to reduce computational demand, protein structures are parsed to contain alpha-carbons 
+  only.
 
 - The main activity included exploratory data analysis of all NMR structures available in the RCSB, as well as Python 
   implementations of different methods for characterising protein dynamics.
@@ -25,16 +48,21 @@
 
 <details><summary><strong>4 distinct quantitations of protein dynamics:</strong></summary>
 
-- (Directly visualising structures of two or more models of a protein for which has NMR data has been deposited, can be
-  done in-browser, using the freely-available RCSB viewer. How to overlay protein structures is explained at 
-  [rcsb/FAQs](https://www.rcsb.org/docs/3d-viewers/mol*/faqs-scenarios#how-do-i-view-all-models-of-an-nmr-ensemble). Scroll down to "How do I select specific models from an ensemble to see them ...?")
-
+- Early on it became apparent to me that there were two competing factors that made assembling a dataset difficult: 
+  - the intrinsic preference of deep learning model training for larger datasets;
+  - the relatively small number of clear cases of proteins with 2 or more different structures.
+  
 - The exploration of the NMR dataset naturally led to the question of how one determines the existence of different 
   protein structures for a single protein. Some groupings that are distinct, albeit with unclear boundaries between 
   them, include general flexibility/mobility, naturally-occuring ensemble populations, ligand-induced conformational 
   change, and non-native conformational changes. Thus, characterising protein dynamics is often not straightforward.<br> 
   One commonly-used method for quantifying structural differences between identical protein sequences involves the 
   calculation of RMSDs. The same method, using variant of this method replaces the calculation RMSDs with that of TM-scores. 
+
+- (One can directly visualise atomic structures of two or more models of a protein for which NMR data has been 
+  deposited, in-browser, using the freely-available RCSB viewer. How to overlay protein structures is explained at 
+  [rcsb/FAQs](https://www.rcsb.org/docs/3d-viewers/mol*/faqs-scenarios#how-do-i-view-all-models-of-an-nmr-ensemble). Scroll down to "How do I select specific models from an ensemble to see them ...?". Alternatively,
+  standard tools (e.g. PyMOL, YASARA, etc) can of course be used instead.)
 
   - <details><summary><strong>RMSD and TM-score matrices and clustering:</strong></summary> 
 
@@ -289,54 +317,54 @@
     conformational variation of interest here, RMSD is useful. Unlike RMSD, TM-score does not penalise domain motion, 
     so it is more useful for other, more subtle conformational variations.
   
-    - <details><summary><strong>Template modeling score (TM-score):</strong></summary><br>
+  - <details><summary><strong>Template modeling score (TM-score):</strong></summary><br>
   
-      Template modeling score (TM-score) can be used in a similar way to RMSDs, though it is designed to be less sensitive
-      to protein lengths than RMSD (Zhang & Skolnick 2004). The algorithm tries different rotations, translations, 
-      and residue correspondences. The reported TM-score is the highest (i.e. best) value found.<br> 
-      TM-score uses nonlinear weighting of atomic distances, calculated as follows:<br><br>
-      <p align="center">
-      $\text{TM-score} = \max \left[ 
-      \frac{1}{L_{target}} 
-      \sum\limits_{i=1}^{L_{aligned}} 
-      \frac{1}{1 + \left( \frac{D_i}{D_0(L_{target})} \right)^2}
-      \right]$
-      </p>
-      where $L_{target}$ is the number of residues in the target protein structure,<br>
-      $L_{aligned}$ is the number of aligned residue pairs,<br>
-      $D_i$ is the Euclidean distance (Å) between two aligned residues, $i$, after superposition,<br>
-      $D_0(L_{target}$ is a normalisation factor that depends on the chain length. (This sets the distance at which a 
-      residue pair’s contribution begins to drop off significantly.)
+    Template modeling score (TM-score) can be used in a similar way to RMSDs, though it is designed to be less sensitive
+    to protein lengths than RMSD (Zhang & Skolnick 2004). The algorithm tries different rotations, translations, 
+    and residue correspondences. The reported TM-score is the highest (i.e. best) value found.<br> 
+    TM-score uses nonlinear weighting of atomic distances, calculated as follows:<br><br>
+    <p align="center">
+    $\text{TM-score} = \max \left[ 
+    \frac{1}{L_{target}} 
+    \sum\limits_{i=1}^{L_{aligned}} 
+    \frac{1}{1 + \left( \frac{D_i}{D_0(L_{target})} \right)^2}
+    \right]$
+    </p>
+    where $L_{target}$ is the number of residues in the target protein structure,<br>
+    $L_{aligned}$ is the number of aligned residue pairs,<br>
+    $D_i$ is the Euclidean distance (Å) between two aligned residues, $i$, after superposition,<br>
+    $D_0(L_{target}$ is a normalisation factor that depends on the chain length. (This sets the distance at which a 
+    residue pair’s contribution begins to drop off significantly.)
       
-      ```
-      TM-score:
-      1.0 = Perfect structural match (identical structures).
-      0.8 = Often considered nearly identical structures (small conformational shifts only).
-      0.5 = Typically indicates same fold.
-      0.2–0.5 = Partial/topological similarity.
-      < 0.2 ≈ Random similarity.
-      ```
+    ```
+    TM-score:
+    1.0 = Perfect structural match (identical structures).
+    0.8 = Often considered nearly identical structures (small conformational shifts only).
+    0.5 = Typically indicates same fold.
+    0.2–0.5 = Partial/topological similarity.
+    < 0.2 ≈ Random similarity.
+    ```
     
-      I opted to include the TM-score because it seems to complement the RMSD calculations, detecting different forms of 
-      conformational variations which RMSD pays less attention to (like small deviations of 3-4 Å), while ignoring 
-      large rearrangements (like domain motions moving 10 Å) that RMSD penalises heavily. 
-      Unlike RMSD, TM-score is independent of the protein size.
+    I opted to include the TM-score because it seems to complement the RMSD calculations, detecting different forms of 
+    conformational variations which RMSD pays less attention to (like small deviations of 3-4 Å), while ignoring 
+    large rearrangements (like domain motions moving 10 Å) that RMSD penalises heavily. 
+    Unlike RMSD, TM-score is independent of the protein size.
     
-      The 'over-sensitivity' of RMSD to domain motions was part of the reason a different metric was used for CASP 
-      (i.e GDT) (Zemla et al. 2001). (GDT was not replaced with TM-score for reasons of consistency with previous CASP 
-      competitions.)  
+    The 'over-sensitivity' of RMSD to domain motions was part of the reason a different metric was used for CASP 
+    (i.e GDT) (Zemla et al. 2001). (GDT was not replaced with TM-score for reasons of consistency with previous CASP 
+    competitions.)  
     
-      All computations are carried out in `tm_aligner.py` and are self-explanatory.<br>
-      ##### Installing TM-align:<br>
-      Installed according to github instructions: https://zhanggroup.org/TM-align/ <br>
-      Rocky Linux: Compile TMalign.cpp with `g++ -O3 -ffast-math -lm -o TMalign TMalign.cpp`. <br> 
-      (Note: `-static` command was left out for both Rocky Linux and Mac).<br>
-      Mac: in `basic_fun.h` on line 10 `// #include <malloc.h> //` is replaced by `#include <stdlib.h>` which was already 
-      on line 6. So, after commenting out `include <malloc.h>` and then compiling, I deleted all other files including 
-      `basic_fun.h`.<br>
-      The TMalign compiled binary executable file (along with the TMalign.cpp and TMalign.h files) are located in 
-      `src/TMalign_exe/Darwin` or `src/TMalign_exe/Linux`. `tm_aligner.py` detects which OS it's running on before building 
-      the correct relative path.
+    All computations are carried out in `tm_aligner.py` and are self-explanatory.<br>
+    ##### Installing TM-align:<br>
+    Installed according to github instructions: https://zhanggroup.org/TM-align/ <br>
+    Rocky Linux: Compile TMalign.cpp with `g++ -O3 -ffast-math -lm -o TMalign TMalign.cpp`. <br> 
+    (Note: `-static` command was left out for both Rocky Linux and Mac).<br>
+    Mac: in `basic_fun.h` on line 10 `// #include <malloc.h> //` is replaced by `#include <stdlib.h>` which was already 
+    on line 6. So, after commenting out `include <malloc.h>` and then compiling, I deleted all other files including 
+    `basic_fun.h`.<br>
+    The TMalign compiled binary executable file (along with the TMalign.cpp and TMalign.h files) are located in 
+    `src/TMalign_exe/Darwin` or `src/TMalign_exe/Linux`. `tm_aligner.py` detects which OS it's running on before building 
+    the correct relative path.
   
   - <details><summary><strong>Difference distance matrix (DDM):</strong></summary><br>
   
