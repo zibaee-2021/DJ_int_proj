@@ -303,8 +303,11 @@
     in the $i$-th pair.
     
     The units of the calculated RMSD value are the same as the units of the input coordinates, i.e. Ångströms.<br>
+    RMSD is not normalised. The minimum possible value is zero and any RMSD over ~15 Å would strongly suggest error(s) 
+    in the alignment and/or other calculation/data.
     
     ```
+    RMSD:
     0 Å = Exactly identical. The exact same structure.
     < 1 Å = Essentially identical, only minor coordinate fluctuations.
     1-2 Å = Very similar, typically same fold, possibly different side-chain conformations.
@@ -316,10 +319,12 @@
     All computations are carried out in `RMSD.py`:<br>
     The main functions of use in the `RMSD.py` script are `calc_rmsds_matrix_of_models()` and `calculate_rmsd()`.
     
-    For clustering and visualisation of RMSDs that provide a route to identifying and selecting ensembles of conformational 
-    variants, an RMSD matrix is passed to `dendrogrm()`. This uses `scipy.cluster.hierarchy.linkage` function to build a 
-    hierarchical clustering tree (a linkage/dendrogram) from the distances. The linkage matrix it generates is then 
-    visualised via`scipy.cluster.hierarchy.dendrogram` function. For example:<br><br>
+    `dendrogrm()` performs clustering and visualisations of RMSDs that provide a route to identifying and selecting 
+    ensembles of conformational variants. It takes an RMSD matrix which is composed of an all-vs-all RMSD calculation
+    whereby the RMSD of every pair of NMR models, for example, are stored in a matrix.<br> 
+    `dendrogrm()` uses `scipy.cluster.hierarchy.linkage` function to build a hierarchical clustering tree 
+    (a linkage/dendrogram) from the RMSD values. The linkage matrix it generates is then visualised via
+    `scipy.cluster.hierarchy.dendrogram` function. For example:<br><br>
     ![Dendrogram of hierarchical clustering of RMSD matrix for the 25 models of chain A of PDB 1A0N](readme_images/RMSDdndrgrm_1A0N_A.png)
 
     The same linkage matrix can be re-used for a different visualisation, using `seaborn.clustermap()`. For example:<br><br>
