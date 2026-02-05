@@ -14,7 +14,6 @@
   (Note: Frank Noé authors both papers. He's the senior author in the Science paper with 17 others, and is one of the 
   two authors in the Nature Comm. paper with Patrick Bryant).
 
-<a id="bryant-noe-2024"></a>
 - <details><summary>Bryant & Noé 2024</summary></details>
   
   - Retrieved pre-predicted structures from AlphaFoldDB yields only one protein structure, albeit accompanied by 
@@ -68,9 +67,8 @@
 
 <details><summary><strong>4 distinct quantitations of protein dynamics:</strong></summary>
 
-  [See Bryant & Noé (2024)](#bryant-noe-2024)
 - Early on the following two competing factors seemed to suggest there would need to either be overly simplified 
-  assumptions of protein structural changes or a far more rigorours approach than simply plucking proteins out of the 
+  assumptions ]()of protein structural changes or a far more rigorours approach than simply plucking proteins out of the 
   PDB: 
   1. The requirement for deep learning model to train on very large datasets.
   2. The relatively small number of clear cases of proteins with 2 or more different structures, even less if filtering
