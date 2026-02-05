@@ -34,21 +34,23 @@
 - <details><summary>Lewis et al 2025</summary></details>
 
   - Lewis et al. also attempt to address the goal of predicting alternative protein structures, but in this much 
-    larger study, the full AlphaFold database is used, after being clustered and augmented according to likely protein 
-    dynamics, Further training includes structures from molecular dynamics simulations, and finally fine-tuned on 
-    protein stability-related metrics. The model is an Evoformer-based neural network and sampling is
-    performed by a denoising part of a diffusion model, which is conditioned on the trained Evoformer-based model.
-
-  - Each protein sequence would then be 'sampled', meaning starting from random Gaussian noise, 50 steps of denoising 
-    conditioned on the trained Evoformer-based neural network, is performed to output a distrubtion of Cartesian 
-    coordinates for the given protein sequence. 
-  - In a similar vein to Bryant & Noé 2024, the test set included proteins that were dissimilar to those in the training
-    set. Predictions of observed conformational changes achieved success rates between 55 and 90% and included large domain 
-    motions, local unfolding transitions, and the formation of cryptic binding pockets. BioEMu effectively emulated equilibrium 
-    distributons of MD simulations of protein folding and confomational transitions, accurately and more rapidly. It 
-    effectively emulated equilibrum ensembles of small proteins from the perspective of how mutations effect protein 
-    stabilities.
-
+    larger study, the full AlphaFold database is usd, which is clustered and then augmented further with 
+    computationally-generatad structural variants based on what molecular movements of the AF structure are deemed 
+    possible and likely. The model, which is an Evoformer-based neural network, is then trained on more protein 
+    structures, this time from molecular dynamics simulations. Finally it is fine-tuned on protein stability-related 
+    metrics. Another big difference from the Bryant & Noé 2024 paper is that inference involves a different neural 
+    network, in the form of the reverse diffusion model (the denoising part only). 
+  - Thus, one protein sequence at a time is 'sampled', starting from random Gaussian noise, which is then subjected to
+    a fixed number of denoising steps (30-50), all of which is conditioned on the trained Evoformer-based neural 
+    network. The end product is a distrubtion of Cartesian coordinates for the given protein sequence. 
+  - They also follow the careful approach of Bryant & Noé 2024 of composing a test dataset of proteins that are 
+    dissimilar to those in the training set. 
+  - Predictions of observed conformational changes achieved success rates between 55% and 90% and included large domain 
+    motions, local unfolding transitions, and the formation of cryptic binding pockets. 
+  - BioEMu effectively emulated equilibrium distributons of MD simulations of protein folding and confomational 
+    transitions, accurately and more rapidly. It effectively emulated equilibrum ensembles of small proteins from the 
+    perspective of how mutations effect protein stabilities.
+  - I found it difficult to assess these reported success/accuracy metrics though.
 
 </details>
 
@@ -61,25 +63,27 @@
 - The main activity included exploratory data analysis of all NMR structures available in the RCSB, as well as Python 
   implementations of different methods for characterising protein dynamics.
 
-
-
 </details>
 
 <details><summary><strong>4 distinct quantitations of protein dynamics:</strong></summary>
 
-- Early on it became apparent to me that there were two competing factors that made assembling a dataset difficult: 
-  - the intrinsic preference of deep learning model training for larger datasets;
-  - the relatively small number of clear cases of proteins with 2 or more different structures.
+- Early on the following two competing factors seemed to suggest there would need to either be overly simplified 
+  assumptions of protein structural changes or a far more rigorours approach than simply plucking proteins out of the 
+  PDB: 
+  1. The requirement for deep learning model to train on very large datasets.
+  2. The relatively small number of clear cases of proteins with 2 or more different structures, even less if filtering
+     out changes that only occur in the presence of some external factor/binding partner. 
   
 - The exploration of the NMR dataset naturally led to the question of how one determines the existence of different 
   protein structures for a single protein. Some groupings that are distinct, albeit with unclear boundaries between 
   them, include general flexibility/mobility, naturally-occuring ensemble populations, ligand-induced conformational 
   change, and non-native conformational changes. Thus, characterising protein dynamics is often not straightforward.<br> 
   One commonly-used method for quantifying structural differences between identical protein sequences involves the 
-  calculation of RMSDs. The same method, using variant of this method replaces the calculation RMSDs with that of TM-scores. 
+  calculation of RMSDs. The same method, using variant of this method replaces the calculation of RMSDs with that of 
+  TM-scores. 
 
-- (One can directly visualise atomic structures of two or more models of a protein for which NMR data has been 
-  deposited, in-browser, using the freely-available RCSB viewer. How to overlay protein structures is explained at 
+- (Incidentally, one can directly visualise atomic structures of two or more models of a protein for which NMR data has 
+  been deposited, in-browser, using the freely-available RCSB viewer. How to overlay protein structures is explained at 
   [rcsb/FAQs](https://www.rcsb.org/docs/3d-viewers/mol*/faqs-scenarios#how-do-i-view-all-models-of-an-nmr-ensemble). Scroll down to "How do I select specific models from an ensemble to see them ...?". Alternatively,
   standard tools (e.g. PyMOL, YASARA, etc) can of course be used instead.)
 
