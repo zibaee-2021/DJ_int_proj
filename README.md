@@ -11,7 +11,7 @@
   (Note: Frank Noé authors both papers. He's the senior author in the Science paper with 17 others, and is one of the 
   two authors in the Nature Comm. paper with Patrick Bryant).
 
-- <details><summary>Bryant & Noé 2024</summary></details>
+- <details><summary>Bryant & Noé 2024</summary>
   
   - Retrieved pre-predicted structures from AlphaFoldDB yields only one protein structure, albeit accompanied by 
     per-residue confidence metrics (pLDDT). However, performing inference with AlphaFold (though not available as a 
@@ -27,8 +27,10 @@
   - They report that this strategy led to accurate predictions for about half of their multi-conformation proteins 
     dataset. Accurately predicted structures were deemed to be so accourding to the TM-score of >0.8 between the 
     predicted alternate structure and the PDB-deposited structure (which was not included in the training set). 
-  
-- <details><summary>Lewis et al 2025</summary></details>
+
+</details>
+
+- <details><summary>Lewis et al 2025</summary>
 
   - Lewis et al. also attempt to address the goal of predicting alternative protein structures, but in this much 
     larger study, the full AlphaFold database is usd, which is clustered and then augmented further with 
