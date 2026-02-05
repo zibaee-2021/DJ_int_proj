@@ -107,8 +107,8 @@
     | Aspect                       | **RMSD**                                           | **TM-score**                                           |
     |------------------------------|----------------------------------------------------|--------------------------------------------------------|
     | Basic idea                   | Avg Euclidean distance after optimal superposition | Length-normalised, distance-weighted structural similarity |
-    | Sensitivity to domain motion | Very high – hinge/domain motion causes large RMSD  | Low – large separations are down-weighted              |
     | Dependence on protein length | Strong                                             | Weak (explicitly normalised)                           |
+    | Sensitivity to domain motion | Very high – hinge/domain motion causes large RMSD  | Low – large separations are down-weighted              |
     | Local sensitivity            | Excellent for small, local deviations              | Poor for subtle local changes                          |
     | Global fold detection        | Weak                                               | Strong                                                 |
     | Typical use                  | NMR ensembles, MD trajectories, refinement         | Fold recognition, topology comparison                  |
