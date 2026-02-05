@@ -6,10 +6,7 @@
 
 - Performed, part-time, over a period of 3 months from mid-July to mid-Sept 2025.
 
-</details>
-
-<details><summary></summary>
-  Inspiration for the project can be attributed to two papers in particular: Bryant & Noé Nature Comm. 2024 and 
+- Inspiration for the project can be attributed to two papers in particular: Bryant & Noé Nature Comm. 2024 and 
   Lewis et al. Science 2025. 
   (Note: Frank Noé authors both papers. He's the senior author in the Science paper with 17 others, and is one of the 
   two authors in the Nature Comm. paper with Patrick Bryant).
