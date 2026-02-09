@@ -13,43 +13,49 @@
 
 - <details><summary>Bryant & Noé 2024</summary>
   
-  - Retrieved pre-predicted structures from AlphaFoldDB yields only one protein structure, albeit accompanied by 
-    per-residue confidence metrics (pLDDT). However, performing inference with AlphaFold (though not available as a 
-    service) is reported by Bryant & Noé to potentially output different predicted structures, each time it is run. 
-    This might suggest AlphaFold has learned the underlying structural propensities of amino acid sequences some of
-    which are observed to populate more than one structure. 
-    However, Bryant & Noé point out that this could simply be down to the neural network memorising these different 
-    structures because they form part of the same dataset used to train the model.
-  - Bryant & Noé 2024 address this directly by assembling stratified training/test datasets instead. The protein dataset 
-    includes a proportion that have more than 1 deposited structure - which is based on a TM-score threshold of 0.8. 
-    Crucially they split these multi-structure proteins up, between training and test datasets, such that accurate 
+  - If one retrieves pre-predicted structures from AlphaFoldDB, it currently yields one single protein structure, 
+    albeit accompanied by per-residue confidence metrics (pLDDT). Bryant & Noé 2024 report that if one were to perform
+    inference with AlphaFold (though this is not available as a service like AlphaFoldDB) or other Evoformer-like model, 
+    a different structure can potentially be output - each time it is run. 
+    Such alternative predictions which are supported by observations of deposited structures in the PDB might suggest 
+    that the Evoformer-based model has learned the underlying molecular determinants for the potential promiscuity of 
+    protein folding. However, Bryant & Noé point out that if the model was trained on a dataset that included these 
+    different structures, then the aforementioned result could simply be due to the model memorising these different
+    structures.
+  - The motivation of this paper was to address this question directly, by assembling stratified training/test datasets 
+    instead and training an Evoformer-like model accordingly. The protein dataset includes a proportion that has more 
+    than 1 deposited structure - which is based on a TM-score threshold of 0.8.
+  - The dataset included one chain only of each protein structure in the PDB, excluding NMR structures, to give 68953
+    monomers.
+    Crucially, they split any multi-structure proteins up, between training and test datasets, such that accurate 
     predictions of alternative structures cannot be attributed to memorising them during training.
   - They report that this strategy led to accurate predictions for about half of their multi-conformation proteins 
-    dataset. Accurately predicted structures were deemed to be so accourding to the TM-score of >0.8 between the 
-    predicted alternate structure and the PDB-deposited structure (which was not included in the training set). 
+    dataset. Accurately-predicted structures were deemed to be so according to the TM-score of >0.8 between the 
+    predicted alternate structure and the 'true' PDB-deposited structure. 
 
 </details>
 
 - <details><summary>Lewis et al 2025</summary>
 
-  - Lewis et al. also attempt to address the goal of predicting alternative protein structures, but in this much 
-    larger study, the full AlphaFold database is usd, which is clustered and then augmented further with 
-    computationally-generatad structural variants based on what molecular movements of the AF structure are deemed 
-    possible and likely. The model, which is an Evoformer-based neural network, is then trained on more protein 
-    structures, this time from molecular dynamics simulations. Finally it is fine-tuned on protein stability-related 
+  - Like Bryant & Noé 2024, Lewis et al. also attempted to address the goal of predicting alternative protein 
+    structures, but in this, much larger study, the full AlphaFold database of 200 million proteins was used. This was 
+    clustered to restrict bias, and then increased further by augmentation (in which computationally-generated 
+    structural variants were generated, based on what molecular rearrangments each AlphsFoldDB structure might undergo.
+  - The model trained, which again was an Evoformer-based neural network, was further trained on even more protein 
+    structures, this time from molecular dynamics simulations. Finally, it was fine-tuned on protein stability-related 
     metrics. Another big difference from the Bryant & Noé 2024 paper is that inference involves a different neural 
     network, in the form of the reverse diffusion model (the denoising part only). 
   - Thus, one protein sequence at a time is 'sampled', starting from random Gaussian noise, which is then subjected to
     a fixed number of denoising steps (30-50), all of which is conditioned on the trained Evoformer-based neural 
-    network. The end product is a distrubtion of Cartesian coordinates for the given protein sequence. 
-  - They also follow the careful approach of Bryant & Noé 2024 of composing a test dataset of proteins that are 
-    dissimilar to those in the training set. 
+    network. The end product is a distribution of Cartesian coordinates for the given protein sequence. 
+  - They also follow the careful approach of Bryant & Noé 2024 in terms of composing a test dataset of proteins that is 
+    dissimilar to the training set. 
   - Predictions of observed conformational changes achieved success rates between 55% and 90% and included large domain 
     motions, local unfolding transitions, and the formation of cryptic binding pockets. 
   - BioEMu effectively emulated equilibrium distributons of MD simulations of protein folding and confomational 
     transitions, accurately and more rapidly. It effectively emulated equilibrum ensembles of small proteins from the 
     perspective of how mutations effect protein stabilities.
-  - I found it difficult to assess these reported success/accuracy metrics though.
+  - (I found it difficult to assess these reported success/accuracy metrics though.)
 
 </details>
 
@@ -66,20 +72,19 @@
 
 <details><summary><strong>4 distinct quantitations of protein dynamics:</strong></summary>
 
-- Early on the following two competing factors seemed to suggest there would need to either be overly simplified 
-  assumptions ]()of protein structural changes or a far more rigorours approach than simply plucking proteins out of the 
-  PDB: 
-  1. The requirement for deep learning model to train on very large datasets.
-  2. The relatively small number of clear cases of proteins with 2 or more different structures, even less if filtering
-     out changes that only occur in the presence of some external factor/binding partner. 
+- Early on, the following two competing factors seemed to suggest the need to either over simplify the problem, or 
+  devise a far more sophisticated approach to defining a dataset than simply plucking structures from the PDB: 
+  1. The requirement of a very large dataset in order to succesfully train a deep neural network.
+  2. The relatively small number of protein deposited with 2 or more clearly different structures, even fewer if 
+     filtering out those that depend entirely on the presence of some external factor/binding partner. 
   
-- The exploration of the NMR dataset naturally led to the question of how one determines the existence of different 
-  protein structures for a single protein. Some groupings that are distinct, albeit with unclear boundaries between 
-  them, include general flexibility/mobility, naturally-occuring ensemble populations, ligand-induced conformational 
-  change, and non-native conformational changes. Thus, characterising protein dynamics is often not straightforward.<br> 
+- Restricting one's self to NMR structures in the PDB, led to the question of how one determines, qualitatively, the 
+  existence of different protein structures for a single protein. This in turn led to questions of how one quantifies 
+  this. Different types of protein movement can be seen as distinct groups, albeit with unclear boundaries between them. 
+  They include general flexibility/mobility, naturally-occuring ensemble populations, ligand-induced conformational 
+  change, and non-native conformational changes.<br> 
   One commonly-used method for quantifying structural differences between identical protein sequences involves the 
-  calculation of RMSDs. The same method, using variant of this method replaces the calculation of RMSDs with that of 
-  TM-scores. 
+  calculation of RMSDs. I apply the same method, using a variant of RMSD called the TM-score. 
 
 - (Incidentally, one can directly visualise atomic structures of two or more models of a protein for which NMR data has 
   been deposited, in-browser, using the freely-available RCSB viewer. How to overlay protein structures is explained at 
@@ -513,7 +518,8 @@
     
       - optional functionality in the pipeline:
         - $k$-means clustering on the PC scores, to automatically assign cluster labels.
-        - kernel PCA, which 
+        - kernel PCA performs RBF kernel PCA on the leading PC scores to obtain a non-linear embedding that can reveal 
+          ensemble separation not visible with linear PCA. 
     
     The main function in this script is `essential_dynamics_pca()`. It begins by aligning the Cartesian coordinates of 
     atleast 2 models, but ideally many more ($\geq$ 10-20 models), of a protein (via `align_all_to_ref()` which uses 
@@ -734,7 +740,7 @@
     have been repeatedly observed to align with the directions of large-scale functional motions such as hinge bending, 
     twisting, and breathing in proteins.
     
-    Bauer et al. (ref x) makes a case for the benefits of an increased adoption of NMA across the field of protein 
+    Bauer et al. (2019) makes a case for the benefits of an increased adoption of NMA across the field of protein 
     structural biology. It is described as a relatively computationally-inexpensive method for identifying functionally 
     significant flexible states accesible to a protein about an equilibrium position (i.e. the given PDB structure). 
     It is based on the combination of the potential energy, kinetic energy and equations of motion. 
@@ -948,7 +954,8 @@
           tcov = 100 x (10/10) = 100%; 
           pident = 100 x (8/10) = 80%;
             
-          (Note: LoL-align was not implemented here as I didn't know about it. (refx)
+          (Note: LoL-align was not implemented here as I didn't know about it. (L. Reifenrath et al. 2025)
+        
           ```
 
     - <details><summary><strong>Generate NMR datasets:</strong></summary><br>
@@ -987,7 +994,7 @@
     - <details><summary><strong>Generate 3Di sequences using FoldSeek:</strong></summary><br>
   
       [FoldSeek](https://github.com/steineggerlab/foldseek) compresses structures into a 20-state 3Di alphabet and applies 
-      MMseqs2-style searches (refx). It converts 3D structure search into sequence search without losing sensitivity. 
+      MMseqs2-style searches (van Kempen et al. 2024). It converts 3D structure search into sequence search without losing sensitivity. 
       3Di alphabets are designed to encode tertiary (and sometimes secondary structure), reducing redundant information 
       between consecutive positions, such that they may represent longer range structure patterns. It is a discrete 
       representation of tertiary/secondary strucure information for each residue, produced based on VQ-VAE clustering.<br> 
@@ -1046,11 +1053,16 @@ scale but is less straightforward to quantify, with no fixed frame of reference.
 
   - <details><summary>Protein dynamics and deep learning</summary><br>
 
-Focusing on the methods implemented here, I've not found mentions of 'essential dynamics', 'normal mode analysis' or 
-'difference distance matrices' in either of the publications that serve as Bryant & Noé 2024 or Lewis et al. 2025.
-However, the use of these old methods might indeed start to feature again in the study of protein dynamics, even with
-the advent of deep neural networks. One reason for this supposition is that some have just started to re-appear in the 
-literature and, in particular, in conjunction with deep learning (at least for pLMs (ref x))). 
+There is no mention of essential dynamics, normal mode analysis or difference distance matrices in Bryant & Noé 2024 and
+Lewis et al. 2025. 
+However, having explored these methods, I think a strong case can be made for the use of these old and methods in the 
+burgeoning field of protein dynamics predictions by deep neural networks. They require very little compute. The one 
+exception would be if one were to use less coarse-grained atomic model, in the case of NMA calculations for example.
+In fact,  do just this. 
+
+Alternative methods not explored here include training Evoformer-based neural networks with a range of reduced MSA 
+depths (Aranganathan A, Beyerle ER. Applied Causality to Infer Protein Dynamics and Kinetics. J Chem Inf Model. 2026 
+
 
 More broadly, it goes against the notion that any form of end-to-end deep learning should completely exclude anything
 resembling 'manual' feature engineering, i.e. that all representation learning should be done entirely 'from scratch' 
@@ -1118,10 +1130,18 @@ a prelimiary multiple sequence alignment. albeit with the use of attention mecha
     - N. Go et al. PNAS (1983) 80: 3696–3700. Dynamics of a Small Globular Protein in Terms of Low-Frequency Vibrational-Modes.
     - M. Levitt et al. Int. J. Quant. Chem. (1983) 24: 181–199. The normal modes of a protein: Native bovine pancreatic trypsin inhibitor.  
     - B. Brooks & M. Karplus. PNAS (1983) 80: 6571–6575. Harmonic dynamics of proteins: Normal modes and fluctuations in bovine pancreatic trypsin inhibitor.  
+    - Gaussian network model (GNM) / elastic network model (ENM):
+      - MM. Tirion. Phys. Rev. Lett. (1996) 77: 1905–1908. Large amplitude elastic motions in proteins from a single-parameter atomic analysis. 
 
 - Recent work on protein mobility and its computation:
   - M. Schneider et al. Structure (2025) 33: 1781–1792. EnsembleFlex: Protein structure ensemble analysis made easy. 
+  - A. Aranganathan & ER. Beyerle. J. Chem. Inf. Model. (2025). Applied Causality to Infer Protein Dynamics and Kinetics.
+
+- NMA of proteins and machine learning:
+  - Qin et al. RSC Adv. (2020) 10:16607–16615. Machine learning model for fast prediction of the natural frequencies of protein molecules
+
 ---
+
 - <details><summary>Datasets:</summary>
 
   - G. Qi, et al. Bioinformatics (2005) 21(12): 2832-2838. A comprehensive and non-redundant database of protein domain movements. 
