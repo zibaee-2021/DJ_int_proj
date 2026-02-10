@@ -336,12 +336,12 @@
     ensembles of conformational variants. It takes an RMSD matrix which is composed of an all-vs-all RMSD calculation
     whereby the RMSD of every pair of NMR models, for example, are stored in a matrix.<br> 
     `dendrogrm()` uses `scipy.cluster.hierarchy.linkage` function to build a hierarchical clustering tree 
-    (a linkage/dendrogram) from the RMSD values. The linkage matrix it generates is then visualised via
-    `scipy.cluster.hierarchy.dendrogram` function. For example:<br><br>
+    (a linkage/dendrogram) from the RMSD values.<br> 
+    The linkage matrix it generates is then visualised via `scipy.cluster.hierarchy.dendrogram` function. For example:<br><br>
     ![Dendrogram of hierarchical clustering of RMSD matrix for the 25 models of chain A of PDB 1A0N](readme_images/RMSDdndrgrm_1A0N_A.png)
 
     The same linkage matrix can be re-used for a different visualisation, using `seaborn.clustermap()`. For example:<br><br>
-    ![Heatmap of hierarchical clustering of RMSD matrix for the 25 models of chain A of PDB 1A0N](readme_images/RMSDheatmp_1A0N_A.png) ... replace..TODO
+    ![Heatmap of hierarchical clustering of RMSD matrix for the 25 models of chain A of PDB 1A0N](readme_images/RMSDheatmp_1A0N_A.png)
     
     For a direct visualisation of the RMSD matrix without any clustering or pre-processing, using `contour_map()`. For example:<br><br>
     ![RMSD matrix for the 25 models of chain A of PDB 1A0N](readme_images/RMSDcntrmap_1A0N_A.png)
@@ -392,7 +392,8 @@
     (i.e GDT) (Zemla et al. 2001). (GDT was not replaced with TM-score for reasons of consistency with previous CASP 
     competitions.)  
     
-    All computations are carried out in `tm_aligner.py` and are self-explanatory:<br>
+    - All computations are carried out in `tm_aligner.py` and are self-explanatory:<br>
+    
     ##### Installing TM-align:<br>
     Installed according to github instructions: https://zhanggroup.org/TM-align/ <br>
     Rocky Linux: Compile TMalign.cpp with `g++ -O3 -ffast-math -lm -o TMalign TMalign.cpp`. <br> 
