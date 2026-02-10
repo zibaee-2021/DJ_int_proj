@@ -1019,32 +1019,31 @@
 
   - <details><summary>Protein dynamics</summary><br>
 
-A decade before X-ray diffraction of protein crystals revealed the Cartesian coordinates of a protein at atomic 
-resolution, hydrogen-deuterium exchange experiments led to the proposal that proteins might exist at thermodynamic 
-ensembles, with continuous interconversion between conformational states, and that any experimentally-observed structure 
-might represent an average of those structures (Linderstrømn-Lang & Schellman 1959). In subsequent decades a number of 
-methodologies supported this notion. This even included by use of X-ray diffraction studies (Frauenfelder et al 1979).
-A different form of structural change was observed by X-ray crystallography, namely upon the binding of a ligand.
-(Perutz 1968). 
-It has since become well-established that all proteins are intrinsically dynamic and that they exhibit motions spanning 
-many orders of magnitude in time, from molecular bond vibrations on femtosecond timescales (Vos & Martin 1999) to 
-protein-specific tertiary and quaternary conformational motions occurring on microsecond to second timescales 
-(Henzler-Wildman & Kern 2007).
-
-As can be seen from the table below, the amplitude of different types of motion correlates with time frame over which 
-they occur, (albeit over a smaller range, at about 4 versus 12 orders of magnitude).   
-
-Amongst the largest motions include those of viral fusion proteins reaching over 100 Ångströms, though these might be 
-considered a different class of motion all together, involving global topological rearrangements, rather than small 
-scale domain motions about flexible hinge regions. Finally, the motions of fully disordered proteins can be of large 
-scale but is less straightforward to quantify, with no fixed frame of reference. 
-
-| Motion          | What changes                     | Typical size              | Typical timescale                   |
-| --------------- | -------------------------------- |---------------------------|-------------------------------------|
-| Bond stretching | Bond length                      | **0.005–0.01 Å**          | **10–100 fs** (10^{-14}–10^{-13} s) |
-| Libration       | Bond / group orientation         | **0.01–0.05 Å (projected)** | **0.1–10 ps** (10^{-13}–10^{-11} s) |
-| Rotamer jump    | Rotameric state (χ angles)       | **0.5–1 Å**               | **10 ps – 10 ns**                   |
-| Loop motion     | Backbone conformation / position | **1–10+ Å**               | **ns – ms (or slower)**             |
+  A decade before X-ray diffraction of protein crystals revealed the Cartesian coordinates of a protein at atomic 
+  resolution, hydrogen-deuterium exchange experiments led to the proposal that proteins might exist at thermodynamic 
+  ensembles, with continuous interconversion between conformational states, and that any experimentally-observed structure 
+  might represent an average of those structures (Linderstrømn-Lang & Schellman 1959). In subsequent decades a number of 
+  methodologies supported this notion. This even included by use of X-ray diffraction studies (Frauenfelder et al 1979).
+  A different form of structural change was observed by X-ray crystallography, namely upon the binding of a ligand.
+  (Perutz 1968). 
+  It has since become well-established that all proteins are intrinsically dynamic and that they exhibit motions spanning 
+  many orders of magnitude in time, from molecular bond vibrations on femtosecond timescales (Vos & Martin 1999) to 
+  protein-specific tertiary and quaternary conformational motions occurring on microsecond to second timescales 
+  (Henzler-Wildman & Kern 2007).
+  As can be seen from the table below, the amplitude of different types of motion correlates with the timeframe over which 
+  they occur, albeit over a much smaller range of about 4 orders of magnitude versus 12).   
+  
+  Amongst the largest motions include those of viral fusion proteins reaching over 100 Ångströms, though these might be 
+  considered a different class of motion all together, involving global topological rearrangements, rather than small 
+  scale domain motions about flexible hinge regions. Finally, the motions of fully disordered proteins can be of large 
+  scale but is less straightforward to quantify, with no fixed frame of reference. 
+  
+  | Motion          | What changes                     | Typical size              | Typical timescale                   |
+  | --------------- | -------------------------------- |---------------------------|-------------------------------------|
+  | Bond stretching | Bond length                      | **0.005–0.01 Å**          | **10–100 fs** (10^{-14}–10^{-13} s) |
+  | Libration       | Bond / group orientation         | **0.01–0.05 Å (projected)** | **0.1–10 ps** (10^{-13}–10^{-11} s) |
+  | Rotamer jump    | Rotameric state (χ angles)       | **0.5–1 Å**               | **10 ps – 10 ns**                   |
+  | Loop motion     | Backbone conformation / position | **1–10+ Å**               | **ns – ms (or slower)**             |
 
   - <details><summary>Diffusion models</summary><br>
 
