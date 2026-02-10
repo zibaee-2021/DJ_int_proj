@@ -11,7 +11,7 @@
   (Note: Frank Noé authors both papers. He's the senior author in the Science paper with 17 others, and is one of the 
   two authors in the Nature Comm. paper with Patrick Bryant).
 
-- <details><summary>Bryant & Noé 2024</summary>
+- <details><summary>Bryant & Noé 2024</summary><br>
   
   - If one retrieves pre-predicted structures from AlphaFoldDB, it currently yields one single protein structure, 
     albeit accompanied by per-residue confidence metrics (pLDDT). Bryant & Noé 2024 report that if one were to perform
@@ -31,11 +31,9 @@
     predictions of alternative structures cannot be attributed to memorising them during training.
   - They report that this strategy led to accurate predictions for about half of their multi-conformation proteins 
     dataset. Accurately-predicted structures were deemed to be so according to the TM-score of >0.8 between the 
-    predicted alternate structure and the 'true' PDB-deposited structure. 
+    predicted alternate structure and the 'true' PDB-deposited structure.
 
-</details>
-
-- <details><summary>Lewis et al 2025</summary>
+- <details><summary>Lewis et al 2025</summary><br>
 
   - Like Bryant & Noé 2024, Lewis et al. also attempted to address the goal of predicting alternative protein 
     structures, but in this, much larger study, the full AlphaFold database of 200 million proteins was used. This was 
