@@ -392,7 +392,7 @@
     (i.e GDT) (Zemla et al. 2001). (GDT was not replaced with TM-score for reasons of consistency with previous CASP 
     competitions.)  
     
-    All computations are carried out in `tm_aligner.py` and are self-explanatory.<br>
+    All computations are carried out in `tm_aligner.py` and are self-explanatory:<br>
     ##### Installing TM-align:<br>
     Installed according to github instructions: https://zhanggroup.org/TM-align/ <br>
     Rocky Linux: Compile TMalign.cpp with `g++ -O3 -ffast-math -lm -o TMalign TMalign.cpp`. <br> 
@@ -422,7 +422,7 @@
     The DDM is processed here to help identify and label distinct protein conformational ensembles, via an appropriate 
     processing and clustering algorithm, described below. 
     
-    All computations are carried out in `diff_distance_matrix.py`.<br>
+    All computations are carried out in `diff_distance_matrix.py`:<br>
     The main functions are `compute_ddms(pidc_pdf)` and `analyse_ddms()`.<br> 
     `compute_ddms(pidc_pdf)` takes a parsed mmCIF of a single NMR protein chain, read from an already parsed copy as an 
     .ssv file. This contains all the NMR models for that protein chain, and is read into a Pandas dataframe ('pidc_pdf'). 
@@ -506,7 +506,7 @@
     modes which indicate directions of conformational change that are energetically favoured by the particular topology of 
     native contacts (Yang et al. 2009).<br> 
     
-    All essential dynamics computations are carried out in `essential_dynamics.py`.<br> 
+    All computations are carried out in `essential_dynamics.py`:<br> 
     In summary, this script does the following:
     - Computes PCA, which comes in the form of eigenvalues, eigenvectors and scores.
       - Generates a scree plot, which indicates which modes matter (i.e. a global picture). It addresses: “how many meaningful modes?”
@@ -799,7 +799,7 @@
     
     Here, the Python implementation of NMA is done with an ENM potential of the GNM type.
     
-    All GNM computations are carried out in `nma_gnm.py`.<br> 
+    All computations are carried out in `nma_gnm.py`:<br> 
     
     The main function `run_gnm()` implements the Gaussian network model given x,y,z coordinates of single protein, as 
     described above, via the 3 following functions that result in the :
