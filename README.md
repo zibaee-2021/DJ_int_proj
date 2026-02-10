@@ -392,7 +392,7 @@
     (i.e GDT) (Zemla et al. 2001). (GDT was not replaced with TM-score for reasons of consistency with previous CASP 
     competitions.)  
     
-  - All computations are carried out in `tm_aligner.py` and are self-explanatory:<br>
+    All computations are carried out in `tm_aligner.py` and are self-explanatory:<br>
     
     ##### Installing TM-align:<br>
     Installed according to github instructions: https://zhanggroup.org/TM-align/ <br>
