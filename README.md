@@ -7,23 +7,22 @@
 - Performed, part-time, over a period of 3 months from mid-July to mid-Sept 2025.
 
 - Inspiration for the project can be attributed to two papers in particular: Bryant & Noé Nature Comm. 2024 and 
-  Lewis et al. Science 2025. 
-  (Note: Frank Noé authors both papers. He's the senior author in the Science paper with 17 others, and is one of the 
-  two authors in the Nature Comm. paper with Patrick Bryant).
+  Lewis et al. Science 2025. (Note: Frank Noé authors both papers. He's the senior author for the Science paper along with 17 others. He's one of 
+  only two authors for the Nature Communications paper with Patrick Bryant):
 
 - <details><summary>Bryant & Noé 2024</summary><br>
   
   - If one retrieves pre-predicted structures from AlphaFoldDB, it currently yields one single protein structure, 
     albeit accompanied by per-residue confidence metrics (pLDDT). Bryant & Noé 2024 report that if one were to perform
-    inference with AlphaFold (though this is not available as a service like AlphaFoldDB) or other Evoformer-like model, 
-    a different structure can potentially be output - each time it is run. 
+    inference with AlphaFold (though this is not available as a service like AlphaFoldDB) or using some other 
+    Evoformer-based model, a different structure can potentially be output - each time it is run. 
     Such alternative predictions which are supported by observations of deposited structures in the PDB might suggest 
     that the Evoformer-based model has learned the underlying molecular determinants for the potential promiscuity of 
     protein folding. However, Bryant & Noé point out that if the model was trained on a dataset that included these 
     different structures, then the aforementioned result could simply be due to the model memorising these different
     structures.
   - The motivation of this paper was to address this question directly, by assembling stratified training/test datasets 
-    instead and training an Evoformer-like model accordingly. The protein dataset includes a proportion that has more 
+    instead and training an Evoformer-based model accordingly. The protein dataset includes a proportion that has more 
     than 1 deposited structure - which is based on a TM-score threshold of 0.8.
   - The dataset included one chain only of each protein structure in the PDB, excluding NMR structures, to give 68953
     monomers.
@@ -517,7 +516,7 @@
       - optional functionality in the pipeline:
         - $k$-means clustering on the PC scores, to automatically assign cluster labels.
         - kernel PCA performs RBF kernel PCA on the leading PC scores to obtain a non-linear embedding that can reveal 
-          ensemble separation not visible with linear PCA. 
+          ensemble separation not visible with linear PCA alone. 
     
     The main function in this script is `essential_dynamics_pca()`. It begins by aligning the Cartesian coordinates of 
     atleast 2 models, but ideally many more ($\geq$ 10-20 models), of a protein (via `align_all_to_ref()` which uses 
