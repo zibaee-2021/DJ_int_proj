@@ -1077,12 +1077,14 @@
 
     - <details><summary>conditioning:</summary><br>
       'Conditioning' of a diffusion model, specifically the denoising process ('reverse'), refers to modelling a 
-      conditional probability distribution, conditioned on some external property s.t. the denoising is: 
-      $p_{\theta}(\textbf{x_t} | \textbf{x_{t-1}}, y})$, <br>
+      conditional probability distribution, conditioned on some external property s.t. the denoising is:<br> 
+  
+      $\textbf{C} = \frac{1}{M - 1} (\textbf{X} - \bar{\textbf{X}})^{\top} (\textbf{X} - \bar{\textbf{X}})$<br>
+      
       where $y$ can be labels, text embeddings, residue-level protein sequence embeddings, amongst other. 
       The effect of this conditioning is to convert a diffusion model from one that generates random 
       samples from a learned distribution to one that incorporates external information into the denoising process in 
-      order to steer it towards specific outcomes. text-to-image (Dhariwal & Nichol 2021)
+      order to steer it towards specific outcomes. Although demonstrated first text-to-image (Dhariwal & Nichol 2021)
 
 
 
@@ -1167,17 +1169,25 @@
     - N. Go et al. PNAS (1983) 80: 3696–3700. Dynamics of a Small Globular Protein in Terms of Low-Frequency Vibrational-Modes.
     - M. Levitt et al. Int. J. Quant. Chem. (1983) 24: 181–199. The normal modes of a protein: Native bovine pancreatic trypsin inhibitor.  
     - B. Brooks & M. Karplus. PNAS (1983) 80: 6571–6575. Harmonic dynamics of proteins: Normal modes and fluctuations in bovine pancreatic trypsin inhibitor.  
-    - Gaussian network model (GNM) / elastic network model (ENM):
+    - Gaussian network model (GNM), aka elastic network model (ENM):
       - MM. Tirion. Phys. Rev. Lett. (1996) 77: 1905–1908. Large amplitude elastic motions in proteins from a single-parameter atomic analysis. 
 
-- Recent work on protein mobility and its computation:
-  - M. Schneider et al. Structure (2025) 33: 1781–1792. EnsembleFlex: Protein structure ensemble analysis made easy. 
-  - A. Aranganathan & ER. Beyerle. J. Chem. Inf. Model. (2025). Applied Causality to Infer Protein Dynamics and Kinetics.
+  - <details><summary>Recent work on protein mobility and its computation:</summary>
+    
+    - M. Schneider et al. Structure (2025) 33: 1781–1792. EnsembleFlex: Protein structure ensemble analysis made easy. 
+    - A. Aranganathan & ER. Beyerle. J. Chem. Inf. Model. (2025). Applied Causality to Infer Protein Dynamics and Kinetics.
 
-- NMA of proteins and machine learning:
-  - Qin et al. RSC Adv. (2020) 10:16607–16615. Machine learning model for fast prediction of the natural frequencies of protein molecules.
-  - C. Hou, H. Zhao & Y. Shen, Proc. Natl. Acad. Sci. U.S.A. (2025) 123(4):1-12. Protein language models trained on biophysical dynamics inform mutation effects.
+  - <details><summary>NMA of proteins and machine learning:</summary><br>
+    
+    - Qin et al. RSC Adv. (2020) 10:16607–16615. Machine learning model for fast prediction of the natural frequencies of protein molecules.
+    - C. Hou, H. Zhao & Y. Shen, Proc. Natl. Acad. Sci. U.S.A. (2025) 123(4):1-12. Protein language models trained on biophysical dynamics inform mutation effects.
 
+  - <details><summary>Diffusion Models:</summary><br>
+
+    - Sohl-Dickstein et al. .. .. (2015) .. .. 
+    - Ho et al. .. .. (2020) . . . 
+    - Dhairwal & .. (2021) . . .
+    - 
 ---
 
 - <details><summary>Datasets:</summary>
