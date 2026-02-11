@@ -770,7 +770,7 @@
     and $\delta_k$ is a phase factor.  
     Substitute into preceding equation, and the entire equation of motion can be rewritten as standard eigenvalue equation:
     <p align="center">
-    $\textbf{V} \textbf{A} = \lambda \textb{A}.$
+    $\textbf{V} \textbf{A} = \lambda \textbf{A}.$
     </p>
     where matrix $\textbf{A}$ contains the $\textbf{A}_k$ eigenvectors of the Hessian matrix $\textbf{V}$, which are 
     the normal mode vectors and describe in which direction and how far each atom moves wrt the others. The $\lambda_k$ 
@@ -778,7 +778,7 @@
     give absolute amplitude of displacements).
     
     For each normal mode, the corresponding eigenvector provides the shape of its oscillation (i.e. the relative directions
-    (x,y,z) of motion for each atom; while the corresponding eigenvalue provides its frequency. In theory, you would be able 
+    $(x,y,z)$ of motion for each atom; while the corresponding eigenvalue provides its frequency. In theory, you would be able 
     to reconstruct the anharmonic oscillation of the protein as a whole by combining all of the normal modes, except for the
     fact that we still lack their amplitudes and the phases.
     
@@ -1079,7 +1079,9 @@
       'Conditioning' of a diffusion model, specifically the denoising process ('reverse'), refers to modelling a 
       conditional probability distribution, conditioned on some external property s.t. the denoising is:<br> 
       
-      $p_{\theta}(\textbf{x}_t | \textbf{x}_{t-1}, y)$<br>
+      <p align="center">
+      $p_{\theta}(\textbf{x}_t \mid \textbf{x}_{t-1}, y)$<br>
+      </p>
       
       where $y$ can be labels, text embeddings, residue-level protein sequence embeddings, amongst other. 
       The effect of this conditioning is to convert a diffusion model from one that generates random 
@@ -1097,9 +1099,8 @@
     difference distance matrices and Gaussian network models require relatively little compute. If one were to try to 
     perform normal mode analysis using less coarse grained form than the Gaussian network model describes here, then the 
     computational demand could become too high.<br>  
-    There are a hadnful of publications that combine protein language models with NMA (Hou et al. 2025) 
+    There are a handful of publications that combine protein language models with NMA (Hou et al. 2025) 
 
-    
     Alternative methods not explored here include training Evoformer-based neural networks with a range of reduced MSA 
     depths (Aranganathan A, Beyerle ER. Applied Causality to Infer Protein Dynamics and Kinetics. J Chem Inf Model. 2026 
     
