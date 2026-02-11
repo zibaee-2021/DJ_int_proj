@@ -1019,55 +1019,95 @@
 
   - <details><summary>Protein dynamics</summary><br>
 
-  A decade before X-ray diffraction of protein crystals revealed the Cartesian coordinates of a protein at atomic 
-  resolution, hydrogen-deuterium exchange experiments led to the proposal that proteins might exist at thermodynamic 
-  ensembles, with continuous interconversion between conformational states, and that any experimentally-observed structure 
-  might represent an average of those structures (Linderstrømn-Lang & Schellman 1959). In subsequent decades a number of 
-  methodologies supported this notion. This even included by use of X-ray diffraction studies (Frauenfelder et al 1979).
-  A different form of structural change was observed by X-ray crystallography, namely upon the binding of a ligand.
-  (Perutz 1968). 
-  It has since become well-established that all proteins are intrinsically dynamic and that they exhibit motions spanning 
-  many orders of magnitude in time, from molecular bond vibrations on femtosecond timescales (Vos & Martin 1999) to 
-  protein-specific tertiary and quaternary conformational motions occurring on microsecond to second timescales 
-  (Henzler-Wildman & Kern 2007).
-  As can be seen from the table below, the amplitude of different types of motion correlates with the timeframe over which 
-  they occur, albeit over a much smaller range of about 4 orders of magnitude versus 12).   
-  
-  Amongst the largest motions include those of viral fusion proteins reaching over 100 Ångströms, though these might be 
-  considered a different class of motion all together, involving global topological rearrangements, rather than small 
-  scale domain motions about flexible hinge regions. Finally, the motions of fully disordered proteins can be of large 
-  scale but is less straightforward to quantify, with no fixed frame of reference. 
-  
-  | Motion          | What changes                     | Typical size              | Typical timescale                   |
-  | --------------- | -------------------------------- |---------------------------|-------------------------------------|
-  | Bond stretching | Bond length                      | **0.005–0.01 Å**          | **10–100 fs** (10^{-14}–10^{-13} s) |
-  | Libration       | Bond / group orientation         | **0.01–0.05 Å (projected)** | **0.1–10 ps** (10^{-13}–10^{-11} s) |
-  | Rotamer jump    | Rotameric state (χ angles)       | **0.5–1 Å**               | **10 ps – 10 ns**                   |
-  | Loop motion     | Backbone conformation / position | **1–10+ Å**               | **ns – ms (or slower)**             |
+    X-ray crystallography experiments demonstrated the change of haemoglobin structure upon binding of a ligand (Perutz 1968).
+    A decade earlier hydrogen-deuterium exchange experiments led to the proposal that proteins might exist as thermodynamic 
+    ensembles, with continuous interconversion between conformational states, and that any experimentally-observed structure 
+    might represent an average of those structures (Linderstrømn-Lang & Schellman 1959), (this was baed on indirect
+    information as I have not been able to get a copy of this paper myself). 
+    In subsequent decades a number of methodologies supported this notion, including via further X-ray diffraction 
+    studies (Frauenfelder et al 1979).
+    It has since become well-established that all proteins are intrinsically dynamic and that they exhibit motions spanning 
+    many orders of magnitude in time, from molecular bond vibrations on femtosecond timescales (Vos & Martin 1999) to 
+    protein-specific tertiary and quaternary conformational motions occurring on microsecond to second timescales 
+    (Henzler-Wildman & Kern 2007).
+    As can be seen from the table below, the amplitude of different types of motion correlates with the timeframe over 
+    which they occur, albeit over a much smaller range of about 4 orders of magnitude versus 12.   
+    
+    Amongst the largest motions include those of viral fusion proteins reaching over 100 Ångströms. These might be 
+    considered a different class of motion all together, involving global topological rearrangements, rather than small 
+    scale domain motions about flexible hinge regions, for example. Finally, the motions of fully disordered proteins 
+    can be relatively large, but are less straightforward to quantify with no fixed frame of reference. 
+    
+    | Motion          | What changes                     | Typical size              | Typical timescale                   |
+    | --------------- | -------------------------------- |---------------------------|-------------------------------------|
+    | Bond stretching | Bond length                      | **0.005–0.01 Å**          | **10–100 fs** (10^{-14}–10^{-13} s) |
+    | Libration       | Bond / group orientation         | **0.01–0.05 Å (projected)** | **0.1–10 ps** (10^{-13}–10^{-11} s) |
+    | Rotamer jump    | Rotameric state (χ angles)       | **0.5–1 Å**               | **10 ps – 10 ns**                   |
+    | Loop motion     | Backbone conformation / position | **1–10+ Å**               | **ns – ms (or slower)**             |
 
   - <details><summary>Diffusion models</summary><br>
+    Although no training of a diffusion model has been taken and no details of its architecture are included here, I 
+    will give a brief and general description of diffusion model in deep learning. 
+    The strategy that would likely have been first tried would be to use a pre-trained protein language model to 
+    condition the denoising part of a diffusion model that would generate Cartesian coordinates of alpha-carbons for a 
+    given amino acid sequence.
+    
+    - <details><summary>Provenance of diffusion models in deep learning:</summary><br>
+      A diffusion model is a parameterised Markov chain trained using variational inference to produce samples matching 
+      the data after finite time. Originally described in 2015 by Sohl-Dickstein et al., subsequent work by 
+      Ho et al. in 2020 led to a large improvement in the application of diffusion models, heavily influencing the 
+      field since. 
+  
+      Sohl-Dickstein et al. (2015)
+      │
+      ├── DDPM (Ho et al., 2020)
+      │   │
+      │   ├── DDIM (fast, deterministic sampling)
+      │   │
+      │   ├── Score-Based Models / SDE Diffusion
+      │   │   └── Continuous-time diffusion
+      │   │
+      │   ├── Solver-based samplers
+      │   │   └── DPM-Solver, UniPC, etc.
+      │   │
+      │   └── Latent Diffusion Models (2022)
+      │       └── Stable Diffusion
+      │
+      └── (Original form rarely used directly)
+
+    - <details><summary>conditioning:</summary><br>
+      'Conditioning' of a diffusion model, specifically the denoising process ('reverse'), refers to modelling a 
+      conditional probability distribution, conditioned on some external property s.t. the denoising is: 
+      $p_{\theta}(\textbf{x_t} | \textbf{x_{t-1}}, y})$, <br>
+      where $y$ can be labels, text embeddings, residue-level protein sequence embeddings, amongst other. 
+      The effect of this conditioning is to convert a diffusion model from one that generates random 
+      samples from a learned distribution to one that incorporates external information into the denoising process in 
+      order to steer it towards specific outcomes. text-to-image (Dhariwal & Nichol 2021)
+
 
 
   - <details><summary>Protein dynamics and deep learning</summary><br>
 
-There is no mention of essential dynamics, normal mode analysis or difference distance matrices in Bryant & Noé 2024 and
-Lewis et al. 2025. 
-However, having explored these methods, I think a strong case can be made for the use of these old and methods in the 
-burgeoning field of protein dynamics predictions by deep neural networks. They require very little compute. The one 
-exception would be if one were to use less coarse-grained atomic model, in the case of NMA calculations for example.
-In fact,  do just this. 
+    There is no mention of essential dynamics, normal mode analysis or difference distance matrices in Bryant & Noé 2024 and
+    Lewis et al. 2025. 
+    However, having explored these methods, I think a strong case can be made for the use of these old and methods in the 
+    burgeoning field of protein dynamics predictions by deep neural networks. Computation involving essential dynamics, 
+    difference distance matrices and Gaussian network models require relatively little compute. If one were to try to 
+    perform normal mode analysis using less coarse grained form than the Gaussian network model describes here, then the 
+    computational demand could become too high.<br>  
+    There are a hadnful of publications that combine protein language models with NMA (Hou et al. 2025) 
 
-Alternative methods not explored here include training Evoformer-based neural networks with a range of reduced MSA 
-depths (Aranganathan A, Beyerle ER. Applied Causality to Infer Protein Dynamics and Kinetics. J Chem Inf Model. 2026 
-
-
-More broadly, it goes against the notion that any form of end-to-end deep learning should completely exclude anything
-resembling 'manual' feature engineering, i.e. that all representation learning should be done entirely 'from scratch' 
-(which can include use of pre-trained models which themselves were trained without manual feature engineering).
-There is no compelling reason to restrict the training and prediction pipeline, particularly in the preliminary 
-exploratory stages of a proof-of-concept project. Furthermore, such a rule is already not adhered to in well-established
-and accurate deep learning pipelines of protein structure prediction, such as AlphaFold, which is heavily dependent on 
-a prelimiary multiple sequence alignment. albeit with the use of attention mechanisms.
+    
+    Alternative methods not explored here include training Evoformer-based neural networks with a range of reduced MSA 
+    depths (Aranganathan A, Beyerle ER. Applied Causality to Infer Protein Dynamics and Kinetics. J Chem Inf Model. 2026 
+    
+    More broadly, it goes against the notion that any form of end-to-end deep learning should completely exclude anything
+    resembling 'manual' feature engineering, i.e. that all representation learning should be done entirely 'from scratch' 
+    (which can include use of pre-trained models which themselves were trained without manual feature engineering).
+    There is no compelling reason to restrict the training and prediction pipeline, particularly in the preliminary 
+    exploratory stages of a proof-of-concept project. Furthermore, such a rule is already not adhered to in well-established
+    and accurate deep learning pipelines of protein structure prediction, such as AlphaFold, which is heavily dependent on 
+    a prelimiary multiple sequence alignment. albeit with the use of attention mechanisms.
 
 
 </details>
@@ -1135,7 +1175,8 @@ a prelimiary multiple sequence alignment. albeit with the use of attention mecha
   - A. Aranganathan & ER. Beyerle. J. Chem. Inf. Model. (2025). Applied Causality to Infer Protein Dynamics and Kinetics.
 
 - NMA of proteins and machine learning:
-  - Qin et al. RSC Adv. (2020) 10:16607–16615. Machine learning model for fast prediction of the natural frequencies of protein molecules
+  - Qin et al. RSC Adv. (2020) 10:16607–16615. Machine learning model for fast prediction of the natural frequencies of protein molecules.
+  - C. Hou, H. Zhao & Y. Shen, Proc. Natl. Acad. Sci. U.S.A. (2025) 123(4):1-12. Protein language models trained on biophysical dynamics inform mutation effects.
 
 ---
 
