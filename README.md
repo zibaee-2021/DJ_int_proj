@@ -1078,7 +1078,9 @@
     - <details><summary>conditioning:</summary><br>
       'Conditioning' of a diffusion model, specifically the denoising process ('reverse'), refers to modelling a 
       conditional probability distribution, conditioned on some external property s.t. the denoising is:<br> 
-  
+      
+      $p{\theta}(\textbf{xt} | \textbf{x{t-1}}, y)$<br>
+
       $\textbf{C} = \frac{1}{M - 1} (\textbf{X} - \bar{\textbf{X}})^{\top} (\textbf{X} - \bar{\textbf{X}})$<br>
       
       where $y$ can be labels, text embeddings, residue-level protein sequence embeddings, amongst other. 
