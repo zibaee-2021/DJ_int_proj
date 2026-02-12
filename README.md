@@ -1077,7 +1077,7 @@
       │       └── Stable Diffusion
       │
       └── (Original form rarely used directly)
-```
+  ```
 
   - <details><summary>conditioning:</summary><br>
       'Conditioning' of a diffusion model, specifically the denoising process ('reverse'), refers to modelling a 
