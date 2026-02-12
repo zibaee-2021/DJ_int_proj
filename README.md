@@ -1060,7 +1060,7 @@
       that best reverses each time step of the forward (noising) steps, although this will more often be for jumps over
       many steps, which is far more efficient and as effective.
   
-  ```bash
+      ```bash
       Sohl-Dickstein et al. (2015)
       │
       ├── DDPM (Ho et al., 2020)
@@ -1077,7 +1077,7 @@
       │       └── Stable Diffusion
       │
       └── (Original form rarely used directly)
-  ```
+      ```
 
   - <details><summary>conditioning:</summary><br>
       'Conditioning' of a diffusion model, specifically the denoising process ('reverse'), refers to modelling a 
