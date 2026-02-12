@@ -1056,8 +1056,11 @@
       A diffusion model is a parameterised Markov chain trained using variational inference to produce samples matching 
       the data after finite time. Originally described in 2015 by Sohl-Dickstein et al., subsequent work by 
       Ho et al. in 2020 led to a large improvement in the application of diffusion models, heavily influencing the 
-      field since. 
+      field since. Parameters of the denoiser are trained using a deep neural network (typically U-Net or Transformer)
+      that best reverses each time step of the forward (noising) steps, although this will more often be for jumps over
+      many steps, which is far more efficient and as effective.
   
+  ```bash
       Sohl-Dickstein et al. (2015)
       │
       ├── DDPM (Ho et al., 2020)
@@ -1074,8 +1077,9 @@
       │       └── Stable Diffusion
       │
       └── (Original form rarely used directly)
+```
 
-    - <details><summary>conditioning:</summary><br>
+  - <details><summary>conditioning:</summary><br>
       'Conditioning' of a diffusion model, specifically the denoising process ('reverse'), refers to modelling a 
       conditional probability distribution, conditioned on some external property s.t. the denoising is:<br> 
       
