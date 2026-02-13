@@ -1046,8 +1046,9 @@
     | Loop motion     | Backbone conformation / position | **1–10+ Å**               | **ns – ms (or slower)**             |
 
   - <details><summary>Diffusion models</summary><br>
-    Although no training of a diffusion model has been taken and no details of its architecture are included here, I 
-    will give a brief and general description of diffusion model in deep learning. 
+    Although no training of a diffusion model has been performed here and no details of the architecture of the 
+    diffusion model that would be used are included, I will still give a brief description of diffusion models and why
+    they are useful for this particular study. 
     The strategy that would likely have been first tried would be to use a pre-trained protein language model to 
     condition the denoising part of a diffusion model that would generate Cartesian coordinates of alpha-carbons for a 
     given amino acid sequence.
@@ -1056,9 +1057,9 @@
       A diffusion model is a parameterised Markov chain trained using variational inference to produce samples matching 
       the data after finite time. Originally described in 2015 by Sohl-Dickstein et al., subsequent work by 
       Ho et al. in 2020 led to a large improvement in the application of diffusion models, heavily influencing the 
-      field since. Parameters of the denoiser are trained using a deep neural network (typically U-Net or Transformer)
-      that best reverses each time step of the forward (noising) steps, although this will more often be for jumps over
-      many steps, which is far more efficient and as effective.
+      field since. The parameters of the denoiser are trained using a deep neural network (typically U-Net or Transformer)
+      that optimally reverses each time step of the forward (noising) process, although this is more often done for 
+      jumps between discontinuous steps, which is far more efficient but as effective.
   
       ```bash
       Sohl-Dickstein et al. (2015)
