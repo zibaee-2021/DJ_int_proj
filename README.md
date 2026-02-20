@@ -1048,37 +1048,53 @@
   - <details><summary>Diffusion models</summary><br>
     Although no training of a diffusion model has been performed here and no details of the architecture of the 
     diffusion model that would be used are included, I will still give a brief description of diffusion models and why
-    they are useful for this particular study. 
-    The strategy that would likely have been first tried would be to use a pre-trained protein language model to 
-    condition the denoising part of a diffusion model that would generate Cartesian coordinates of alpha-carbons for a 
-    given amino acid sequence.
+    this type of model is a good fit for this type of study. 
     
     - <details><summary>Provenance of diffusion models in deep learning:</summary><br>
       A diffusion model is a parameterised Markov chain trained using variational inference to produce samples matching 
-      the data after finite time. Originally described in 2015 by Sohl-Dickstein et al., subsequent work by 
-      Ho et al. in 2020 led to a large improvement in the application of diffusion models, heavily influencing the 
-      field since. The parameters of the denoiser are trained using a deep neural network (typically U-Net or Transformer)
-      that optimally reverses each time step of the forward (noising) process, although this is more often done for 
-      jumps between discontinuous steps, which is far more efficient but as effective.
+      the data after finite time. Originally described in 2015 by Sohl-Dickstein et al. it was mathematically 
+      constructed as a discretised diffusion-to-equilibrium process with Gaussian noise repeatedly added to some data
+      distribution, and the reverse of this to  
+      
+      Subsequent work by Ho et al. in 2020 led to a large improvement in the applicability of diffusion models, more 
+      directly influencing the field since. The conceptual lineage of developments is shown below, from 5 particular 
+      research papers. 
+      The parameters of the denoiser are trained using a deep neural network (typically U-Net or Transformer)
+      to learn the reverse of the noising process.
   
       ```bash
-      Sohl-Dickstein et al. (2015)
-      │
-      ├── DDPM (Ho et al., 2020)
-      │   │
-      │   ├── DDIM (fast, deterministic sampling)
-      │   │
-      │   ├── Score-Based Models / SDE Diffusion
-      │   │   └── Continuous-time diffusion
-      │   │
-      │   ├── Solver-based samplers
-      │   │   └── DPM-Solver, UniPC, etc.
-      │   │
-      │   └── Latent Diffusion Models (2022)
-      │       └── Stable Diffusion
-      │
-      └── (Original form rarely used directly)
+                                                                                                Hyvärinen et al. 2005: score-matching objective
+                                                                                                │
+      Sohl-Dickstein et al. 2015: diffusion mathematical proof & proof-of-concept - 1           │
+      │                                                                                         Song & Ermon 2019: neural score estimation + annealed Langevin - 2b
+      └── Ho et al. 2020: DDPM, noise-prediction objective, simplified ELBO - 2                 │
+          │                                                                                     │
+          ├── Song et al. 2020: DDIM, fast, deterministic sampling - 3                          └───────────────────────────────┐                          
+          │                                                                                                                     │
+          ├── Song et al. 2021: score-based models, SDE (continuous-time diffusion, reverse-time SDE/ODE interpretation)- 4 ────┘   
+          │
+          └── Rombach et al. 2022: latent diffusion models - 5
       ```
+
+    Table below summarises the 6 papers shown above in the lineage of the development of the diffusion model and the 
+    earlier Hyvärinen et al. 2005 score-matching paper that was important for Song & Ermon 2019 and Song et al. 2021. 
+
+    | Contribution                                   | Paper                                                                          | What It Introduced                                                                 |
+    | ---------------------------------------------- |--------------------------------------------------------------------------------| ---------------------------------------------------------------------------------- |
+    | Score matching objective                       | Estimation of Non-Normalized Statistical Models by Score Matching (2005)       | Objective for learning ∇ₓ log p(x) without normalising constant                   |
+    | Original diffusion generative modeling         | 1-Deep Unsupervised Learning inspired by Nonequilibrium Thermodynamics (2015)  | First diffusion-based generative model (forward noising + learned reverse)       |
+    | Neural score estimation + Langevin sampling    | 2b-Generative Modeling by Estimating Gradients of the Data Distribution (2019) | Practical neural score estimation at multiple noise scales + annealed Langevin   |
+    | Practical high-quality image diffusion         | 2-Denoising Diffusion Probabilistic Models (DDPM) (2020)                       | Noise-prediction objective, simplified ELBO, stable high-quality image training  |
+    | Large reverse jumps / fast sampling            | 3-Denoising Diffusion Implicit Models (DDIM) (2020)                            | Deterministic reverse process (non-Markovian), allows skipping many steps         |
+    | Continuous-time / ODE/SDE view                 | 4-Score-Based Generative Modeling through SDEs (2021)                          | Reverse process as SDE/ODE → unifies diffusion and score models                   |
+    | Diffusion in latent space (instead of pixels)  | 5-High-Resolution Image Synthesis with Latent Diffusion Models (2022)          | First major latent diffusion architecture                                          |
+
+    | Paper | What is explicitly learned?      | 
+    |-------|----------------------------------| 
+    | 1     | Reverse Gaussian mean & variance | 
+    | 2, 3  | Noise ($\epsilon$)               |
+    | 4     | Score ($\nabla_x \log p_t(x)$)   |
+
 
   - <details><summary>conditioning:</summary><br>
       'Conditioning' of a diffusion model, specifically the denoising process ('reverse'), refers to modelling a 
@@ -1189,11 +1205,11 @@
     - C. Hou, H. Zhao & Y. Shen, Proc. Natl. Acad. Sci. U.S.A. (2025) 123(4):1-12. Protein language models trained on biophysical dynamics inform mutation effects.
 
   - <details><summary>Diffusion Models:</summary><br>
-
-    - Sohl-Dickstein et al. .. .. (2015) .. .. 
-    - Ho et al. .. .. (2020) . . . 
-    - Dhairwal & .. (2021) . . .
-    - 
+  
+    - J. Sohl-Dickstein wt al. International Conference on Machine Learning, 2256–2265 (2015). Deep unsupervised learning using nonequilibrium thermodynamics. 
+    - Ho et al. DDPM (2020) . . . 
+    - Song et al DDPM (2020) . . .
+    - Song et al. 2021 Score-Based Models / SDE Diffusion
 ---
 
 - <details><summary>Datasets:</summary>
