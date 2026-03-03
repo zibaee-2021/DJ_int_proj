@@ -1051,18 +1051,21 @@
     this type of model is a good fit for this type of study. 
     
     - <details><summary>Provenance of diffusion models in deep learning:</summary><br>
-      A diffusion model is a parameterised Markov chain trained via variational inference to generate samples that 
-      approximate a target data distribution after a finite number of steps. Originally introduced by 
-      Sohl-Dickstein et al. (2015), it was formulated as a discretised diffusion-to-equilibrium process in which 
-      Gaussian noise is progressively added to data through a forward Markov chain, transforming the data distribution 
-      into a simple tractable prior (e.g. an isotropic Gaussian).
+      A diffusion model, as introduced in 2015 by Sohl-Dickstein et al., is a generative model defined by a forward and 
+      reverse Markov chain. The forward process is a fixed, discretised diffusion-to-equilibrium Markov chain in which 
+      small amounts of Gaussian noise are progressively added to data over many time steps, gradually transforming the 
+      data distribution into a simple tractable distribution (such as an isotropic Gaussian in the continuous case). 
+      The reverse process is a parameterised Markov chain whose transition distributions are learned to approximate the 
+      time-reversal of the forward diffusion. In the Gaussian case (for continuous data), each reverse step is modelled 
+      as a Gaussian distribution whose mean and covariance are produced by a learned function implemented as a neural 
+      network. Model parameters are learned by maximising a variational lower bound (ELBO) on the log-likelihood of the 
+      data. Sampling is performed by initialising at the equilibrium distribution (i.e. isotropic Gaussian noise) and 
+      iteratively applying the learned reverse transitions to obtain a data-like sample.
       
       Subsequent work by Ho et al. in 2020 led to a large improvement in the applicability of diffusion models, more 
-      directly influencing the field since. The conceptual lineage of developments is shown below, from 5 particular 
-      research papers. 
-      The parameters of the denoiser are trained using a deep neural network (typically U-Net or Transformer)
-      to learn the reverse of the noising process.
-  
+      directly influencing the field since. The conceptual lineage including 7 of the most important research papers is
+      shown below.
+
       ```bash
                                                                                                 Hyvärinen et al. 2005: score-matching objective
                                                                                                 │
