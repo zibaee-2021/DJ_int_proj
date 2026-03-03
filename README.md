@@ -1090,10 +1090,10 @@
     | Continuous-time / ODE/SDE view                 | 4-Score-Based Generative Modeling through SDEs (2021)                          | Reverse process as SDE/ODE unifies diffusion and score models                |
     | Diffusion in latent space (instead of pixels)  | 5-High-Resolution Image Synthesis with Latent Diffusion Models (2022)          | First major latent diffusion architecture                                    |
 
-    | Paper | What is explicitly learned?         | 
-    |-------|-------------------------------------| 
-    | 1     | Reverse Gaussian mean & variance    | 
-    | 2, 3  | Noise $(\epsilon)$                  |
+    | Paper | What is explicitly learned?          | 
+    |-------|--------------------------------------| 
+    | 1     | Reverse Gaussian mean & variance     | 
+    | 2, 3  | Noise $(\epsilon)$                   |
     | 4     | Score $(\nabla_x \, \log \, p_t(x))$ |
 
 
