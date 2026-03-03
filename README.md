@@ -1121,13 +1121,6 @@
     | **High-Resolution Image Synthesis with Latent Diffusion Models**     | Token-level text embeddings     | **Cross-attention inside U-Net blocks**                                                  | Classifier-free guidance                                                                               | Standardised cross-attention conditioning; enabled efficient latent-space diffusion (foundation of Stable Diffusion)               |
 
 
-Conditioning main refs:
-- P. Dhariwal & A. Nichol. In Advances in Neural Information Processing Systems (2021) 34:8780–8794. Diffusion Models Beat GANs on Image Synthesis.
-- J. Ho & T. Salimans. arXiv (2022) preprint arXiv:2207.12598. Classifier-free diffusion guidance. 
-- AQ. Nichol et al. In International Conference on Machine Learning (2022) 16784–16804. GLIDE: Towards Photorealistic Image Generation and Editing with Text-Guided Diffusion Models. 
-- A. Ramesh et al. arXiv (2022) abs/2204.06125. Hierarchical Text-Conditional Image Generation with CLIP Latents.
-- R. Rombach et al. In IEEE Conference on Computer Vision and Pattern Recognition (2022) 10684–10695. High-resolution image synthesis with latent diffusion models.
-
   - <details><summary>Protein dynamics and deep learning</summary><br>
 
     There is no mention of essential dynamics, normal mode analysis or difference distance matrices in Bryant & Noé 2024 and
@@ -1157,88 +1150,100 @@ Conditioning main refs:
 - <details><summary>Protein dynamics:</summary>
 
   - KU. Linderstrøm-Lang & JA. Schellman. Enzymes (1959) 1:443. Protein structure and enzymatic activity.
-  - H. Frauenfelder, G. Petsko & D. Tsernoglou. Nature (1979) 280, 558–563. Temperature-dependent X-ray diffraction as a probe of protein structural dynamics. 
+  - H. Frauenfelder, G. Petsko & D. Tsernoglou. Nature (1979) 280:558–563. Temperature-dependent X-ray diffraction as a probe of protein structural dynamics. 
   - M. Perutz, H. Muirhead, J. Cox. et al. Nature (1968) 219:131–139. Three-dimensional Fourier synthesis of horse oxyhaemoglobin at 2.8 Å resolution: The Atomic Model. 
-  - MH. Vos & J.L. Martin. Biochim. Biophys. Acta (1999), 21;1411(1):1-20. Femtosecond processes in proteins. 
-  - K. Henzler-Wildman & D. Kern. Nature (2007), 450:964–972. Dynamic personalities of proteins. 
+  - MH. Vos & J.L. Martin. Biochim. Biophys. Acta (1999) 21;1411(1):1-20. Femtosecond processes in proteins. 
+  - K. Henzler-Wildman & D. Kern. Nature (2007) 450:964–972. Dynamic personalities of proteins. 
 - 
   - TE. Creighton, 2nd ed., WH. Freeman (1993). Proteins: Structures and Molecular Properties. 
   - G. Herzberg, Van Nostrand, New York (1945). Infrared and Raman Spectra of Polyatomic Molecules. 
   -
   - H. Frauenfelder, F. Parak & RD. Young. Ann. Rev. of Biophys. & Biophysical Chem. (1988) 17:451–479. Conformational substates in proteins.
   - W. Doster, S. Cusack & W. Petry. Nature (1989) 337: 754–756. Dynamical transition of myoglobin revealed by inelastic neutron scattering. 
-  - S. Harrison. Nat Struct Mol Biol (2008) 15, 690–698. Viral membrane fusion. 
+  - S. Harrison. Nat. Struct. Mol. Biol. (2008) 15, 690–698. Viral membrane fusion. 
 
-- <details><summary>Generative (Diffusion) Models and protein structural ensembles:</summary>
+  - <details><summary>Diffusion Models:</summary><br>
+    
+    - A. Hyvärinen et al. Mach. Learn. Res. (2005) 6:695-709. Estimation of Non-Normalized Statistical Models by Score Matching. $/leftarrow$ Not diffusion model but important for Song & Ermon 2019 onwards.
+    - J. Sohl-Dickstein et al. International Conference on Machine Learning (2015) 2256–2265. Deep unsupervised learning using nonequilibrium thermodynamics.
+    - Y. Song & S. Ermon. Neural Information Processing Systems. ArXiv (2019):1907.05600. Generative Modeling by Estimating Gradients of the Data Distribution.
+    - J. Ho et al. ArXiv (2020) abs/2006.11239. Denoising Diffusion Probabilistic Models. $/leftarrow$ Appears to be the most cited diffusion model paper (currently 27437 citations). 
+    - Y. Song et al. ArXiv (2020) abs/2010.02502. Denoising Diffusion Implicit Models.
+    - Y. Song et al. ArXiv (2020) abs/2011.13456. Score-based generative modeling through stochastic differential equations.
+    - R. Rombach et al. In IEEE Conference on Computer Vision and Pattern Recognition (2022) 10684–10695. High-resolution image synthesis with latent diffusion models.
+   
+    - <details><summary>Conditioning:</summary><br>
+  
+      - P. Dhariwal & A. Nichol. In Advances in Neural Information Processing Systems (2021) 34:8780–8794. Diffusion Models Beat GANs on Image Synthesis.
+      - J. Ho & T. Salimans. ArXiv (2022) preprint abs/2207.12598. Classifier-free diffusion guidance. 
+      - AQ. Nichol et al. In International Conference on Machine Learning (2022) 16784–16804. GLIDE: Towards Photorealistic Image Generation and Editing with Text-Guided Diffusion Models. 
+      - A. Ramesh et al. ArXiv (2022) abs/2204.06125. Hierarchical Text-Conditional Image Generation with CLIP Latents.
+      - R. Rombach et al. In IEEE Conference on Computer Vision and Pattern Recognition (2022) 10684–10695. High-resolution image synthesis with latent diffusion models.
 
-  - Bryant & Noé. Nature Comm. (2024) 15: 7328. Structure prediction of alternative protein conformations. 
-  - S. Lewis et al. ..... TODO ... Scalable emulation of protein equilibrium ensembles with generative deep learning.  
-  - C. Hou et al. .... TODO... Learning Biophysical Dynamics with Protein Language Models.  
+- <details><summary>Use of diffusion models for sampling protein structural ensembles:</summary>
+
+  - Bryant & Noé. Nature Comm. (2024) 15:7328. Structure prediction of alternative protein conformations. 
+  - S. Lewis et al. Science (2025) 389:6761. Scalable emulation of protein equilibrium ensembles with generative deep learning.
+  - C. Hou et al. BioRxiv (2024). Learning Biophysical Dynamics with Protein Language Models. 
 
 - <details><summary>Identifying and/or quantifying structural variations:</summary>
 
   - RMSD: 
-    - W. Kabsch. Acta Cryst. A. (1976) 32: 922-923. A solution for the best rotation to relate two sets of vectors. 
+    - W. Kabsch. Acta Cryst. A. (1976) 32:922-923. A solution for the best rotation to relate two sets of vectors. 
   - TM-score:
-    - Y. Zhang & J. Skolnick. Proteins (2004) 57 (4): 702–710. Scoring function for automated assessment of protein structure template quality. 
+    - Y. Zhang & J. Skolnick. Proteins (2004) 57 (4):702–710. Scoring function for automated assessment of protein structure template quality. 
   - GDT:
-    - A. Zemla et al. Proteins (2001) Suppl. 5: 13-21. Processing and evaluation of predictions in CASP4. 
+    - A. Zemla et al. Proteins (2001) Suppl. 5:13-21. Processing and evaluation of predictions in CASP4. 
 
   - <details><summary>Distance matrix:</summary>
     
     - DC. Phillips (1970). In British Biochemistry, Past and Present (Goodwin, TW., ed.), pp. 11-28.
-    - GM. Crippen. J. Comp. Phys. (1977) 24: 96-107. A Novel Approach to Calculation of Conformation: Distance Geometry. 
+    - GM. Crippen. J. Comp. Phys. (1977) 24:96-107. A Novel Approach to Calculation of Conformation: Distance Geometry. 
     - TF. Havel et al. Biopolymers (1979) 18:73-81. Effects of Distance Constraints on Macromolecular Conformation. 
     - V. Mariani. Proteins (2011) 79 (Suppl 10):37–58. Assessment of template based protein structure predictions in CASP9. 
     - Difference distance matrix:
-    - WL. Nichols et al. Proteins (1995) 23: 38-48. Rigid Domains in Proteins: An Algorithmic Approach to Their Identification. 
+    - WL. Nichols et al. Proteins (1995) 23:38-48. Rigid Domains in Proteins: An Algorithmic Approach to Their Identification. 
 
   - <details><summary>Essential Dynamics:</summary>s
 
-    - M. Karplus & JN. Jushick. Macromolecules (1981) 14, 325-332.
-    - T. Ichiye & M. Karplus. Proteins (1991) 11: 205-217. Collective Motions in Proteins: A Covariance Analysis of Atomic Fluctuations in Molecular Dynamics and Normal Mode Simulations. 
-    - A. Amadei et al. Proteins (1993) 17: 412-425. Essential Dynamics of Proteins. 
-    - S. Hayward et al. Mol. Biol. (1993) 234, 1207-1217. Effect of Solvent on Collective Motions in Globular Protein
-    - Yang et al. Bioinformatics (2009) 25(5): 606–614. PCA of native ensembles of biomolecular structures (PCA_NEST): insights into functional dynamics. 
-    - CC. David & DJ. Jacobs. Methods Mol. Biol. (2014) 1084: 193–226. Principal Component Analysis: A Method for Determining the Essential Dynamics of Proteins. 
+    - M. Karplus & JN. Jushick. Macromolecules (1981) 14:325-332.
+    - T. Ichiye & M. Karplus. Proteins (1991) 11:205-217. Collective Motions in Proteins: A Covariance Analysis of Atomic Fluctuations in Molecular Dynamics and Normal Mode Simulations. 
+    - A. Amadei et al. Proteins (1993) 17:412-425. Essential Dynamics of Proteins. 
+    - S. Hayward et al. Mol. Biol. (1993) 234:1207-1217. Effect of Solvent on Collective Motions in Globular Protein
+    - Yang et al. Bioinformatics (2009) 25(5):606–614. PCA of native ensembles of biomolecular structures (PCA_NEST): insights into functional dynamics. 
+    - CC. David & DJ. Jacobs. Methods Mol. Biol. (2014) 1084:193–226. Principal Component Analysis: A Method for Determining the Essential Dynamics of Proteins. 
 
   - <details><summary>Normal Mode Analysis:</summary>
 
-    - JA. Bauer et al. Molecules (2019) 24: 3293-3312. Normal Mode Analysis as a Routine Part of a Structural Investigation. 
-    - N. Go et al. PNAS (1983) 80: 3696–3700. Dynamics of a Small Globular Protein in Terms of Low-Frequency Vibrational-Modes.
-    - M. Levitt et al. Int. J. Quant. Chem. (1983) 24: 181–199. The normal modes of a protein: Native bovine pancreatic trypsin inhibitor.  
-    - B. Brooks & M. Karplus. PNAS (1983) 80: 6571–6575. Harmonic dynamics of proteins: Normal modes and fluctuations in bovine pancreatic trypsin inhibitor.  
+    - JA. Bauer et al. Molecules (2019) 24:3293-3312. Normal Mode Analysis as a Routine Part of a Structural Investigation. 
+    - N. Go et al. PNAS (1983) 80:3696–3700. Dynamics of a Small Globular Protein in Terms of Low-Frequency Vibrational-Modes.
+    - M. Levitt et al. Int. J. Quant. Chem. (1983) 24:181–199. The normal modes of a protein: Native bovine pancreatic trypsin inhibitor.  
+    - B. Brooks & M. Karplus. PNAS (1983) 80:6571–6575. Harmonic dynamics of proteins: Normal modes and fluctuations in bovine pancreatic trypsin inhibitor.  
     - Gaussian network model (GNM), aka elastic network model (ENM):
-      - MM. Tirion. Phys. Rev. Lett. (1996) 77: 1905–1908. Large amplitude elastic motions in proteins from a single-parameter atomic analysis. 
+      - MM. Tirion. Phys. Rev. Lett. (1996) 77:1905–1908. Large amplitude elastic motions in proteins from a single-parameter atomic analysis. 
 
   - <details><summary>Recent work on protein mobility and its computation:</summary>
     
-    - M. Schneider et al. Structure (2025) 33: 1781–1792. EnsembleFlex: Protein structure ensemble analysis made easy. 
-    - A. Aranganathan & ER. Beyerle. J. Chem. Inf. Model. (2025). Applied Causality to Infer Protein Dynamics and Kinetics.
+    - M. Schneider et al. Structure (2025) 33:1781–1792. EnsembleFlex: Protein structure ensemble analysis made easy. 
+    - A. Aranganathan & ER. Beyerle. J. Chem. Inf. Model. (2026) 66(3):1661-1674.Applied Causality to Infer Protein Dynamics and Kinetics.
 
   - <details><summary>NMA of proteins and machine learning:</summary><br>
     
     - Qin et al. RSC Adv. (2020) 10:16607–16615. Machine learning model for fast prediction of the natural frequencies of protein molecules.
-    - C. Hou, H. Zhao & Y. Shen, Proc. Natl. Acad. Sci. U.S.A. (2025) 123(4):1-12. Protein language models trained on biophysical dynamics inform mutation effects.
+    - C. Hou,  et al. PNAS (2025) 123(4):1-12. Protein language models trained on biophysical dynamics inform mutation effects.
 
-  - <details><summary>Diffusion Models:</summary><br>
-  
-    - J. Sohl-Dickstein wt al. International Conference on Machine Learning, 2256–2265 (2015). Deep unsupervised learning using nonequilibrium thermodynamics. 
-    - Ho et al. DDPM (2020) . . . 
-    - Song et al DDPM (2020) . . .
-    - Song et al. 2021 Score-Based Models / SDE Diffusion
 ---
 
 - <details><summary>Datasets:</summary>
 
-  - G. Qi, et al. Bioinformatics (2005) 21(12): 2832-2838. A comprehensive and non-redundant database of protein domain movements. 
+  - G. Qi, et al. Bioinformatics (2005) 21(12):2832-2838. A comprehensive and non-redundant database of protein domain movements. 
     (https://dyndom.cmp.uea.ac.uk/dyndom/main.jsp)
 ---
 - <details><summary>Tools:</summary>
 
-- M. van Kempen, et al. Nat. Biotechnol. (2024) 42, 243–246. Fast and accurate protein structure search with Foldseek. 
+- M. van Kempen, et al. Nat. Biotechnol. (2024) 42:243–246. Fast and accurate protein structure search with Foldseek. 
 - 
-- L. Reifenrath, et al. bioRxiv 2025.11.24.690091. LoL-align: sensitive and fast probabilistic protein structure alignment.   
+- L. Reifenrath, et al. BioRxiv 2025.11.24.690091. LoL-align: sensitive and fast probabilistic protein structure alignment.   
 
 </details>
 
