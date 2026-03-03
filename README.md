@@ -1093,7 +1093,7 @@
     | Paper | What is explicitly learned?      | 
     |-------|----------------------------------| 
     | 1     | Reverse Gaussian mean & variance | 
-    | 2, 3  | Noise ($\epsilon$)               |
+    | 2, 3  | Noise ($\epsilon$) $\nabla_x$    |
     | 4     | Score ($\nabla_x  p_t(x)$)       |
 
 
