@@ -1089,24 +1089,24 @@
     | Continuous-time / ODE/SDE view                 | 4-Score-Based Generative Modeling through SDEs (2021)                          | Reverse process as SDE/ODE unifies diffusion and score models                |
     | Diffusion in latent space (instead of pixels)  | 5-High-Resolution Image Synthesis with Latent Diffusion Models (2022)          | First major latent diffusion architecture                                    |
 
-    | Paper | What is explicitly learned?      | 
-    |-------|----------------------------------| 
+    | Paper | What is explicitly learned?  | 
+    |-------|------------------------------| 
     | 1     | Reverse Gaussian mean & variance | 
-    | 2, 3  | Noise ($\epsilon$)               |
-    | 4     | Score ($\nabla_x \log p_t(x)$)   |
+    | 2, 3  | Noise ($\epsilon$)           |
+    | 4     | Score ($\nabla_x \mathrm{log}\, p_t(x)$)   |
 
 
   - <details><summary>Conditioning:</summary><br>
       'Conditioning' of a diffusion model, specifically the denoising process ('reverse'), refers to modelling a 
       conditional probability distribution, conditioned not only on the previous time step ($\mathbf{x}_{t-1}$), but 
-      also on some external property ($y$) s.t. the denoising is:<br> 
+      on some external property ($y$) as well, such that the denoising is:<br> 
       
       <p align="center">
       $p_{\theta}(\textbf{x}_t \mid \textbf{x}_{t-1}, y)$<br>
       </p>
       
       where $y$ is the conditioning signal, like class labels (Dhariwal & Nichol 2021), text embeddings 
-      (Ho & Salimans 2022), residue-level protein sequence embeddings (REFERENCE), amongst others. 
+      (Ho & Salimans 2022), residue-level protein sequence embeddings (Yim et al. 2023, Lewis et al. 2025), amongst others. 
       The effect of this conditioning is to convert a diffusion model from one that generates random samples, from a 
       learned distribution, to one that incorporates external information into the denoising process in order to steer 
       it towards specific outcomes. This can be implemented by various mechansims such as concatenation, 
@@ -1123,8 +1123,8 @@
 
   - <details><summary>Protein dynamics and deep learning</summary><br>
 
-    There is no mention of essential dynamics, normal mode analysis or difference distance matrices in Bryant & Noé 2024 and
-    Lewis et al. 2025. 
+    There is no mention of essential dynamics, normal mode analysis or difference distance matrices in Bryant & Noé 
+    2024 and Lewis et al. 2025. 
     However, having explored these methods, I think a strong case can be made for the use of these old and methods in the 
     burgeoning field of protein dynamics predictions by deep neural networks. Computation involving essential dynamics, 
     difference distance matrices and Gaussian network models require relatively little compute. If one were to try to 
@@ -1171,7 +1171,6 @@
     - Y. Song et al. ArXiv (2020) abs/2010.02502. Denoising Diffusion Implicit Models.
     - Y. Song et al. ArXiv (2020) abs/2011.13456. Score-based generative modeling through stochastic differential equations.
     - R. Rombach et al. In IEEE Conference on Computer Vision and Pattern Recognition (2022) 10684–10695. High-resolution image synthesis with latent diffusion models.
-   
     - <details><summary>Conditioning:</summary><br>
   
       - P. Dhariwal & A. Nichol. In Advances in Neural Information Processing Systems (2021) 34:8780–8794. Diffusion Models Beat GANs on Image Synthesis.
@@ -1179,6 +1178,7 @@
       - AQ. Nichol et al. In International Conference on Machine Learning (2022) 16784–16804. GLIDE: Towards Photorealistic Image Generation and Editing with Text-Guided Diffusion Models. 
       - A. Ramesh et al. ArXiv (2022) abs/2204.06125. Hierarchical Text-Conditional Image Generation with CLIP Latents.
       - R. Rombach et al. In IEEE Conference on Computer Vision and Pattern Recognition (2022) 10684–10695. High-resolution image synthesis with latent diffusion models.
+      - J. Yim et al. In Proc. Mach. Learn. Res. (2023) 202:40001-40039. SE(3) diffusion model with application to protein backbone generation.
 
 - <details><summary>Use of diffusion models for sampling protein structural ensembles:</summary>
 
