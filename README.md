@@ -130,13 +130,13 @@
   - <details><summary>Table of methods implemented here for quantitatively characterising structural variants and dynamics:</summary> 
   
     | **Method**                                  | **Core Algorithm / Mathematical Basis**                                                          | **Typical Post-processing / Clustering**                                                      | **What It Measures or Detects**                                                                  | **Pros**                                                                                                  | **Cons**                                                                            | **Required Inputs**                                                                    | **Relative Computational Demand** |
-    | :------------------------------------------ | :----------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------- |:----------------------------------|
+    | :------------------------------------------ | :----------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------- |:------------------------------------------------------------------------------------| :------------------------------------------------------------------------------------- |:----------------------------------|
     | **RMSD Matrix (all-vs-all)**                | Pairwise Euclidean distance between Cartesian coordinates; optionally after Kabsch superposition | Hierarchical clustering (Ward, average, complete), dendrograms, multidimensional scaling      | Overall structural dissimilarity between models (global or per-chain conformation)               | Simple, widely understood; directly interpretable; works even with few models                             | Sensitive to outliers and domain motions; loses local detail                        | ≥ 2 models of same atom order (typically Cα or backbone only)                          | low                               |
-    | **TM-score Matrix (all-vs-all)**            | Sequence-independent superposition optimizing TM-score metric (length-normalized similarity)     | Same clustering or heat-map visualization as RMSD                                             | Fold-level structural similarity; insensitive to local disorder                                  | Scale-independent; robust to domain motions and chain-length variation                                    | Non-linear optimization; slower than RMSD; less local sensitivity                   | ≥ 2 protein structures (Cα or full-atom)                                               | moderate                          |
-    | **Difference-Distance Matrix (DDM)**        | Element-wise subtraction of intra-model distance matrices; optional SVD alignment beforehand     | Spectral clustering (Laplacian eigenmaps); hinge scoring; domain segmentation                 | Localized internal rearrangements; hinge/bend detection; conformational subdomain identification | Captures internal geometry changes independent of global rotation/translation; interpretable residue-wise | Requires many models; sensitive to missing residues; needs long-range mask tuning   | ≥ 2 models with matched residue indices (Cα sufficient)                                | moderate                          |
+    | **TM-score Matrix (all-vs-all)**            | Sequence-independent superposition optimising TM-score metric (length-normalised similarity)     | Same clustering or heat-map visualisation as RMSD                                             | Fold-level structural similarity; insensitive to local disorder                                  | Scale-independent; robust to domain motions and chain-length variation                                    | Non-linear optimisation; slower than RMSD; less local sensitivity                   | ≥ 2 protein structures (Cα or full-atom)                                               | moderate                          |
+    | **Difference-Distance Matrix (DDM)**        | Element-wise subtraction of intra-model distance matrices; optional SVD alignment beforehand     | Spectral clustering (Laplacian eigenmaps); hinge scoring; domain segmentation                 | Localised internal rearrangements; hinge/bend detection; conformational subdomain identification | Captures internal geometry changes independent of global rotation/translation; interpretable residue-wise | Requires many models; sensitive to missing residues; needs long-range mask tuning   | ≥ 2 models with matched residue indices (Cα sufficient)                                | moderate                          |
     | **Essential Dynamics (PCA of coordinates)** | Eigen-decomposition of covariance (or correlation) matrix of aligned coordinates                 | Low-dimensional projection (PC1–PC2); optional k-means clustering in PC space; scree analysis | Directions of maximal correlated fluctuation across ensemble (collective motions)                | Physically intuitive; identifies dominant motions; easy visualisation                                     | Needs sufficient sampling; ignores time ordering; linear method                     | ≥ 10–20 models or MD frames, aligned (Cα or all-atom)                                  | moderate                          |
     | **Kernel PCA (non-linear extension)**       | Non-linear mapping via kernel trick (e.g., RBF) on top PCs or coordinates                        | Scatter plots in kernel PC space; silhouette or cluster analysis                              | Curved or anharmonic manifolds of motion; separates overlapping ensembles                        | Captures non-linear motions missed by linear PCA                                                          | Kernel choice and γ-tuning critical; less physically interpretable                  | Same as PCA (ensemble of aligned structures)                                           | moderate–high                     |
-    | **Normal Mode Analysis (NMA)**              | Eigen-decomposition of Hessian of potential energy (2nd derivatives of energy wrt coordinates)   | Optional projection of trajectory onto modes; visualization of low-frequency modes            | Harmonic vibrational directions and frequencies near energy minimum                              | Physics-based; provides frequencies and force constants; requires only one structure                      | Harmonic approximation only; no anharmonic or diffusive motion; energy model needed | Single high-quality structure + parameterized force field (all-atom or coarse-grained) | high                              |
+    | **Normal Mode Analysis (NMA)**              | Eigen-decomposition of Hessian of potential energy (2nd derivatives of energy wrt coordinates)   | Optional projection of trajectory onto modes; visualisation of low-frequency modes            | Harmonic vibrational directions and frequencies near energy minimum                              | Physics-based; provides frequencies and force constants; requires only one structure                      | Harmonic approximation only; no anharmonic or diffusive motion; energy model needed | Single high-quality structure + parameterised force field (all-atom or coarse-grained) | high                              |
 
 
 </details>
@@ -709,7 +709,7 @@
     Tirion, M. M. (1996). “Large amplitude elastic motions in proteins from a single-parameter, atomic analysis.” Physical Review Letters 77: 1905–1908.
     Bahar, I., Atilgan, A. R., & Erman, B. (1997). “Direct evaluation of thermal fluctuations in proteins using a single-parameter harmonic potential.” Folding & Design 2: 173–181.
     Atilgan, A. R., Durell, S. R., Jernigan, R. L., Demirel, M. C., Keskin, O., & Bahar, I. (2001).
-    “Anisotropic network model (ANM): A robust tool for characterizing global motions of proteins.”  Biophysical Journal 80: 505–515.
+    “Anisotropic network model (ANM): A robust tool for characterising global motions of proteins.”  Biophysical Journal 80: 505–515.
     
     As with essential dynamics (ED), NMA involves the eigendecomposition of a symmetric 3N x 3N matrix in 
     coordinate space. However, instead of eigendecomposition of the covariance of Cartesian coordinates, NMA 
@@ -1076,18 +1076,18 @@
           └── Rombach et al. 2022: latent diffusion models - 5
       ```
 
-    Table below summarises the 6 papers shown above in the lineage of the development of the diffusion model and the 
-    earlier Hyvärinen et al. 2005 score-matching paper that was important for Song & Ermon 2019 and Song et al. 2021. 
+    Table below gives a quick glance and very brief summary of what each of the 7 major papers (shown above) 
+    contributed to the field of diffusion models in deep learning. 
 
-    | Contribution                                   | Paper                                                                          | What It Introduced                                                                 |
-    | ---------------------------------------------- |--------------------------------------------------------------------------------| ---------------------------------------------------------------------------------- |
-    | Score matching objective                       | Estimation of Non-Normalized Statistical Models by Score Matching (2005)       | Objective for learning ∇ₓ log p(x) without normalising constant                   |
-    | Original diffusion generative modeling         | 1-Deep Unsupervised Learning inspired by Nonequilibrium Thermodynamics (2015)  | First diffusion-based generative model (forward noising + learned reverse)       |
-    | Neural score estimation + Langevin sampling    | 2b-Generative Modeling by Estimating Gradients of the Data Distribution (2019) | Practical neural score estimation at multiple noise scales + annealed Langevin   |
-    | Practical high-quality image diffusion         | 2-Denoising Diffusion Probabilistic Models (DDPM) (2020)                       | Noise-prediction objective, simplified ELBO, stable high-quality image training  |
-    | Large reverse jumps / fast sampling            | 3-Denoising Diffusion Implicit Models (DDIM) (2020)                            | Deterministic reverse process (non-Markovian), allows skipping many steps         |
-    | Continuous-time / ODE/SDE view                 | 4-Score-Based Generative Modeling through SDEs (2021)                          | Reverse process as SDE/ODE → unifies diffusion and score models                   |
-    | Diffusion in latent space (instead of pixels)  | 5-High-Resolution Image Synthesis with Latent Diffusion Models (2022)          | First major latent diffusion architecture                                          |
+    | Contribution                                   | Paper                                                                          | What It Introduced                                                           |
+    | ---------------------------------------------- |--------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+    | Score matching objective                       | Estimation of Non-Normalised Statistical Models by Score Matching (2005)       | Objective for learning $\nabla_\mathbf{x} \log p(\mathbf{x})$ without normalising constant |
+    | Original diffusion generative modeling         | 1-Deep Unsupervised Learning inspired by Nonequilibrium Thermodynamics (2015)  | First diffusion-based generative model (forward noising + learned reverse)   |
+    | Neural score estimation + Langevin sampling    | 2b-Generative Modeling by Estimating Gradients of the Data Distribution (2019) | Practical neural score estimation at multiple noise scales + annealed Langevin |
+    | Practical high-quality image diffusion         | 2-Denoising Diffusion Probabilistic Models (DDPM) (2020)                       | Noise-prediction objective, simplified ELBO, stable high-quality image training |
+    | Large reverse jumps / fast sampling            | 3-Denoising Diffusion Implicit Models (DDIM) (2020)                            | Deterministic reverse process (non-Markovian), allows skipping many steps    |
+    | Continuous-time / ODE/SDE view                 | 4-Score-Based Generative Modeling through SDEs (2021)                          | Reverse process as SDE/ODE unifies diffusion and score models                |
+    | Diffusion in latent space (instead of pixels)  | 5-High-Resolution Image Synthesis with Latent Diffusion Models (2022)          | First major latent diffusion architecture                                    |
 
     | Paper | What is explicitly learned?      | 
     |-------|----------------------------------| 
@@ -1096,20 +1096,37 @@
     | 4     | Score ($\nabla_x \log p_t(x)$)   |
 
 
-  - <details><summary>conditioning:</summary><br>
+  - <details><summary>Conditioning:</summary><br>
       'Conditioning' of a diffusion model, specifically the denoising process ('reverse'), refers to modelling a 
-      conditional probability distribution, conditioned on some external property s.t. the denoising is:<br> 
+      conditional probability distribution, conditioned not only on the previous time step ($\mathbf{x}_{t-1}$), but 
+      also on some external property ($y$) s.t. the denoising is:<br> 
       
       <p align="center">
       $p_{\theta}(\textbf{x}_t \mid \textbf{x}_{t-1}, y)$<br>
       </p>
       
-      where $y$ can be labels, text embeddings, residue-level protein sequence embeddings, amongst other. 
-      The effect of this conditioning is to convert a diffusion model from one that generates random 
-      samples from a learned distribution to one that incorporates external information into the denoising process in 
-      order to steer it towards specific outcomes. Although demonstrated first text-to-image (Dhariwal & Nichol 2021)
+      where $y$ is the conditioning signal, like class labels (Dhariwal & Nichol 2021), text embeddings 
+      (Ho & Salimans 2022), residue-level protein sequence embeddings (REFERENCE), amongst others. 
+      The effect of this conditioning is to convert a diffusion model from one that generates random samples, from a 
+      learned distribution, to one that incorporates external information into the denoising process in order to steer 
+      it towards specific outcomes. This can be implemented by various mechansims such as concatenation, 
+      cross-attention, gradient-based or adaptive layer normalisation.
+
+    | Paper                                                                | Conditioning signal ($y$)       | Architectural injection mechanism                                                        | Sampling-time guidance                                                                                 | Main contribution                                                                                                                  |
+    |----------------------------------------------------------------------|---------------------------------|------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+    | **Diffusion Models Beat GANs on Image Synthesis**                    | ImageNet class label            | **adaptive group normalisation (AdaGN)** modulation using class embedding                | **Classifier guidance** via external classifier gradient $\nabla_\mathbf{x} \log p(y \mid \mathbf{x})$ | First large-scale, explicitly class-conditional diffusion model; introduced practical guidance scaling; surpassed GANs on ImageNet |
+    | **Classifier-Free Diffusion Guidance**                               | Class labels or text embeddings | Architecture-dependent (same conditioning pathway as base model; often AdaGN or similar) | **Classifier-free guidance** (interpolating conditional & unconditional scores)                        | Removed need for external classifier; became standard guidance mechanism                                                           |
+    | **GLIDE: Towards Photorealistic Image Generation and Editing...**    | Text embeddings (CLIP-based)    | Text embedding injected into U-Net (OpenAI architecture; conditioning modulation)        | Classifier-free guidance (preferred over CLIP guidance)                                                | First strong large-scale text-to-image diffusion system                                                                            |
+    | **Hierarchical Text-Conditional Image Generation with CLIP Latents** | CLIP text embeddings            | Conditioning applied to diffusion decoder in hierarchical setup                          | Classifier-free guidance                                                                               | Scaled text-conditional diffusion with hierarchical prior + decoder                                                                |
+    | **High-Resolution Image Synthesis with Latent Diffusion Models**     | Token-level text embeddings     | **Cross-attention inside U-Net blocks**                                                  | Classifier-free guidance                                                                               | Standardised cross-attention conditioning; enabled efficient latent-space diffusion (foundation of Stable Diffusion)               |
 
 
+Conditioning main refs:
+- P. Dhariwal & A. Nichol. In Advances in Neural Information Processing Systems (2021) 34:8780–8794. Diffusion Models Beat GANs on Image Synthesis.
+- J. Ho & T. Salimans. arXiv (2022) preprint arXiv:2207.12598. Classifier-free diffusion guidance. 
+- AQ. Nichol et al. In International Conference on Machine Learning (2022) 16784–16804. GLIDE: Towards Photorealistic Image Generation and Editing with Text-Guided Diffusion Models. 
+- A. Ramesh et al. arXiv (2022) abs/2204.06125. Hierarchical Text-Conditional Image Generation with CLIP Latents.
+- R. Rombach et al. In IEEE Conference on Computer Vision and Pattern Recognition (2022) 10684–10695. High-resolution image synthesis with latent diffusion models.
 
   - <details><summary>Protein dynamics and deep learning</summary><br>
 
