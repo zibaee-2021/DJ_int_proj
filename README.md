@@ -1094,7 +1094,7 @@
     |-------|-------------------------------------------| 
     | 1     | Reverse Gaussian mean & variance          | 
     | 2, 3  | Noise ($\epsilon$)                        |
-    | 4     | Score ($\nabla_x \mathrm{log} \, p_t(x)$) |
+    | 4     | Score ($\mathrm{log} \, p_t(x)$) |
 
 
   - <details><summary>Conditioning:</summary><br>
