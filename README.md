@@ -1051,10 +1051,11 @@
     this type of model is a good fit for this type of study. 
     
     - <details><summary>Provenance of diffusion models in deep learning:</summary><br>
-      A diffusion model is a parameterised Markov chain trained using variational inference to produce samples matching 
-      the data after finite time. Originally described in 2015 by Sohl-Dickstein et al. it was mathematically 
-      constructed as a discretised diffusion-to-equilibrium process with Gaussian noise repeatedly added to some data
-      distribution, and the reverse of this to  
+      A diffusion model is a parameterised Markov chain trained via variational inference to generate samples that 
+      approximate a target data distribution after a finite number of steps. Originally introduced by 
+      Sohl-Dickstein et al. (2015), it was formulated as a discretised diffusion-to-equilibrium process in which 
+      Gaussian noise is progressively added to data through a forward Markov chain, transforming the data distribution 
+      into a simple tractable prior (e.g. an isotropic Gaussian).
       
       Subsequent work by Ho et al. in 2020 led to a large improvement in the applicability of diffusion models, more 
       directly influencing the field since. The conceptual lineage of developments is shown below, from 5 particular 
@@ -1089,11 +1090,11 @@
     | Continuous-time / ODE/SDE view                 | 4-Score-Based Generative Modeling through SDEs (2021)                          | Reverse process as SDE/ODE unifies diffusion and score models                |
     | Diffusion in latent space (instead of pixels)  | 5-High-Resolution Image Synthesis with Latent Diffusion Models (2022)          | First major latent diffusion architecture                                    |
 
-    | Paper | What is explicitly learned?  | 
-    |-------|------------------------------| 
-    | 1     | Reverse Gaussian mean & variance | 
-    | 2, 3  | Noise ($\epsilon$)           |
-    | 4     | Score ($\nabla_x \mathrm{log}\, p_t(x)$)   |
+    | Paper | What is explicitly learned?               | 
+    |-------|-------------------------------------------| 
+    | 1     | Reverse Gaussian mean & variance          | 
+    | 2, 3  | Noise ($\epsilon$)                        |
+    | 4     | Score ($\nabla_x \mathrm{log} \, p_t(x)$) |
 
 
   - <details><summary>Conditioning:</summary><br>
