@@ -1048,7 +1048,7 @@
   - <details><summary>Diffusion models</summary><br>
     Although no training of a diffusion model has been performed here and no details of the architecture of the 
     diffusion model that would be used are included, I will still give a brief description of diffusion models and why
-    this type of model is a good fit for this type of study. 
+    this type of model is a good fit for this type of study. <br>
     
     - <details><summary>Provenance of diffusion models in deep learning:</summary><br>
       A diffusion model, as introduced in 2015 by Sohl-Dickstein et al., is a generative model defined by a forward and 
@@ -1080,9 +1080,9 @@
           └── Rombach et al. 2022: latent diffusion models - 5
       ```
 
-    Table below gives a quick glance and very brief summary of what each of the 7 major papers (shown above) 
+    The 2 tables below gives a quick glance and very brief summary of what each of the 7 major papers (shown above) 
     contributed to the field of diffusion models in deep learning. 
-
+    - <details><summary>Tables:</summary><br>
     | Contribution                                   | Paper                                                                          | What It Introduced                                                           |
     | ---------------------------------------------- |--------------------------------------------------------------------------------|------------------------------------------------------------------------------|
     | Score matching objective                       | Estimation of Non-Normalised Statistical Models by Score Matching (2005)       | Objective for learning $\nabla_\mathbf{x} \log p(\mathbf{x})$ without normalising constant |
