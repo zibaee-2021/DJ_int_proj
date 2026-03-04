@@ -1099,30 +1099,29 @@
     | 2, 3  | Noise $(\epsilon)$                   |
     | 4     | Score $(\nabla_x \, \log \, p_t(x))$ |
 
-
-  - <details><summary>Conditioning:</summary><br>
-      'Conditioning' of a diffusion model, specifically the denoising process ('reverse'), refers to modelling a 
-      conditional probability distribution, conditioned not only on the previous time step ($\mathbf{x}_{t-1}$), but 
-      on some external property ($y$) as well, such that the denoising is:<br> 
-      
-      <p align="center">
-      $p_{\theta}(\textbf{x}_t \mid \textbf{x}_{t-1}, y)$<br>
-      </p>
-      
-      where $y$ is the conditioning signal, like class labels (Dhariwal & Nichol 2021), text embeddings 
-      (Ho & Salimans 2022), residue-level protein sequence embeddings (Yim et al. 2023, Lewis et al. 2025), amongst others. 
-      The effect of this conditioning is to convert a diffusion model from one that generates random samples, from a 
-      learned distribution, to one that incorporates external information into the denoising process in order to steer 
-      it towards specific outcomes. This can be implemented by various mechansims such as concatenation, 
-      cross-attention, gradient-based or adaptive layer normalisation.
-
-    | Paper                                                                | Conditioning signal ($y$)       | Architectural injection mechanism                                                        | Sampling-time guidance                                                                                 | Main contribution                                                                                                                  |
-    |----------------------------------------------------------------------|---------------------------------|------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
-    | **Diffusion Models Beat GANs on Image Synthesis**                    | ImageNet class label            | **adaptive group normalisation (AdaGN)** modulation using class embedding                | **Classifier guidance** via external classifier gradient $\nabla_\mathbf{x} \log p(y \mid \mathbf{x})$ | First large-scale, explicitly class-conditional diffusion model; introduced practical guidance scaling; surpassed GANs on ImageNet |
-    | **Classifier-Free Diffusion Guidance**                               | Class labels or text embeddings | Architecture-dependent (same conditioning pathway as base model; often AdaGN or similar) | **Classifier-free guidance** (interpolating conditional & unconditional scores)                        | Removed need for external classifier; became standard guidance mechanism                                                           |
-    | **GLIDE: Towards Photorealistic Image Generation and Editing...**    | Text embeddings (CLIP-based)    | Text embedding injected into U-Net (OpenAI architecture; conditioning modulation)        | Classifier-free guidance (preferred over CLIP guidance)                                                | First strong large-scale text-to-image diffusion system                                                                            |
-    | **Hierarchical Text-Conditional Image Generation with CLIP Latents** | CLIP text embeddings            | Conditioning applied to diffusion decoder in hierarchical setup                          | Classifier-free guidance                                                                               | Scaled text-conditional diffusion with hierarchical prior + decoder                                                                |
-    | **High-Resolution Image Synthesis with Latent Diffusion Models**     | Token-level text embeddings     | **Cross-attention inside U-Net blocks**                                                  | Classifier-free guidance                                                                               | Standardised cross-attention conditioning; enabled efficient latent-space diffusion (foundation of Stable Diffusion)               |
+    - <details><summary>Conditioning:</summary><br>
+        'Conditioning' of a diffusion model, specifically the denoising process ('reverse'), refers to modelling a 
+        conditional probability distribution, conditioned not only on the previous time step ($\mathbf{x}_{t-1}$), but 
+        on some external property ($y$) as well, such that the denoising is:<br> 
+        
+        <p align="center">
+        $p_{\theta}(\textbf{x}_t \mid \textbf{x}_{t-1}, y)$<br>
+        </p>
+        
+        where $y$ is the conditioning signal, like class labels (Dhariwal & Nichol 2021), text embeddings 
+        (Ho & Salimans 2022), residue-level protein sequence embeddings (Yim et al. 2023, Lewis et al. 2025), amongst others. 
+        The effect of this conditioning is to convert a diffusion model from one that generates random samples, from a 
+        learned distribution, to one that incorporates external information into the denoising process in order to steer 
+        it towards specific outcomes. This can be implemented by various mechansims such as concatenation, 
+        cross-attention, gradient-based or adaptive layer normalisation.
+  
+      | Paper                                                                | Conditioning signal ($y$)       | Architectural injection mechanism                                                        | Sampling-time guidance                                                                                 | Main contribution                                                                                                                  |
+      |----------------------------------------------------------------------|---------------------------------|------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+      | **Diffusion Models Beat GANs on Image Synthesis**                    | ImageNet class label            | **adaptive group normalisation (AdaGN)** modulation using class embedding                | **Classifier guidance** via external classifier gradient $\nabla_\mathbf{x} \log p(y \mid \mathbf{x})$ | First large-scale, explicitly class-conditional diffusion model; introduced practical guidance scaling; surpassed GANs on ImageNet |
+      | **Classifier-Free Diffusion Guidance**                               | Class labels or text embeddings | Architecture-dependent (same conditioning pathway as base model; often AdaGN or similar) | **Classifier-free guidance** (interpolating conditional & unconditional scores)                        | Removed need for external classifier; became standard guidance mechanism                                                           |
+      | **GLIDE: Towards Photorealistic Image Generation and Editing...**    | Text embeddings (CLIP-based)    | Text embedding injected into U-Net (OpenAI architecture; conditioning modulation)        | Classifier-free guidance (preferred over CLIP guidance)                                                | First strong large-scale text-to-image diffusion system                                                                            |
+      | **Hierarchical Text-Conditional Image Generation with CLIP Latents** | CLIP text embeddings            | Conditioning applied to diffusion decoder in hierarchical setup                          | Classifier-free guidance                                                                               | Scaled text-conditional diffusion with hierarchical prior + decoder                                                                |
+      | **High-Resolution Image Synthesis with Latent Diffusion Models**     | Token-level text embeddings     | **Cross-attention inside U-Net blocks**                                                  | Classifier-free guidance                                                                               | Standardised cross-attention conditioning; enabled efficient latent-space diffusion (foundation of Stable Diffusion)               |
 
 
   - <details><summary>Protein dynamics and deep learning</summary><br>
