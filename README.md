@@ -1065,7 +1065,6 @@
       Subsequent work by Ho et al. in 2020 led to a large improvement in the applicability of diffusion models, more 
       directly influencing the field since. The conceptual lineage including 7 of the most important research papers is
       shown below.
-
       ```bash
                                                                                                 Hyvärinen et al. 2005: score-matching objective
                                                                                                 │
