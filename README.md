@@ -1108,8 +1108,9 @@
         $p_{\theta}(\textbf{x}_t \mid \textbf{x}_{t-1}, y)$<br>
         </p>
         
-        where $y$ is the conditioning signal, like class labels (Dhariwal & Nichol 2021), text embeddings 
-        (Ho & Salimans 2022), residue-level protein sequence embeddings (Yim et al. 2023, Lewis et al. 2025), amongst others. 
+        where $y$ is the external property or 'conditioning signal', like class labels (Dhariwal & Nichol 2021), text 
+        embeddings (Ho & Salimans 2022), residue-level protein sequence embeddings (Yim et al. 2023, Lewis et al. 2025), 
+        amongst others. 
         The effect of this conditioning is to convert a diffusion model from one that generates random samples, from a 
         learned distribution, to one that incorporates external information into the denoising process in order to steer 
         it towards specific outcomes. This can be implemented by various mechansims such as concatenation, 
@@ -1180,7 +1181,7 @@
       - J. Ho & T. Salimans. ArXiv (2022) preprint abs/2207.12598. Classifier-free diffusion guidance. 
       - AQ. Nichol et al. In International Conference on Machine Learning (2022) 16784–16804. GLIDE: Towards Photorealistic Image Generation and Editing with Text-Guided Diffusion Models. 
       - A. Ramesh et al. ArXiv (2022) abs/2204.06125. Hierarchical Text-Conditional Image Generation with CLIP Latents.
-      - R. Rombach et al. In IEEE Conference on Computer Vision and Pattern Recognition (2022) 10684–10695. High-resolution image synthesis with latent diffusion models.
+      - R. Rombach et al. 2022 (same as above)
       - J. Yim et al. In Proc. Mach. Learn. Res. (2023) 202:40001-40039. SE(3) diffusion model with application to protein backbone generation.
 
 - <details><summary>Use of diffusion models for sampling protein structural ensembles:</summary>
