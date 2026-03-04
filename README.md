@@ -1045,40 +1045,40 @@
     | Rotamer jump    | Rotameric state (χ angles)       | **0.5–1 Å**               | **10 ps – 10 ns**                   |
     | Loop motion     | Backbone conformation / position | **1–10+ Å**               | **ns – ms (or slower)**             |
 
-    - <details><summary>Diffusion models</summary><br>
-      Although no training of a diffusion model has been performed here and no details of the architecture of the 
-      diffusion model that would be used are included, I will still give a very brief background description of the field 
-      and why this type of model is a good fit for this type of study.<br><br>
+  - <details><summary>Diffusion models</summary><br>
+    Although no training of a diffusion model has been performed here and no details of the architecture of the 
+    diffusion model that would be used are included, I will still give a very brief background description of the field 
+    and why this type of model is a good fit for this type of study.<br><br>
     
-      - <details><summary>Provenance of diffusion models in deep learning:</summary><br>
-        A diffusion model, as introduced in 2015 by Sohl-Dickstein et al., is a generative model defined by a forward and 
-        reverse Markov chain. The forward process is a fixed, discretised diffusion-to-equilibrium Markov chain in which 
-        small amounts of Gaussian noise are progressively added to data over many time steps, gradually transforming the 
-        data distribution into a simple tractable distribution (such as an isotropic Gaussian in the continuous case). 
-        The reverse process is a parameterised Markov chain whose transition distributions are learned to approximate the 
-        time-reversal of the forward diffusion. In the Gaussian case (for continuous data), each reverse step is modelled 
-        as a Gaussian distribution whose mean and covariance are produced by a learned function implemented as a neural 
-        network. Model parameters are learned by maximising a variational lower bound (ELBO) on the log-likelihood of the 
-        data. Sampling is performed by initialising at the equilibrium distribution (i.e. isotropic Gaussian noise) and 
-        iteratively applying the learned reverse transitions to obtain a data-like sample.
+    - <details><summary>Provenance of diffusion models in deep learning:</summary><br>
+      A diffusion model, as introduced in 2015 by Sohl-Dickstein et al., is a generative model defined by a forward and 
+      reverse Markov chain. The forward process is a fixed, discretised diffusion-to-equilibrium Markov chain in which 
+      small amounts of Gaussian noise are progressively added to data over many time steps, gradually transforming the 
+      data distribution into a simple tractable distribution (such as an isotropic Gaussian in the continuous case). 
+      The reverse process is a parameterised Markov chain whose transition distributions are learned to approximate the 
+      time-reversal of the forward diffusion. In the Gaussian case (for continuous data), each reverse step is modelled 
+      as a Gaussian distribution whose mean and covariance are produced by a learned function implemented as a neural 
+      network. Model parameters are learned by maximising a variational lower bound (ELBO) on the log-likelihood of the 
+      data. Sampling is performed by initialising at the equilibrium distribution (i.e. isotropic Gaussian noise) and 
+      iteratively applying the learned reverse transitions to obtain a data-like sample.
       
-        Subsequent work by Ho et al. in 2020 led to a large improvement in the applicability of diffusion models, more 
-        directly influencing the field since. The conceptual lineage including 7 of the most important research papers is
-        shown below.
+      Subsequent work by Ho et al. in 2020 led to a large improvement in the applicability of diffusion models, more 
+      directly influencing the field since. The conceptual lineage including 7 of the most important research papers is
+      shown below.
 
-        ```bash
-                                                                                                  Hyvärinen et al. 2005: score-matching objective
-                                                                                                  │
-        Sohl-Dickstein et al. 2015: diffusion mathematical proof & proof-of-concept - 1           │
-        │                                                                                         Song & Ermon 2019: neural score estimation + annealed Langevin - 2b
-        └── Ho et al. 2020: DDPM, noise-prediction objective, simplified ELBO - 2                 │
-            │                                                                                     │
-            ├── Song et al. 2020: DDIM, fast, deterministic sampling - 3                          └───────────────────────────────┐                          
-            │                                                                                                                     │
-            ├── Song et al. 2021: score-based models, SDE (continuous-time diffusion, reverse-time SDE/ODE interpretation)- 4 ────┘   
-            │
-            └── Rombach et al. 2022: latent diffusion models - 5
-        ```
+      ```bash
+                                                                                                Hyvärinen et al. 2005: score-matching objective
+                                                                                                │
+      Sohl-Dickstein et al. 2015: diffusion mathematical proof & proof-of-concept - 1           │
+      │                                                                                         Song & Ermon 2019: neural score estimation + annealed Langevin - 2b
+      └── Ho et al. 2020: DDPM, noise-prediction objective, simplified ELBO - 2                 │
+          │                                                                                     │
+          ├── Song et al. 2020: DDIM, fast, deterministic sampling - 3                          └───────────────────────────────┐                          
+          │                                                                                                                     │
+          ├── Song et al. 2021: score-based models, SDE (continuous-time diffusion, reverse-time SDE/ODE interpretation)- 4 ────┘   
+          │
+          └── Rombach et al. 2022: latent diffusion models - 5
+      ```
 
       The 2 tables below gives a quick glance and very brief summary of what each of the 7 major papers (shown above) 
       contributed to the field of diffusion models in deep learning. 
@@ -1100,29 +1100,29 @@
         | 2, 3  | Noise $(\epsilon)$                   |
         | 4     | Score $(\nabla_x \, \log \, p_t(x))$ |
 
-      - <details><summary>Conditioning:</summary><br>
-          'Conditioning' of a diffusion model, specifically the denoising process ('reverse'), refers to modelling a 
-          conditional probability distribution, conditioned not only on the previous time step ($\mathbf{x}_{t-1}$), but 
-          on some external property ($y$) as well, such that the denoising is:<br> 
+    - <details><summary>Conditioning:</summary><br>
+        'Conditioning' of a diffusion model, specifically the denoising process ('reverse'), refers to modelling a 
+        conditional probability distribution, conditioned not only on the previous time step ($\mathbf{x}_{t-1}$), but 
+        on some external property ($y$) as well, such that the denoising is:<br> 
         
-          <p align="center">
-          $p_{\theta}(\textbf{x}_t \mid \textbf{x}_{t-1}, y)$<br>
-          </p>
+        <p align="center">
+        $p_{\theta}(\textbf{x}_t \mid \textbf{x}_{t-1}, y)$<br>
+        </p>
         
-          where $y$ is the conditioning signal, like class labels (Dhariwal & Nichol 2021), text embeddings 
-          (Ho & Salimans 2022), residue-level protein sequence embeddings (Yim et al. 2023, Lewis et al. 2025), amongst others. 
-          The effect of this conditioning is to convert a diffusion model from one that generates random samples, from a 
-          learned distribution, to one that incorporates external information into the denoising process in order to steer 
-          it towards specific outcomes. This can be implemented by various mechansims such as concatenation, 
-          cross-attention, gradient-based or adaptive layer normalisation.
+        where $y$ is the conditioning signal, like class labels (Dhariwal & Nichol 2021), text embeddings 
+        (Ho & Salimans 2022), residue-level protein sequence embeddings (Yim et al. 2023, Lewis et al. 2025), amongst others. 
+        The effect of this conditioning is to convert a diffusion model from one that generates random samples, from a 
+        learned distribution, to one that incorporates external information into the denoising process in order to steer 
+        it towards specific outcomes. This can be implemented by various mechansims such as concatenation, 
+        cross-attention, gradient-based or adaptive layer normalisation.
   
-        | Paper                                                                | Conditioning signal ($y$)       | Architectural injection mechanism                                                        | Sampling-time guidance                                                                                 | Main contribution                                                                                                                  |
-        |----------------------------------------------------------------------|---------------------------------|------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
-        | **Diffusion Models Beat GANs on Image Synthesis**                    | ImageNet class label            | **adaptive group normalisation (AdaGN)** modulation using class embedding                | **Classifier guidance** via external classifier gradient $\nabla_\mathbf{x} \log p(y \mid \mathbf{x})$ | First large-scale, explicitly class-conditional diffusion model; introduced practical guidance scaling; surpassed GANs on ImageNet |
-        | **Classifier-Free Diffusion Guidance**                               | Class labels or text embeddings | Architecture-dependent (same conditioning pathway as base model; often AdaGN or similar) | **Classifier-free guidance** (interpolating conditional & unconditional scores)                        | Removed need for external classifier; became standard guidance mechanism                                                           |
-        | **GLIDE: Towards Photorealistic Image Generation and Editing...**    | Text embeddings (CLIP-based)    | Text embedding injected into U-Net (OpenAI architecture; conditioning modulation)        | Classifier-free guidance (preferred over CLIP guidance)                                                | First strong large-scale text-to-image diffusion system                                                                            |
-        | **Hierarchical Text-Conditional Image Generation with CLIP Latents** | CLIP text embeddings            | Conditioning applied to diffusion decoder in hierarchical setup                          | Classifier-free guidance                                                                               | Scaled text-conditional diffusion with hierarchical prior + decoder                                                                |
-        | **High-Resolution Image Synthesis with Latent Diffusion Models**     | Token-level text embeddings     | **Cross-attention inside U-Net blocks**                                                  | Classifier-free guidance                                                                               | Standardised cross-attention conditioning; enabled efficient latent-space diffusion (foundation of Stable Diffusion)               |
+      | Paper                                                                | Conditioning signal ($y$)       | Architectural injection mechanism                                                        | Sampling-time guidance                                                                                 | Main contribution                                                                                                                  |
+      |----------------------------------------------------------------------|---------------------------------|------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+      | **Diffusion Models Beat GANs on Image Synthesis**                    | ImageNet class label            | **adaptive group normalisation (AdaGN)** modulation using class embedding                | **Classifier guidance** via external classifier gradient $\nabla_\mathbf{x} \log p(y \mid \mathbf{x})$ | First large-scale, explicitly class-conditional diffusion model; introduced practical guidance scaling; surpassed GANs on ImageNet |
+      | **Classifier-Free Diffusion Guidance**                               | Class labels or text embeddings | Architecture-dependent (same conditioning pathway as base model; often AdaGN or similar) | **Classifier-free guidance** (interpolating conditional & unconditional scores)                        | Removed need for external classifier; became standard guidance mechanism                                                           |
+      | **GLIDE: Towards Photorealistic Image Generation and Editing...**    | Text embeddings (CLIP-based)    | Text embedding injected into U-Net (OpenAI architecture; conditioning modulation)        | Classifier-free guidance (preferred over CLIP guidance)                                                | First strong large-scale text-to-image diffusion system                                                                            |
+      | **Hierarchical Text-Conditional Image Generation with CLIP Latents** | CLIP text embeddings            | Conditioning applied to diffusion decoder in hierarchical setup                          | Classifier-free guidance                                                                               | Scaled text-conditional diffusion with hierarchical prior + decoder                                                                |
+      | **High-Resolution Image Synthesis with Latent Diffusion Models**     | Token-level text embeddings     | **Cross-attention inside U-Net blocks**                                                  | Classifier-free guidance                                                                               | Standardised cross-attention conditioning; enabled efficient latent-space diffusion (foundation of Stable Diffusion)               |
 
 
   - <details><summary>Protein dynamics and deep learning</summary><br>
@@ -1145,7 +1145,7 @@
     There is no compelling reason to restrict the training and prediction pipeline, particularly in the preliminary 
     exploratory stages of a proof-of-concept project. Furthermore, such a rule is already not adhered to in well-established
     and accurate deep learning pipelines of protein structure prediction, such as AlphaFold, which is heavily dependent on 
-    a prelimiary multiple sequence alignment. albeit with the use of attention mechanisms.
+    a prelimiary multiple sequence alignment, albeit with the use of attention mechanisms.
 
 
 </details>
