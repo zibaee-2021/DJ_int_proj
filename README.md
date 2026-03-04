@@ -1047,9 +1047,8 @@
 
   - <details><summary>Diffusion models</summary><br>
     Although no training of a diffusion model has been performed here and no details of the architecture of the 
-    diffusion model that would be used are included, I will still give a brief description of diffusion models and why
-    this type of model is a good fit for this type of study. <br>
-    
+    diffusion model that would be used are included, I will still give a very brief background description of the field 
+    and why this type of model is a good fit for this type of study.
     - <details><summary>Provenance of diffusion models in deep learning:</summary><br>
       A diffusion model, as introduced in 2015 by Sohl-Dickstein et al., is a generative model defined by a forward and 
       reverse Markov chain. The forward process is a fixed, discretised diffusion-to-equilibrium Markov chain in which 
