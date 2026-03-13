@@ -1287,7 +1287,7 @@
   - (sometimes) guidance on the implementation details I want to see used. 
 
   I have also used GenAI here for:
-  - assistance in breaking down and explaining some of the mathematics and algorithms in uploaded papers, e.g. for NMA;
+  - assistance in breaking down and explaining some of the mathematics and algorithms via uploaded publications;
     - (I essentially interrogated it to extract a complete explanation, and try to weed out potentially redundant/incorrect 
       logic/code.) 
   - writing LaTex;
