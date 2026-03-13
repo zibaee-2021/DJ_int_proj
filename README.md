@@ -1,8 +1,8 @@
 <details><summary><strong>Rationale for this mini-project:</strong></summary>
 
 - A proof-of-concept exploration of the predictive capability of a diffusion model for alternate protein conformations.
-  The focus of this mini-project remained on the preliminary methods for generating and characterising the required 
-  dataset. (No model design, training or inference was done by me.)
+  The focus of this mini-project remained on the preliminary stages: generating and characterising the required dataset. 
+  (Hence, no model design, training or inference was done.)
 
 - Performed, part-time, over a period of 3 months from mid-July to mid-Sept 2025.
 
@@ -22,12 +22,13 @@
     different structures, then the aforementioned result could simply be due to the model memorising these different
     structures.
   - The motivation of this paper was to address this question directly, by assembling stratified training/test datasets 
-    instead and training an Evoformer-based model accordingly. The protein dataset includes a proportion that has more 
-    than 1 deposited structure - which is based on a TM-score threshold of 0.8.
-  - The dataset included one chain only of each protein structure in the PDB, excluding NMR structures, to give 68953
+    instead and then training an Evoformer-based model accordingly. 
+    The protein dataset includes a proportion that has more than 1 deposited structure - which is based on a TM-score 
+    threshold of 0.8.
+  - The dataset included one chain only for each protein structure in the PDB, excluding NMR structures, giving 68953
     monomers.
     Crucially, they split any multi-structure proteins up, between training and test datasets, such that accurate 
-    predictions of alternative structures cannot be attributed to memorising them during training.
+    predictions of alternative structures cannot be attributed to simply memorising them during training.
   - They report that this strategy led to accurate predictions for about half of their multi-conformation proteins 
     dataset. Accurately-predicted structures were deemed to be so according to the TM-score of >0.8 between the 
     predicted alternate structure and the 'true' PDB-deposited structure.
@@ -35,9 +36,9 @@
 - <details><summary>Lewis et al 2025</summary><br>
 
   - Like Bryant & Noé 2024, Lewis et al. also attempted to address the goal of predicting alternative protein 
-    structures, but in this, much larger study, the full AlphaFold database of 200 million proteins was used. This was 
+    structures, but in this, much larger, study the full AlphaFold database of 200 million proteins was used. This was 
     clustered to restrict bias, and then increased further by augmentation (in which computationally-generated 
-    structural variants were generated, based on what molecular rearrangments each AlphsFoldDB structure might undergo.
+    structural variants were generated, based on what molecular rearrangments each AlphaFoldDB structure might undergo.
   - The model trained, which again was an Evoformer-based neural network, was further trained on even more protein 
     structures, this time from molecular dynamics simulations. Finally, it was fine-tuned on protein stability-related 
     metrics. Another big difference from the Bryant & Noé 2024 paper is that inference involves a different neural 
