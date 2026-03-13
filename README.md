@@ -952,10 +952,9 @@
           tcov = 100 x (10/10) = 100%; 
           pident = 100 x (8/10) = 80%;
             
-          (Note: LoL-align was not implemented here as I didn't know about it. (L. Reifenrath et al. 2025)
-        
+          (Note: LoL-align was not implemented here as I didn't know about it. (L. Reifenrath et al. 2025) 
           ```
-
+        
     - <details><summary><strong>Generate NMR datasets:</strong></summary><br>
   
         - <details><summary>`api_callr.py`:</summary><br>
@@ -1129,15 +1128,17 @@
 
     There is no mention of essential dynamics, normal mode analysis or difference distance matrices in Bryant & Noé 
     2024 and Lewis et al. 2025. 
-    However, having explored these methods, I think a strong case can be made for the use of these old and methods in the 
-    burgeoning field of protein dynamics predictions by deep neural networks. Computation involving essential dynamics, 
-    difference distance matrices and Gaussian network models require relatively little compute. If one were to try to 
-    perform normal mode analysis using less coarse grained form than the Gaussian network model describes here, then the 
-    computational demand could become too high.<br>  
-    There are a handful of publications that combine protein language models with NMA (Hou et al. 2025) 
+    However, having explored these methods, it seems to me that a good case can be made for incorporating these older 
+    calculations into the burgeoning field of protein dynamics predictions by deep neural networks. 
+    Computation involving essential dynamics, difference distance matrices and Gaussian network models require 
+    relatively little compute. If one were to try to perform normal mode analysis using less coarse grained form than 
+    the Gaussian network model describes here, then the computational demand could become too high however.<br>  
+    
+    I did later manage to find one paper on protein dynamics that integrates one of these calculations (NMA) into a 
+    deep learning framework though none of my work here was informed by it (Hou et al. 2025).<br>  
 
-    Alternative methods not explored here include training Evoformer-based neural networks with a range of reduced MSA 
-    depths (Aranganathan A, Beyerle ER. Applied Causality to Infer Protein Dynamics and Kinetics. J Chem Inf Model. 2026 
+    Alternative methods, not explored here, include training Evoformer-based neural networks with a range of reduced 
+    MSA depths (Aranganathan et al. 2026). 
     
     More broadly, it goes against the notion that any form of end-to-end deep learning should completely exclude anything
     resembling 'manual' feature engineering, i.e. that all representation learning should be done entirely 'from scratch' 
@@ -1160,8 +1161,7 @@
   - K. Henzler-Wildman & D. Kern. Nature (2007) 450:964–972. Dynamic personalities of proteins. 
 - 
   - TE. Creighton, 2nd ed., WH. Freeman (1993). Proteins: Structures and Molecular Properties. 
-  - G. Herzberg, Van Nostrand, New York (1945). Infrared and Raman Spectra of Polyatomic Molecules. 
-  -
+  - G. Herzberg, Van Nostrand, New York (1945). Infrared and Raman Spectra of Polyatomic Molecules.
   - H. Frauenfelder, F. Parak & RD. Young. Ann. Rev. of Biophys. & Biophysical Chem. (1988) 17:451–479. Conformational substates in proteins.
   - W. Doster, S. Cusack & W. Petry. Nature (1989) 337: 754–756. Dynamical transition of myoglobin revealed by inelastic neutron scattering. 
   - S. Harrison. Nat. Struct. Mol. Biol. (2008) 15, 690–698. Viral membrane fusion. 
@@ -1175,6 +1175,7 @@
     - Y. Song et al. ArXiv (2020) abs/2010.02502. Denoising Diffusion Implicit Models.
     - Y. Song et al. ArXiv (2020) abs/2011.13456. Score-based generative modeling through stochastic differential equations.
     - R. Rombach et al. In IEEE Conference on Computer Vision and Pattern Recognition (2022) 10684–10695. High-resolution image synthesis with latent diffusion models.
+    
     - <details><summary>Conditioning:</summary><br>
   
       - P. Dhariwal & A. Nichol. In Advances in Neural Information Processing Systems (2021) 34:8780–8794. Diffusion Models Beat GANs on Image Synthesis.
@@ -1187,8 +1188,7 @@
 - <details><summary>Use of diffusion models for sampling protein structural ensembles:</summary>
 
   - Bryant & Noé. Nature Comm. (2024) 15:7328. Structure prediction of alternative protein conformations. 
-  - S. Lewis et al. Science (2025) 389:6761. Scalable emulation of protein equilibrium ensembles with generative deep learning.
-  - C. Hou et al. BioRxiv (2024). Learning Biophysical Dynamics with Protein Language Models. 
+  - S. Lewis et al. Science (2025) 389:6761. Scalable emulation of protein equilibrium ensembles with generative deep learning. 
 
 - <details><summary>Identifying and/or quantifying structural variations:</summary>
 
@@ -1229,12 +1229,15 @@
   - <details><summary>Recent work on protein mobility and its computation:</summary>
     
     - M. Schneider et al. Structure (2025) 33:1781–1792. EnsembleFlex: Protein structure ensemble analysis made easy. 
-    - A. Aranganathan & ER. Beyerle. J. Chem. Inf. Model. (2026) 66(3):1661-1674.Applied Causality to Infer Protein Dynamics and Kinetics.
 
-  - <details><summary>NMA of proteins and machine learning:</summary><br>
+  - <details><summary>Protein dynamics and deep learning:</summary>
     
-    - Qin et al. RSC Adv. (2020) 10:16607–16615. Machine learning model for fast prediction of the natural frequencies of protein molecules.
-    - C. Hou,  et al. PNAS (2025) 123(4):1-12. Protein language models trained on biophysical dynamics inform mutation effects.
+    - A. Aranganathan & ER. Beyerle. J. Chem. Inf. Model. (2026) 66(3):1661-1674. Applied Causality to Infer Protein Dynamics and Kinetics.
+  
+    - <details><summary>NMA of proteins and machine learning:</summary><br>
+    
+      - Qin et al. RSC Adv. (2020) 10:16607–16615. Machine learning model for fast prediction of the natural frequencies of protein molecules.
+      - C. Hou et al. PNAS (2026) 123(4):1-12. Protein language models trained on biophysical dynamics inform mutation effects.
 
 ---
 
@@ -1251,44 +1254,26 @@
 
 </details>
 
-<details><summary><strong>'Good data practice'</strong></summary><br>
-The dataset(s) are intended for model-training regimens, which are protracted and costly by nature.
-As such, optimal approaches for managing the potentially complicated process of generating, collecting, curating and 
-updating datasets deserve attention and considered thought. This could be referred to as 'good data practice'. 
-This led me to two aspects that I describe as 'data-as-code' and 'dataset versioning'.<br><br>
-
-- <details><summary>Data-as-code:</summary><br>
-  A straightforward manual download of data, which is then stored, passed around and re-used is common practice. 
-  However, once downloaded, here as in many cases of machine learning projects, the data must undergo significant 
-  processing before it is ready to be used the input dataset. 
-  It is the extraction, parsing, and filtering of data. This is more rudimentary than 'feature engineering'. 
-  This processing is what I mean by 'data-as-code', because the code is inextricably tied to the dataset and should, in 
-  my opinion, be considered a *part* of the dataset. To be clear, it is not to draw a distinction between programmatic, 
-  rather than manual, data downloads. (And indeed, using a programmatic download, via a generic API call that simply 
-  retrieves the latest copy of some dataset would require annotation with the version number if no metadata is 
-  automatically included with the download.)
-  
 - <details><summary>Dataset versioning:</summary><br>    
-  The use of dataset versioning is already commonplace. For example in bioinformatics, data sources like the PDB, RefSeq, 
-  AlphaFold DB, etc, all have version numbers.
+  The use of dataset versioning is commonplace. For example in bioinformatics, data sources like the PDB, 
+  RefSeq, AlphaFold DB, etc, all have version numbers.
   However, my use of this term is intended to apply, not only to a static data entity, but to each of the parameters 
   used to subsequently process it in this codebase, in preparation for model training.<br>
-  I did not employ this method here because generating a baseline dataset, rather a range of variants of updates, was 
-  the immediate priority. I did however briefly demonstrate how it might look, using a simple flat document: 
+  I did not get round to employing this method because generating a baseline dataset, rather a range of variants of 
+  updates, was the immediate priority and time ran out. I did however briefly demonstrate how it might look, using a 
+  simple flat document: 
   [Dataset_version_specifications.md](src/unused_dataset_prune_and_versioning/Dataset_version_specifications.md).
   The benefit of this approach is to remove ambiguity from data provenance, reducing the risk of unnecessary errors in 
   reproducibility. 
   It also serves to highlight the number of permutations from which a single selection must be made. The number of 
-  permutations woulc increase further if the dataset were to incorporate the use of non-identical protein sequences. 
+  permutations would increase further if the dataset were to incorporate the use of non-identical protein sequences. 
   For example, proteins sharing sufficient sequence identity (above some given threshold, such as 30 %), which have 
   been observed to fold into different 'enough' tertiary structures, could be included and would thereby help increase 
-  the dataset size. 
-
-The full implementation of both dataset versioning and data-as-code would be assigned to a single version number. 
-All parameters required for specifiying the exact download and processing would be mapped to this version number,
-stored, for example, in a yaml file. The version number would be passed as an argument from the calling function such 
-that downloading (or reading in) the data and the subsequent processing steps, according to the parameters for that 
-version number, would all be specified at runtime.
+  the dataset size.
+  All parameters required for specifiying the exact download and processing would be mapped to this version number,
+  stored, for example, in a yaml file. The version number would be passed as an argument from the calling function such
+  that downloading (or reading in) the data and the subsequent processing steps, according to the parameters for that
+  version number, would all be specified at runtime.
 
 </details>
 <details><summary>Use of AI for code generation:</summary><br>
@@ -1316,15 +1301,14 @@ I have also used GenAI here for:
   - generating Python to implement functionality described in the paper.
 
 My observations thusfar are that it has been excellent for lowering the barrier to getting up and running quickly 
-with Python for topics and libraries that are completely new to me (e.g. Molecular Dynamics, TM-scores with TM-align, 
-clustering RMSD/TM scores for generating dendrogram visualisations, etc). It made me slightly more confident to explore 
-topics I was not familiar with.
-In terms of time saved overall, I found it did not reduce it due to the amount of time required to step through the 
-GenAI code, to understand it fully and to spot and correct errors/hallucinations. A benefit of this latter proof-reading 
-and checking step is that it mimics, to some extent, pair-programming. I found it exercises the important skill of 
-reading code not written by myself. 
-What I haven't yet tried, but will in future, is to prompt GenAI to write unit tests as well, potentially as a starting 
-point (i.e. TDD). 
+with Python for the Molecular Dynamics, TM-scores with TM-align, clustering RMSD/TM scores for generating dendrogram 
+visualisations, etc). It made me slightly more confident to explore topics I was not familiar with.
+In terms of time saved overall: I found it did not reduce it, due to the amount of time required to step through the 
+GenAI code, to understand it fully and to spot and correct any errors/hallucinations (though this seemed to be 
+surprisingly rare). 
+An unexpected benefit of this latter proof-reading and checking step is that it mimics, to some extent, 
+pair-programming, exercising the important skill of reading code not written by oneself. 
+In future I'd be interested to apply a BDD and TDD approach, prompting GenAI to write unit tests as well.
 
 All unused skeleton scripts in [unused_DL_model_training](src/unused_DL_model_training) dir were completely written by GenAI.
 
