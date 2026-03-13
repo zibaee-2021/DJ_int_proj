@@ -142,7 +142,7 @@
 
 </details>
 
-<details><summary><strong>Data files and Python scripts: </strong> $\leftarrow$ bulk of the detail for this project is here, in src/ subdir</summary><br>
+<details><summary><strong>Data files and Python scripts: </strong> $\leftarrow$ bulk of the detail for this project is here, in the src/ subdirectory</summary><br>
 
 - <details><summary><strong>data/</strong></summary>
 
