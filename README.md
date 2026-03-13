@@ -1308,28 +1308,4 @@
     - [diff_distance_matrix.py](src/diff_distance_matrix.py), [DynDom_reader.py](src/DynDom_reader.py), [essential_dynamics.py](src/essential_dynamics.py), [foldseek.py](src/foldseek.py), [mmseqs2.py](src/mmseqs2.py), [plotter.py](src/plotter.py), [tm_aligner.py](src/tm_aligner.py)
   - GenAI was used for writing the clustering & visualisations in [RMSD.py](src/RMSD.py)
 
-
-
-
-<details><summary>Dataset versioning:</summary><br>    
-  The use of dataset versioning is commonplace. For example in bioinformatics, data sources like the PDB, 
-  RefSeq, AlphaFold DB, etc, all have version numbers.
-  However, my use of this term is intended to apply, not only to a static data entity, but to each of the parameters 
-  used to subsequently process it in this codebase, in preparation for model training.<br>
-  I did not get round to employing this method because generating a baseline dataset, rather a range of variants of 
-  updates, was the immediate priority and time ran out. I did however briefly demonstrate how it might look, using a 
-  simple flat document: 
-  [Dataset_version_specifications.md](src/unused_dataset_prune_and_versioning/Dataset_version_specifications.md).
-  The benefit of this approach is to remove ambiguity from data provenance, reducing the risk of unnecessary errors in 
-  reproducibility. 
-  It also serves to highlight the number of permutations from which a single selection must be made. The number of 
-  permutations would increase further if the dataset were to incorporate the use of non-identical protein sequences. 
-  For example, proteins sharing sufficient sequence identity (above some given threshold, such as 30 %), which have 
-  been observed to fold into different 'enough' tertiary structures, could be included and would thereby help increase 
-  the dataset size.
-  All parameters required for specifiying the exact download and processing would be mapped to this version number,
-  stored, for example, in a yaml file. The version number would be passed as an argument from the calling function such
-  that downloading (or reading in) the data and the subsequent processing steps, according to the parameters for that
-  version number, would all be specified at runtime.
-
 </details>
