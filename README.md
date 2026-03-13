@@ -1013,6 +1013,34 @@
       Most of the functions here are called from `pdb_model_stats.py` although from code variably commented out, in the
       scope of that script's main execution block.
     
+    - <details><summary>Dataset versioning:</summary><br>    
+      The use of dataset versioning is commonplace. For example in bioinformatics, data sources like the PDB, 
+      RefSeq, AlphaFold DB, etc, all have version numbers.
+      However, my use of this term is intended to apply, not only to a static data entity, but to each of the parameters 
+      used to subsequently process it in this codebase, in preparation for model training.<br>
+      I did not get round to employing this method because generating a baseline dataset, rather a range of variants of 
+      updates, was the immediate priority and time ran out. I did however briefly demonstrate how it might look, using a 
+      simple flat document: [Dataset_version_specifications.md](src/unused_dataset_prune_and_versioning/Dataset_version_specifications.md).
+      The benefit of this approach is to remove ambiguity from data provenance, reducing the risk of unnecessary errors 
+      in reproducibility. 
+      It also serves to highlight the number of permutations from which a single selection must be made. The number of 
+      permutations would increase further if the dataset were to incorporate the use of non-identical protein sequences. 
+      For example, proteins sharing sufficient sequence identity (above some given threshold, such as 30 %), which have 
+      been observed to fold into different 'enough' tertiary structures, could be included and would thereby help increase 
+      the dataset size.
+      All parameters required for specifiying the exact download and processing would be mapped to this version number,
+      stored, for example, in a yaml file. The version number would be passed as an argument from the calling function such
+      that downloading (or reading in) the data and the subsequent processing steps, according to the parameters for that
+      version number, would all be specified at runtime.
+    </details>
+
+
+
+
+
+
+
+
 </details>
 
 <details><summary><strong>Discussion:</strong></summary><br>
@@ -1153,7 +1181,7 @@
 </details>
 <details><summary><strong>References:</strong></summary><br>
 
-- <details><summary>Protein dynamics:</summary>
+- <details><summary>Protein dynamics:</summary><br>
 
   - KU. Linderstrøm-Lang & JA. Schellman. Enzymes (1959) 1:443. Protein structure and enzymatic activity.
   - H. Frauenfelder, G. Petsko & D. Tsernoglou. Nature (1979) 280:558–563. Temperature-dependent X-ray diffraction as a probe of protein structural dynamics. 
@@ -1186,12 +1214,12 @@
       - R. Rombach et al. 2022 (same as above)
       - J. Yim et al. In Proc. Mach. Learn. Res. (2023) 202:40001-40039. SE(3) diffusion model with application to protein backbone generation.
 
-- <details><summary>Use of diffusion models for sampling protein structural ensembles:</summary>
-
+- <details><summary>Use of diffusion models for sampling protein structural ensembles:</summary><br>
+  
   - Bryant & Noé. Nature Comm. (2024) 15:7328. Structure prediction of alternative protein conformations. 
   - S. Lewis et al. Science (2025) 389:6761. Scalable emulation of protein equilibrium ensembles with generative deep learning. 
 
-- <details><summary>Identifying and/or quantifying structural variations:</summary>
+- <details><summary>Identifying and/or quantifying structural variations:</summary><br>
 
   - RMSD: 
     - W. Kabsch. Acta Cryst. A. (1976) 32:922-923. A solution for the best rotation to relate two sets of vectors. 
@@ -1200,7 +1228,7 @@
   - GDT:
     - A. Zemla et al. Proteins (2001) Suppl. 5:13-21. Processing and evaluation of predictions in CASP4. 
 
-  - <details><summary>Distance matrix:</summary>
+  - <details><summary>Distance matrix:</summary><br>
     
     - DC. Phillips (1970). In British Biochemistry, Past and Present (Goodwin, TW., ed.), pp. 11-28.
     - GM. Crippen. J. Comp. Phys. (1977) 24:96-107. A Novel Approach to Calculation of Conformation: Distance Geometry. 
@@ -1209,7 +1237,7 @@
     - Difference distance matrix:
     - WL. Nichols et al. Proteins (1995) 23:38-48. Rigid Domains in Proteins: An Algorithmic Approach to Their Identification. 
 
-  - <details><summary>Essential Dynamics:</summary>s
+  - <details><summary>Essential Dynamics:</summary><br>
 
     - M. Karplus & JN. Jushick. Macromolecules (1981) 14:325-332.
     - T. Ichiye & M. Karplus. Proteins (1991) 11:205-217. Collective Motions in Proteins: A Covariance Analysis of Atomic Fluctuations in Molecular Dynamics and Normal Mode Simulations. 
@@ -1218,7 +1246,7 @@
     - Yang et al. Bioinformatics (2009) 25(5):606–614. PCA of native ensembles of biomolecular structures (PCA_NEST): insights into functional dynamics. 
     - CC. David & DJ. Jacobs. Methods Mol. Biol. (2014) 1084:193–226. Principal Component Analysis: A Method for Determining the Essential Dynamics of Proteins. 
 
-  - <details><summary>Normal Mode Analysis:</summary>
+  - <details><summary>Normal Mode Analysis:</summary><br>
 
     - JA. Bauer et al. Molecules (2019) 24:3293-3312. Normal Mode Analysis as a Routine Part of a Structural Investigation. 
     - N. Go et al. PNAS (1983) 80:3696–3700. Dynamics of a Small Globular Protein in Terms of Low-Frequency Vibrational-Modes.
@@ -1227,11 +1255,11 @@
     - Gaussian network model (GNM), aka elastic network model (ENM):
       - MM. Tirion. Phys. Rev. Lett. (1996) 77:1905–1908. Large amplitude elastic motions in proteins from a single-parameter atomic analysis. 
 
-  - <details><summary>Recent work on protein mobility and its computation:</summary>
+  - <details><summary>Recent work on protein mobility and its computation:</summary><br>
     
     - M. Schneider et al. Structure (2025) 33:1781–1792. EnsembleFlex: Protein structure ensemble analysis made easy. 
 
-  - <details><summary>Protein dynamics and deep learning:</summary>
+  - <details><summary>Protein dynamics and deep learning:</summary><br>
     
     - A. Aranganathan & ER. Beyerle. J. Chem. Inf. Model. (2026) 66(3):1661-1674. Applied Causality to Infer Protein Dynamics and Kinetics.
   
@@ -1240,22 +1268,55 @@
       - Qin et al. RSC Adv. (2020) 10:16607–16615. Machine learning model for fast prediction of the natural frequencies of protein molecules.
       - C. Hou et al. PNAS (2026) 123(4):1-12. Protein language models trained on biophysical dynamics inform mutation effects.
 
----
-
-- <details><summary>Datasets:</summary>
+- <details><summary>Datasets:</summary><br>
 
   - G. Qi, et al. Bioinformatics (2005) 21(12):2832-2838. A comprehensive and non-redundant database of protein domain movements. 
     (https://dyndom.cmp.uea.ac.uk/dyndom/main.jsp)
----
-- <details><summary>Tools:</summary>
+
+- <details><summary>Tools:</summary><br>
 
 - M. van Kempen, et al. Nat. Biotechnol. (2024) 42:243–246. Fast and accurate protein structure search with Foldseek. 
 - 
 - L. Reifenrath, et al. BioRxiv 2025.11.24.690091. LoL-align: sensitive and fast probabilistic protein structure alignment.   
 
 </details>
+<details><summary>Use of AI for code generation:</summary><br>
 
-- <details><summary>Dataset versioning:</summary><br>    
+  This is the first codebase in which I have made wholesale use of generative AI (GenAI) for building groups of fully-written functions. 
+  My previous usage of GenAI, in MSc project, had been limited to replace StackOverFlow/Google searches for complicated 
+  Pandas and NumPy operations, Matplotlib functions, regex and a few API calls and webscrapes. 
+
+  However, in this mini-project, I have written prompts that provide the following, in a format that might be referred to as "agentic AI":
+  - detailed descriptions of the overall goal; 
+  - as much context as I can provide;
+  - (sometimes) guidance on the implementation details I want to see used. 
+
+  I have also used GenAI here for:
+  - assistance in breaking down and explaining some of the mathematics and algorithms in uploaded papers, e.g. for NMA;
+    - (I essentially interrogated it to extract a complete explanation, and try to weed out potentially redundant/incorrect 
+      logic/code.) 
+  - writing LaTex;
+  - markdown formatting;
+  - searching the Internet for relevant publications;
+  - scanning an uploaded publication and 
+    - responding to questions about the publication;
+    - generating Python to implement functionality described in the paper.
+
+  My observations thusfar are that it has been excellent for lowering the barrier to getting up and running quickly with written logic (in Python) for the Molecular Dynamics (unused), TM-scores with TM-align, clustering RMSD/TM scores for generating dendrogram visualisations, and the methods of difference-distance matrix, essential dynamics and Gaussian network models. It made me slightly more confident to explore topics I was not familiar with, particularly  in terms of the mathematics involved.
+  In terms of time saved overall: I found it probably did not reduce it by much if at all, due to the amount of time I spent stepping through GenAI code, to understand it fully and to spot and correct any errors/hallucinations (though this seemed to be surprisingly rare). Some of the delay was due to my not trusting and/or understanding every detail in the responses, hence leading to extensive 'interrogation'. Unsurprisingly the process of forming detailed, context-heavy and thought-through prompts aided greatly my own learning process. An unexpected benefit of my proof-reading and checking of the Python was that it mimics pair-programming, exercising the important skill of reading code not written by myself. 
+  In future, I'd be interested to apply a BDD and TDD approach with GenAI, such that unit tests would be pre-written.
+
+  All the following unused skeleton scripts in [unused_DL_model_training](src/unused_DL_model_training) dir were completely written by GenAI.
+
+  - GenAI was used for writing the inital core functionalities in:
+    - [atlas.py](src/unused_MD_scripts/atlas.py)
+    - [diff_distance_matrix.py](src/diff_distance_matrix.py), [DynDom_reader.py](src/DynDom_reader.py), [essential_dynamics.py](src/essential_dynamics.py), [foldseek.py](src/foldseek.py), [mmseqs2.py](src/mmseqs2.py), [plotter.py](src/plotter.py), [tm_aligner.py](src/tm_aligner.py)
+  - GenAI was used for writing the clustering & visualisations in [RMSD.py](src/RMSD.py)
+
+
+
+
+<details><summary>Dataset versioning:</summary><br>    
   The use of dataset versioning is commonplace. For example in bioinformatics, data sources like the PDB, 
   RefSeq, AlphaFold DB, etc, all have version numbers.
   However, my use of this term is intended to apply, not only to a static data entity, but to each of the parameters 
@@ -1277,47 +1338,3 @@
   version number, would all be specified at runtime.
 
 </details>
-<details><summary>Use of AI for code generation:</summary><br>
-
-This is the first codebase in which I have made wholesale use of generative AI (GenAI) for building groups of 
-fully-written functions. 
-My previous usage of GenAI, in MSc project, had been limited to replace StackOverFlow/Google searches for complicated 
-Pandas and NumPy operations, Matplotlib functions, regex and a few API calls and webscrapes. 
-
-However, in this mini-project, I have written prompts that provide the following, in a format that might be referred to 
-as "agentic AI":
-- detailed descriptions of the overall goal; 
-- as much context as I can provide;
-- (sometimes) guidance on the implementation details I want to see used. 
-
-I have also used GenAI here for:
-- assistance in breaking down and explaining some of the mathematics and algorithms in uploaded papers, e.g. for NMA;
-  - (I essentially interrogated it to extract a complete explanation, and try to weed out potentially redundant/incorrect 
-    logic/code.) 
-- writing LaTex;
-- markdown formatting;
-- searching the Internet for relevant publications;
-- scanning an uploaded publication and 
-  - responding to questions about the publication;
-  - generating Python to implement functionality described in the paper.
-
-My observations thusfar are that it has been excellent for lowering the barrier to getting up and running quickly 
-with written logic (in Python) for the Molecular Dynamics (unused), TM-scores with TM-align, clustering RMSD/TM scores 
-for generating dendrogram visualisations, and the methods of difference-distance matrix, essential dynamics and 
-and Gaussian network models. It made me slightly more confident to explore topics I was not familiar with, particularly
-in terms of the mathematics involved.
-In terms of time saved overall: I found it probably did not reduce it by much if at all, due to the amount of time I 
-spent stepping through GenAI code, to understand it fully and to spot and correct any errors/hallucinations (though 
-this seemed to be surprisingly rare). Some of the delay was due to my not trusting and/or understanding every detail in 
-the responses, hence leading to extensive 'interrogation'. Unsurprisingly the process of forming detailed, 
-context-heavy and thought-through prompts aided greatly my own learning process. An unexpected benefit of my 
-proof-reading and checking of the Python was that it mimics pair-programming, exercising the important skill of 
-reading code not written by myself. 
-In future, I'd be interested to apply a BDD and TDD approach with GenAI, such that unit tests would be pre-written.
-
-All the following unused skeleton scripts in [unused_DL_model_training](src/unused_DL_model_training) dir were completely written by GenAI.
-
-- GenAI was used for writing the inital core functionalities in:
-  - [atlas.py](src/unused_MD_scripts/atlas.py)
-  - [diff_distance_matrix.py](src/diff_distance_matrix.py), [DynDom_reader.py](src/DynDom_reader.py), [essential_dynamics.py](src/essential_dynamics.py), [foldseek.py](src/foldseek.py), [mmseqs2.py](src/mmseqs2.py), [plotter.py](src/plotter.py), [tm_aligner.py](src/tm_aligner.py)
-- GenAI was used for writing the clustering & visualisations in [RMSD.py](src/RMSD.py)
