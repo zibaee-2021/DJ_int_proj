@@ -922,7 +922,6 @@
           i.e.<br>
       
           <p align="center">
-        
           $A = \begin{pmatrix}
           1 & 0 \\
           0 & 1
