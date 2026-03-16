@@ -541,7 +541,11 @@
     where $\textbf{C}$ is the covariance matrix,<br>
     $M$ is the number of NMR models (or frames in MD trajectory),<br>
     $\bar{\textbf{X}} = (\bar{x}_1 ,\; \bar{x}_2, \; \cdots, \; \bar{x}_p)$,<br> 
-    $\bar{x}_i = \frac{1}{M}\sum\limits_{k=1}^{M} x_i^{(k)}$ which is the mean of the Cartesian coordinate for atom $i$ across $k$ NMR models (or frames in MD trajectory).<br>
+  
+    <p align="center">
+    $\bar{x}_i = \frac{1}{M}\sum\limits_{k=1}^{M} x_i^{(k)}$
+    </p>
+    which is the mean of the Cartesian coordinate for atom $i$ across $k$ NMR models (or frames in MD trajectory).<br>
     So, $\textbf{X} - \bar{\textbf{X}}$ converts locations to fluctuations, and the covariance of this encodes how atoms move together in space. 
 
     (For the correlation matrix, the normalisation and covariance computation can be done in either order. In the script,
