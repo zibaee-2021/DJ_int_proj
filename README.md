@@ -925,6 +925,22 @@
           $C(n, r) = \begin{pmatrix} n \\[4pt] r \end{pmatrix} = \dfrac{n!}{r! \, (n - r)!}  = \dfrac{2713!}{2! \, (2713 - 2)!} = 3678828$
           </p>
       
+          <p align="center">
+
+          $C(n,r) =
+          \left(
+          \begin{smallmatrix}
+          n \\
+          r
+          \end{smallmatrix}
+          \right)
+          = \dfrac{n!}{r!(n-r)!}
+          = \dfrac{2713!}{2!(2713-2)!}
+          = 3678828$
+
+          </p> 
+  
+  
           (Note: it could be even more if explicitly set to allow more than 1 alignment output for any given protein pair, 
           but default setting restricts to only 1 output per pair).
         
