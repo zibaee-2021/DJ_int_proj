@@ -918,9 +918,9 @@
           it partly for the learning experience.
         
           The output is saved to one large csv with 7 columns: query, target, evalue, pident, alnlen, qcov, tcov. 
-          2713 PDB-chains choose 2 gives over 3 million pairs: 
-      
+          2713 PDB-chains choose 2 gives over 3 million pairs:
           i.e. 
+
           <p align="center">
           $C(n, r) = \begin{pmatrix} n \\[4pt] r \end{pmatrix} = \dfrac{n!}{r! \, (n - r)!}  = \dfrac{2713!}{2! \, (2713 - 2)!} = 3678828$
           </p>
