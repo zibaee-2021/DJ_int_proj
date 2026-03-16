@@ -923,10 +923,10 @@
       
           <p align="center">
         
-          $$A = \begin{pmatrix}
+          $A = \begin{pmatrix}
           1 & 0 \\
           0 & 1
-          \end{pmatrix}$$  
+          \end{pmatrix}$  
           </p> 
 
           $$C(n, r) = \begin{bmatrix} n \\[4pt] r \end{bmatrix} = \dfrac{n!}{r! \, (n - r)!}  = \dfrac{2713!}{2! \, (2713 - 2)!} = 3678828$$
