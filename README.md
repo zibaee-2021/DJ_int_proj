@@ -542,7 +542,7 @@
     $M$ is the number of NMR models (or frames in MD trajectory),<br>
     
     <p align="center">
-    $\bar{\textbf{X}} = (\bar{x}_1 ,\; \bar{x}_2, \; \cdots, \; \bar{x}_p)$,<br>
+    $\bar{\textbf{X}} = (\bar{x}_1 ,\; \bar{x}_2, \; \cdots, \; \bar{x}_p)$,<br><br>
     $\bar{x}_i = \frac{1}{M}\sum\limits_{k=1}^{M} x_i^{(k)}$
     </p>
     which is the mean of the Cartesian coordinate for atom $i$ across $k$ NMR models (or frames in MD trajectory).<br>
