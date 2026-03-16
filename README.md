@@ -612,7 +612,7 @@
     \;=\;
     \sqrt{\lambda_i\left( v_{i,r_x}^2 + v_{i,r_y}^2 + v_{i,r_z}^2 \right)}$
     </p>
-    where $\textbf{v}_i$ is eigenvector $i$ (unitless shape) and $\lambda_i$ is the variance $(Å^2)$.<br> 
+    where $\textbf{v}_i$ is eigenvector $i$ (unitless shape) and $\lambda_i$ is the variance $(\, Å^2 \,)$.<br> 
     Yielding $A_i(r)$, the displacement amplitude (Å) of residue $r$, along eigenvector $i$.
     
     Before returning, `essential_dynamics_pca()` offers the option to perform kernel PCA (kPCA). Unlike applying 
@@ -919,7 +919,12 @@
         
           The output is saved to one large csv with 7 columns: query, target, evalue, pident, alnlen, qcov, tcov. 
           2713 PDB-chains choose 2 gives over 3 million pairs: 
-          i.e. $C(n, r) = \begin{pmatrix} n \\[4pt] r \end{pmatrix} = \dfrac{n!}{r! \, (n - r)!}  = \dfrac{2713!}{2! \, (2713 - 2)!} = 3678828$
+      
+          i.e. 
+          <p align="center">
+          $C(n, r) = \begin{pmatrix} n \\[4pt] r \end{pmatrix} = \dfrac{n!}{r! \, (n - r)!}  = \dfrac{2713!}{2! \, (2713 - 2)!} = 3678828$
+          </p>
+      
           (Note: it could be even more if explicitly set to allow more than 1 alignment output for any given protein pair, 
           but default setting restricts to only 1 output per pair).
         
