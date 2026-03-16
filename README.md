@@ -921,6 +921,13 @@
           2713 PDB-chains choose 2 gives over 3 million pairs:
           i.e.<br>
       
+          <p align="center">
+          A = \begin{pmatrix}
+          1 & 0 \\
+          0 & 1
+          \end{pmatrix}  
+          </p> 
+
           $$C(n, r) = \begin{bmatrix} n \\[4pt] r \end{bmatrix} = \dfrac{n!}{r! \, (n - r)!}  = \dfrac{2713!}{2! \, (2713 - 2)!} = 3678828$$
 
           <p align="center">
