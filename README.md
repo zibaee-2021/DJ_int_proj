@@ -922,7 +922,7 @@
           i.e. 
 
           <p align="center">
-          $C(n, r) = \begin{pmatrix} n \\\[4pt] r \end{pmatrix} = \dfrac{n!}{r! \, (n - r)!}  = \dfrac{2713!}{2! \, (2713 - 2)!} = 3678828$
+          $$C(n, r) = \begin{bmatrix} n \\\[4pt] r \end{bmatrix} = \dfrac{n!}{r! \, (n - r)!}  = \dfrac{2713!}{2! \, (2713 - 2)!} = 3678828$$
           </p>
       
           <p align="center">
