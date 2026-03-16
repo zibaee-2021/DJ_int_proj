@@ -612,7 +612,7 @@
     \;=\;
     \sqrt{\lambda_i\left( v_{i,r_x}^2 + v_{i,r_y}^2 + v_{i,r_z}^2 \right)}$
     </p>
-    where $\textbf{v}_i$ is eigenvector $i$ (unitless shape) and $\lambda_i$ is the variance (Å$^2$).<br> 
+    where $\textbf{v}_i$ is eigenvector $i$ (unitless shape) and $\lambda_i$ is the variance $(Å^2)$.<br> 
     Yielding $A_i(r)$, the displacement amplitude (Å) of residue $r$, along eigenvector $i$.
     
     Before returning, `essential_dynamics_pca()` offers the option to perform kernel PCA (kPCA). Unlike applying 
