@@ -399,7 +399,7 @@
     Installed according to github instructions: https://zhanggroup.org/TM-align/ <br>
     Rocky Linux: Compile TMalign.cpp with ``g++ -O3 -ffast-math -lm -o TMalign TMalign.cpp``. <br> 
     (Note: `-static` command was left out for both Rocky Linux and Mac).<br>
-    Mac: in `basic_fun.h` on line 10 ``// #include <malloc.h> //`` is replaced by ``#include <stdlib.h>`` which was already 
+    Mac: in `basic_fun.h` on line 10 \``// #include <malloc.h> //`\` is replaced by ``#include <stdlib.h>`` which was already 
     on line 6. So, after commenting out ``include <malloc.h>`` and then compiling, I deleted all other files including 
     `basic_fun.h`.<br>
     The TMalign compiled binary executable file (along with the TMalign.cpp and TMalign.h files) are located in 
