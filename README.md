@@ -1019,17 +1019,16 @@
       part would be useable for any subsequent searches if needed in future. And, as with MMseqs2 in `mmseqs2.py`, I am using 
       Foldseek here partly for the learning experience.)
 
-    - <details><summary><strong>Scrape DynDom webserver:</strong></summary><br>
+    - <details><summary><strong>Scraping DynDom webserver:</strong></summary><br>
 
       `DynDom_reader.py` ...
       Written to scrape the dataset from the html page of the DynDom webserver. May not be needed now as superior source of 
       dataset was kindly emailed to me by Prof Steven Hayward.  
   
     - <details><summary><strong>Visualise data:</strong></summary><br>
-      `plotter.py` ...
-  
-      Most of the functions here are called from `pdb_model_stats.py` although from code variably commented out, in the
-      scope of that script's main execution block.
+      
+      Most of the functions in `plotter.py` are called from `pdb_model_stats.py` although from code in the scope of 
+      that script's `__main__` execution block, commented out as these were one-off runs.
     
     - <details><summary>Dataset versioning:</summary><br>    
       The use of dataset versioning is commonplace. For example in bioinformatics, data sources like the PDB, 
