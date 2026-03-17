@@ -1094,12 +1094,12 @@
     can be relatively large, but are not straightforward to quantify, given there's essentially no fixed frame of 
     reference. 
     
-    | Motion          | What changes                       | Typical size (Å)        | Typical timescale (secs)       |
-    | --------------- |------------------------------------|-------------------------|--------------------------------|
-    | Bond stretching | Bond length                        | $0.005–0.01$            | $10^{-15}–10^{-14}$            |
-    | Libration       | Bond / group orientation           | $0.01–0.05$ (projected) | $10^{-14}–10^{-12}$            |
-    | Rotamer jump    | Rotameric state $(\chi$ angles $)$ | $0.5–1$                 | $10^{-12}–10^{-9}$             |
-    | Loop motion     | Backbone conformation / position   | $1–10+$                 | $10^{-10}–10^{-4}$ (or slower) |
+    | Motion          | What changes                          | Typical size (Å)        | Typical timescale (secs)       |
+    | --------------- |---------------------------------------|-------------------------|--------------------------------|
+    | Bond stretching | Bond length                           | $0.005–0.01$            | $10^{-15}–10^{-14}$            |
+    | Libration       | Bond / group orientation              | $0.01–0.05$ (projected) | $10^{-14}–10^{-12}$            |
+    | Rotamer jump    | Rotameric state $($ $\chi$ angles $)$ | $0.5–1$                 | $10^{-12}–10^{-9}$             |
+    | Loop motion     | Backbone conformation / position      | $1–10+$                 | $10^{-10}–10^{-4}$ (or slower) |
 
   - <details><summary>Diffusion models</summary><br>
     Although no training of a diffusion model has been performed here and no details of the architecture of the 
