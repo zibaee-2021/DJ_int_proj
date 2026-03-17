@@ -1032,7 +1032,7 @@
     
     - <details><summary>Dataset versioning:</summary><br>    
       The use of dataset versioning is commonplace. For example in bioinformatics, data sources like the PDB, 
-      RefSeq, AlphaFold DB, etc, all have version numbers.
+      RefSeq, AlphaFoldDB, etc, all have deposit/release dates or version numbers (for each protein sequence or structure).
       However, my use of this term is intended to apply, not only to a static data entity, but to each of the parameters 
       used to subsequently process it in this codebase, in preparation for model training.<br>
       I did not get round to employing this method because generating a baseline dataset, rather a range of variants of 
