@@ -1096,7 +1096,7 @@
     
     | Motion          | What changes                     | Typical size              | Typical timescale (secs)       |
     | --------------- | -------------------------------- |---------------------------|--------------------------------|
-    | Bond stretching | Bond length                      | $0.005–0.01 \mathrm{\AA}$ Å           | $10^{-15}–10^{-14}$            |
+    | Bond stretching | Bond length                      | $0.005–0.01 \AA$ Å           | $10^{-15}–10^{-14}$            |
     | Libration       | Bond / group orientation         | $0.01–0.05$ Å (projected) | $10^{-14}–10^{-12}$            |
     | Rotamer jump    | Rotameric state (χ angles)       | $0.5–1$ Å                 | $10^{-12}–10^{-9}$             |
     | Loop motion     | Backbone conformation / position | $1–10+$ Å                 | $10^{-10}–10^{-4}$ (or slower) |
