@@ -925,7 +925,9 @@
           2713 PDB-chains choose 2 gives over 3 million pairs:
           i.e.<br>
      
+          <p align="center">
           $C(n,r)=\binom{n}{r}=\dfrac{n!}{r!(n-r)!}$
+          </p>
 
           (Note: it could be even more if explicitly set to allow more than 1 alignment output for any given protein pair, 
           but default setting restricts to only 1 output per pair).
