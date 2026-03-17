@@ -690,14 +690,16 @@
     implementations of ENMs. ENMs are not alpha-carbon only by default, but as it has been shown that alpha-carbon-only 
     ENMs reproduce the same low modes as full-atom NMA (Bahar & Atilgan), alpha-carbon-only became the standard 
     coarse-grained representation for ENMs and has been implemented here accordingly.
+  - 
+  - 
     
     Nosology:
     ```bash
     
     normal mode analysis (NMA)
         └── elastic network models (ENM)
-                ├── Gaussian network model (GNM)  <-- isotropic ENM
-                └── anisotropic network model (ANM) <-- anisotropic ENM
+                ├── Gaussian network model (GNM)  ⟵ isotropic ENM
+                └── anisotropic network model (ANM) ⟵ anisotropic ENM
     ```
     
     | Model    | Matrix size    | Eigenvector contains           |
