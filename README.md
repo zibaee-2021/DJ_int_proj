@@ -1094,12 +1094,12 @@
     scale domain motions about flexible hinge regions, for example. Finally, the motions of fully disordered proteins 
     can be relatively large, but are less straightforward to quantify with no fixed frame of reference. 
     
-    | Motion          | What changes                     | Typical size              | Typical timescale                              |
-    | --------------- | -------------------------------- |---------------------------|------------------------------------------------|
-    | Bond stretching | Bond length                      | **0.005–0.01 Å**          | **10–100 fs** $(10^{-15}–10^{-14})$ s          |
-    | Libration       | Bond / group orientation         | **0.01–0.05 Å (projected)** | **0.1–10 ps** $(10^{-14}–10^{-12})$ s          |
-    | Rotamer jump    | Rotameric state (χ angles)       | **0.5–1 Å**               | **10 ps – 10 ns** $(10^{-12}–10^{-9})$ s       |
-    | Loop motion     | Backbone conformation / position | **1–10+ Å**               | **ns – ms (or slower)** $(10^{-10}–10^{-4})$ s |
+    | Motion          | What changes                     | Typical size            | Typical timescale (secs)         |
+    | --------------- | -------------------------------- |-------------------------|----------------------------------|
+    | Bond stretching | Bond length                      | 0.005–0.01 Å            | $(10^{-15}–10^{-14})$            |
+    | Libration       | Bond / group orientation         | 0.01–0.05 Å (projected) | $(10^{-14}–10^{-12})$            |
+    | Rotamer jump    | Rotameric state (χ angles)       | 0.5–1 Å                 | $(10^{-12}–10^{-9})$             |
+    | Loop motion     | Backbone conformation / position | 1–10+ Å                 | $(10^{-10}–10^{-4})$ (or slower) |
 
   - <details><summary>Diffusion models</summary><br>
     Although no training of a diffusion model has been performed here and no details of the architecture of the 
