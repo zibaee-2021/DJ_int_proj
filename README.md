@@ -1034,10 +1034,12 @@
       The use of dataset versioning is commonplace. For example in bioinformatics, data sources like the PDB, 
       RefSeq, AlphaFoldDB, etc, all have deposit/release dates or version numbers (for each protein sequence or structure).
       However, my use of this term is intended to apply, not only to a static data entity, but to each of the parameters 
-      used to subsequently process it in this codebase, in preparation for model training.<br>
-      I did not get round to employing this method because generating a baseline dataset, rather a range of variants of 
-      updates, was the immediate priority and time ran out. I did however briefly demonstrate how it might look, using a 
-      simple flat document: 
+      used to subsequently process it in this codebase, in preparation for model training. Essentially the code 
+      responsible for downloading and processing the data is versioned as software is typically done. As such, it is 
+      closer to the versioning system of AlphaFoldDB as the data is generated entirely by software.<br>
+      I did not get round to employing this method in full because generating a baseline dataset, rather a range of 
+      variants of updates, was the immediate priority and time ran out. I did however briefly demonstrate how it might 
+      look, using a simple flat document: 
       
       [Dataset_version_specifications.md](src/unused_dataset_prune_and_versioning/Dataset_version_specifications.md).
       The benefit of this approach is to remove ambiguity from data provenance, reducing the risk of unnecessary errors 
