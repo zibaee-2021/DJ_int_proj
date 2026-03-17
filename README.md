@@ -1122,7 +1122,7 @@
       directly influencing the field since. The conceptual lineage including 7 of the most important research papers is
       shown below.
       ```bash
-                                                                                                Hyvärinen et al. 2005: score-matching objective
+      (scroll right)                                                                            Hyvärinen et al. 2005: score-matching objective
                                                                                                 │
       Sohl-Dickstein et al. 2015: diffusion mathematical proof & proof-of-concept - 1           │
       │                                                                                         Song & Ermon 2019: neural score estimation + annealed Langevin - 2b
