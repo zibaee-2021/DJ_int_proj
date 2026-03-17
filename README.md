@@ -851,15 +851,15 @@
     diagonalisation is involved in each, how it's interpreted and what information each model is realistically capable of 
     predicting and/or characterising:
     
-    | Model                                    | Matrix diagonalised               | What the eigenvectors represent                                   | Gives explicit Cartesian directions?                         | Resulting motion info                                                                                      |
-    | ---------------------------------------- | --------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------ |------------------------------------------------------------------------------------------------------------|
-    | **Full all-atom NMA (Hessian)**          | (3N \times 3N)                    | Per-atom 3D displacement vectors from a physics-based force field | **Yes** — full atomic ((\Delta x,\Delta y,\Delta z))         | Predicted small-amplitude 3D displacement vectors for every atom; vibrational directions around a minimum  |
-    | **ANM (Anisotropic Network Model)**      | (3N \times 3N)                    | Per-residue 3D displacement vectors (coarse-grained)              | **Yes** — residue-level directions                           | Predicted collective 3D directions of residue motion (hinges, domain rotations)                            |
-    | **PCA / Essential Dynamics (MD or NMR)** | (3N \times 3N) covariance         | Dominant directions of *observed* Cartesian variance              | **Yes** — but data-driven, not predictive                    | Dominant *observed* displacement directions sampled experimentally or in MD                                |
-    | **Cartesian displacement analysis (two structures)** | none (direct subtraction) | (\Delta \textbf{r}_i) vectors      | **Yes**                              | Exact per-residue displacement vectors between two aligned conformations                                   |
-    | **Difference–Distance Matrix (DDM)**     | (N \times N) (pairwise distances) | Complete internal geometric change between structures             | **Implicitly yes** — internal geometry only, no global frame | Complete information about which internal distances change and by how much; no Cartesian directions        |
-    | **GNM (Gaussian Network Model)**         | (N \times N) Laplacian            | Scalar participation / correlation patterns of residues           | **No** — isotropic, sign structure only                      | Predicted relative flexibility and correlated/anti-correlated regions                                      |
-    | **Spectral clustering of graphs / DDMs** | (N \times N) Laplacian            | Relational partitions and collective groupings                    | **No** — partitions, not displacement vectors                | Identification of moving blocks, hinges, and collective rearrangement patterns                             |
+    | Model                                          | Matrix diagonalised                | What the eigenvectors represent                                   | Gives explicit Cartesian directions?                         | Resulting motion info                                                                                      |
+    |------------------------------------------------|------------------------------------|-------------------------------------------------------------------| ------------------------------------------------------------ |------------------------------------------------------------------------------------------------------------|
+    | Full all-atom NMA (Hessian)                    | (3N \times 3N)                     | Per-atom 3D displacement vectors from a physics-based force field | **Yes** — full atomic ((\Delta x,\Delta y,\Delta z))         | Predicted small-amplitude 3D displacement vectors for every atom; vibrational directions around a minimum  |
+    | ANM (Anisotropic Network Model)                | (3N \times 3N)                     | Per-residue 3D displacement vectors (coarse-grained)              | **Yes** — residue-level directions                           | Predicted collective 3D directions of residue motion (hinges, domain rotations)                            |
+    | PCA / Essential Dynamics (MD or NMR)           | (3N \times 3N) covariance          | Dominant directions of *observed* Cartesian variance              | **Yes** — but data-driven, not predictive                    | Dominant *observed* displacement directions sampled experimentally or in MD                                |
+    | Cartesian displacement analysis (2 structures) | none (direct subtraction)          | $(\Delta \textbf{r}_i)$ vectors                                   | **Yes**                              | Exact per-residue displacement vectors between two aligned conformations                                   |
+    | Difference–Distance Matrix (DDM)               | (N \times N) (pairwise distances)  | Complete internal geometric change between structures             | **Implicitly yes** — internal geometry only, no global frame | Complete information about which internal distances change and by how much; no Cartesian directions        |
+    | GNM (Gaussian Network Model)                   | (N \times N) Laplacian             | Scalar participation / correlation patterns of residues           | **No** — isotropic, sign structure only                      | Predicted relative flexibility and correlated/anti-correlated regions                                      |
+    | Spectral clustering of graphs / DDMs           | (N \times N) Laplacian             | Relational partitions and collective groupings                    | **No** — partitions, not displacement vectors                | Identification of moving blocks, hinges, and collective rearrangement patterns                             |
   
     The table below aims to clarify the difference between what PCA/ED does vs what NMA does, and the different meanings of the word 
     'mode' in each: 
@@ -1191,20 +1191,12 @@
     relatively little compute. If one were to try to perform normal mode analysis using less coarse grained form than 
     the Gaussian network model describes here, then the computational demand could become too high however.<br>  
     
-    I did later manage to find one paper on protein dynamics that integrates one of these calculations (NMA) into a 
-    deep learning framework though none of my work here was informed by it (Hou et al. 2025).<br>  
+    I did later manage to find one paper on protein dynamics, Hou et al. 2025, in which one of these calculations, 
+    namely NMA, is included in a deep learning framework, though none of my work here was informed by this as I only
+    found after I'd already begun exploring NMA, DDM and ED.<br>  
 
     Alternative methods, not explored here, include training Evoformer-based neural networks with a range of reduced 
-    MSA depths (Aranganathan et al. 2026). 
-    
-    More broadly, it goes against the notion that any form of end-to-end deep learning should completely exclude anything
-    resembling 'manual' feature engineering, i.e. that all representation learning should be done entirely 'from scratch' 
-    (which can include use of pre-trained models which themselves were trained without manual feature engineering).
-    There is no compelling reason to restrict the training and prediction pipeline, particularly in the preliminary 
-    exploratory stages of a proof-of-concept project. Furthermore, such a rule is already not adhered to in well-established
-    and accurate deep learning pipelines of protein structure prediction, such as AlphaFold, which is heavily dependent on 
-    a prelimiary multiple sequence alignment, albeit with the use of attention mechanisms.
-
+    MSA depths (Aranganathan et al. 2026).
 
 </details>
 <details><summary><strong>References:</strong></summary><br>
