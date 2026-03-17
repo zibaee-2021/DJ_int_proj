@@ -948,7 +948,10 @@
           (millions of sequences) that could contain distant homologues, potentially sharing < 25% identity.
           (MMseqs2's E-value of $1e^{-3}$ corresponds to BLAST's E-value of approximately $1e^{-5}–1e^{-6}$ for the same dataset.)
         
-          `pident`: The percent identity over the alignment is given by: $\dfrac{\text{Number of identical residues in alignment}}{\text{alignment length}} \times 100$
+          `pident`: The percent identity over the alignment is given by: 
+           <p align="center">
+           $\dfrac{\text{Number of identical residues in alignment}}{\text{alignment length}} \times 100$
+           </p>
         
           `alnlen`: The alignment length, which is the number of aligned positions, including gaps if any.
           (Note: MMseqs2 performs local, not global, alignments by default. This setting can be changed though.)
