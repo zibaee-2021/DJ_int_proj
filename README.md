@@ -687,11 +687,14 @@
     (curvature) of the harmonic oscillator in each direction, thereby defining the vibrational frequencies.
     (The source of the potential can be quantum, molecular mechanics, coarse-grained, or anything else.)
     
-    **Elastic network models (ENMs)** are a special case of NMA, where the potential is simplified (to Hookean springs between 
-    nodes within a cutoff). Gaussian network models (GNMs) and anisotropic network models (ANMs) are two different 
-    implementations of ENMs. ENMs are not alpha-carbon only by default, but as it has been shown that alpha-carbon-only 
-    ENMs reproduce the same low modes as full-atom NMA (Bahar & Atilgan), alpha-carbon-only became the standard 
-    coarse-grained representation for ENMs and has been implemented here accordingly.
+    **Elastic network models (ENMs)** are a simplified form of NMA in which interatomic interactions are replaced by 
+    Hookean springs connecting pairs of nodes within a cutoff distance (Tirion (1996)). 
+    The Gaussian network model (GNM) (Bahar et al. 1997) and anisotropic network model (ANM) (Atilgan et al. 2001)  
+    are two widely used implementations of this framework, providing scalar (isotropic) and vector (directional) 
+    descriptions of fluctuations, respectively. 
+    Although ENMs are not restricted to $\alpha$-carbon representations, it has been shown that such highly 
+    coarse-grained, $\alpha$-carbon-only ENMs reproduce the low-frequency modes of full-atom NMA (Tirion 1996), 
+    which has led to their widespread adoption in practice.
   
     Nosology:
     ```bash
@@ -708,13 +711,15 @@
     | ANM      | $(3N \times 3N)$ | 3D displacement vectors (i.e. direction of motion)       |
     | GNM      | $(N \times N)$   | scalar participation per residue |
     
-    NMA provides the mathematical machinery. It can identify **directions** in which the protein would move if large 
-    motions were allowed. ENMs specify a particular harmonic potential used in NMA.<br> 
-    The harmonic approximation yields normal modes that mathematically assume small-amplitude oscillations. 
-    However, a surprising result emerged, namely that lowest-frequency normal modes predicted by these harmonic models 
-    align extremely well with the directions of biologically functional, often large-scale, motions.<br>
-    A GNM is an isotropic ENM producing a scalar Laplacian, where as an ANM is an anisotropic ENM producing a full 
-    $3N \times 3N$ Hessian.<br> 
+    NM provides the general mathematical framework for describing protein motions by approximating the potential energy 
+    surface near an equilibrium structure as harmonic, yielding a set of normal modes that formally correspond to \
+    small-amplitude oscillations. 
+    Despite this local approximation, it has been widely observed that the lowest-frequency modes often align with 
+    biologically relevant, large-scale domain motions.<br> 
+    ENMs define a particular class of simplified potentials used within this NMA framework, in which interactions are 
+    represented as Hookean springs between nodes within a cutoff distance. 
+    Within this class, the GNM provides an isotropic (scalar) description of fluctuations based on a graph Laplacian, 
+    whereas the ANM extends this to a full directional description via a $3N\times3N$ Hessian.
     
     As with essential dynamics (ED), NMA involves the eigendecomposition of a symmetric $3N \times 3N$ matrix in 
     coordinate space. However, instead of eigendecomposition of the covariance of Cartesian coordinates, NMA 
