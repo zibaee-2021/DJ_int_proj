@@ -913,8 +913,9 @@
         https://github.com/soedinglab/MMseqs2: `conda install -c conda-forge -c bioconda mmseqs2`. 
         However, on Rocky Linux, I first installed aria2 with: `sudo dnf makecache` and `sudo dnf install aria2`.
     
-      - <details><summary>`mmseqs2.py`</summary><br>
-        
+      - <details>
+        <summary>`mmseqs2.py`</summary>
+  
           Once installed, my script `mmseqs2.py` uses it. [MMseqs2](https://github.com/soedinglab/MMseqs2?tab=readme-ov-file) performs sequence alignments at least 100 times 
           faster than BLAST. It is primarily designed for sequence searching using many-to-many alignments for large 
           datasets. However, I am using here simply for sequence alignments and for relatively small datasets. I am using 
@@ -924,12 +925,12 @@
           2713 PDB-chains choose 2 gives over 3 million pairs:
           i.e.<br>
       
-          <p align="center">
-          $A = \begin{pmatrix}
+          $$
+          A = \begin{pmatrix}
           1 & 0 \\
           0 & 1
-          \end{pmatrix}$  
-          </p> 
+          \end{pmatrix}
+          $$
 
           $$C(n, r) = \begin{bmatrix} n \\[4pt] r \end{bmatrix} = \dfrac{n!}{r! \, (n - r)!}  = \dfrac{2713!}{2! \, (2713 - 2)!} = 3678828$$
 
