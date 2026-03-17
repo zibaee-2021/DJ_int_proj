@@ -663,12 +663,14 @@
     any Github URL for this but given it was 16 years ago, it's not unlikely that it has not been maintained recently.)
   
   - <details><summary><strong>Normal Mode Analysis (NMA):</strong></summary><br>
-  
-    Normal mode analysis (NMA) is used as a predictor of feasible domain motions, not a simulation of them. It models a
-    protein as fully connected graph and treats this as a harmonic oscillator, from which it quantifies small harmonic
-    oscillations. These are restorative motions based on some approximate assumptions that the given structure's atomic 
-    coordinates correspond to a relaxed, near-equilibrium conformation, i.e. one that lies in a local minimum of the energy 
-    landscape.
+
+    Normal mode analysis (NMA) is used as a predictor of feasible domain motions rather than a simulation of them. 
+    It approximates the protein’s potential energy surface as quadratic near a minimum, yielding a system of coupled 
+    harmonic oscillators. These small harmonic oscillations are restorative motions based on some approximate 
+    assumptions that the given structure's atomic coordinates correspond to a relaxed, near-equilibrium conformation, 
+    i.e. one that lies in a local minimum of the energy landscape.
+    In simplified variants such as elastic network models (ENMs), the protein is represented as a sparse contact graph 
+    of residues connected by springs.
     NMA describes only the small, near-equilibrium harmonic fluctuations that restore that minimum.
     NMA cannot describe motions that cross into other basins or large anharmonic transitions.
     Accordingly, an X-ray crystal structure or a cryo-EM model (without steric clashes) is typically suitable for NMA.
@@ -690,9 +692,7 @@
     implementations of ENMs. ENMs are not alpha-carbon only by default, but as it has been shown that alpha-carbon-only 
     ENMs reproduce the same low modes as full-atom NMA (Bahar & Atilgan), alpha-carbon-only became the standard 
     coarse-grained representation for ENMs and has been implemented here accordingly.
-  - 
-  - 
-    
+  
     Nosology:
     ```bash
     
@@ -708,19 +708,15 @@
     | ANM      | $(3N \times 3N)$ | 3D displacement vectors (i.e. direction of motion)       |
     | GNM      | $(N \times N)$   | scalar participation per residue |
     
-    NMA provides the mathematical machinery; ENMs specify a particular harmonic potential used in NMA. 
-    GNMs are an isotropic ENM producing a scalar Laplacian. ANMs are an anisotropic ENM producing a full 3Nx3N Hessian.
-
-    It can identify **directions** in which the protein would move if large motions were allowed.
-    The harmonic approximation yields normal modes that mathematically assume small-amplitude oscillations. However, a
-    surprising result has emerged, namely that lowest-frequency normal modes predicted by these harmonic models align 
-    extremely well with the directions of biologically functional, often large-scale, motions.
-    Tirion, M. M. (1996). “Large amplitude elastic motions in proteins from a single-parameter, atomic analysis.” Physical Review Letters 77: 1905–1908.
-    Bahar, I., Atilgan, A. R., & Erman, B. (1997). “Direct evaluation of thermal fluctuations in proteins using a single-parameter harmonic potential.” Folding & Design 2: 173–181.
-    Atilgan, A. R., Durell, S. R., Jernigan, R. L., Demirel, M. C., Keskin, O., & Bahar, I. (2001).
-    “Anisotropic network model (ANM): A robust tool for characterising global motions of proteins.”  Biophysical Journal 80: 505–515.
+    NMA provides the mathematical machinery. It can identify **directions** in which the protein would move if large 
+    motions were allowed. ENMs specify a particular harmonic potential used in NMA.<br> 
+    The harmonic approximation yields normal modes that mathematically assume small-amplitude oscillations. 
+    However, a surprising result emerged, namely that lowest-frequency normal modes predicted by these harmonic models 
+    align extremely well with the directions of biologically functional, often large-scale, motions.<br>
+    A GNM is an isotropic ENM producing a scalar Laplacian, where as an ANM is an anisotropic ENM producing a full 
+    $3N \times 3N$ Hessian.<br> 
     
-    As with essential dynamics (ED), NMA involves the eigendecomposition of a symmetric 3N x 3N matrix in 
+    As with essential dynamics (ED), NMA involves the eigendecomposition of a symmetric $3N \times 3N$ matrix in 
     coordinate space. However, instead of eigendecomposition of the covariance of Cartesian coordinates, NMA 
     involves the eigendecomposition of the second derivates (Hessian) matrix of the potential energy. 
     
@@ -1279,8 +1275,11 @@
     - N. Go et al. PNAS (1983) 80:3696–3700. Dynamics of a Small Globular Protein in Terms of Low-Frequency Vibrational-Modes.
     - M. Levitt et al. Int. J. Quant. Chem. (1983) 24:181–199. The normal modes of a protein: Native bovine pancreatic trypsin inhibitor.  
     - B. Brooks & M. Karplus. PNAS (1983) 80:6571–6575. Harmonic dynamics of proteins: Normal modes and fluctuations in bovine pancreatic trypsin inhibitor.  
-    - Gaussian network model (GNM), aka elastic network model (ENM):
-      - MM. Tirion. Phys. Rev. Lett. (1996) 77:1905–1908. Large amplitude elastic motions in proteins from a single-parameter atomic analysis. 
+    - Elastic network models (ENMs):
+      - Gaussian network model (GNM): 
+        - MM. Tirion. Phys. Rev. Lett. (1996) 77:1905–1908. Large amplitude elastic motions in proteins from a single-parameter atomic analysis.
+      - Anisotropic network models (ANMs):
+        - AR. Atilgan et al. Biophysical Journal (2001) 80:505–515. Anisotropic network model (ANM): A robust tool for characterising global motions of proteins.
 
   - <details><summary>Recent work on protein mobility and its computation:</summary><br>
     
