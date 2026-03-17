@@ -946,7 +946,6 @@
           = 3678828$
           </p> 
   
-  
           (Note: it could be even more if explicitly set to allow more than 1 alignment output for any given protein pair, 
           but default setting restricts to only 1 output per pair).
         
@@ -1091,8 +1090,9 @@
     
     Amongst the largest motions include those of viral fusion proteins reaching over 100 Ångströms. These might be 
     considered a different class of motion all together, involving global topological rearrangements, rather than small 
-    scale domain motions about flexible hinge regions, for example. Finally, the motions of fully disordered proteins 
-    can be relatively large, but are less straightforward to quantify with no fixed frame of reference. 
+    scale domain motions about flexible hinge regions, for example. The motions of fully disordered proteins 
+    can be relatively large, but are not straightforward to quantify, given there's essentially no fixed frame of 
+    reference. 
     
     | Motion          | What changes                      | Typical size (Å)        | Typical timescale (secs)       |
     | --------------- |-----------------------------------|-------------------------|--------------------------------|
