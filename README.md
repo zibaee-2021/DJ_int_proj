@@ -687,7 +687,7 @@
     (curvature) of the harmonic oscillator in each direction, thereby defining the vibrational frequencies.
     (The source of the potential can be quantum, molecular mechanics, coarse-grained, or anything else.)
     
-    Elastic network models (ENMs) are a special case of NMA, where the potential is simplified (to Hookean springs between 
+    **Elastic network models (ENMs)** are a special case of NMA, where the potential is simplified (to Hookean springs between 
     nodes within a cutoff). Gaussian network models (GNMs) and anisotropic network models (ANMs) are two different 
     implementations of ENMs. ENMs are not alpha-carbon only by default, but as it has been shown that alpha-carbon-only 
     ENMs reproduce the same low modes as full-atom NMA (Bahar & Atilgan), alpha-carbon-only became the standard 
