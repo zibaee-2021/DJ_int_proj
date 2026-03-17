@@ -960,15 +960,16 @@
           (i.e. full protein length).
         
           Example alignment of two very short proteins identical except for two  residues, one of the two differences 
-          is E/D. E and D are similar but non-identical; the other is a gap/K:
+          is E versus D. E and D are similar (both are negatively-charged) but non-identical; the other is a gap versus 
+          K:
           ```
           Query :  M   A   E   –   G   Q   L   V   T   T 
           Target:  M   A   D   K   G   Q   L   V   T   T
         
           alnlen = 10; 
-          qcov = 100 x (9/10) = 90%; 
-          tcov = 100 x (10/10) = 100%; 
-          pident = 100 x (8/10) = 80%;
+          qcov = 100 x (9/10) = 90 %; 
+          tcov = 100 x (10/10) = 100 %; 
+          pident = 100 x (8/10) = 80 %;
             
           (Note: LoL-align was not implemented here as I didn't know about it. (L. Reifenrath et al. 2025) 
           ```
