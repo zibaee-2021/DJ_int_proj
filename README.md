@@ -1135,7 +1135,7 @@
           └── Rombach et al. 2022: latent diffusion models - 5
       ```
 
-      The 2 tables below gives a quick glance and very brief summary of what each of the 7 major papers (shown above) 
+      The 2 tables below give a quick glance and very brief summary of what each of the 7 major papers (shown above) 
       contributed to the field of diffusion models in deep learning. 
       - <details><summary>Tables:</summary><br>
 
@@ -1157,8 +1157,8 @@
 
     - <details><summary>Conditioning:</summary><br>
         'Conditioning' of a diffusion model, specifically the denoising process ('reverse'), refers to modelling a 
-        conditional probability distribution, conditioned not only on the previous time step ($\mathbf{x}_{t-1}$), but 
-        on some external property ($y$) as well, such that the denoising is:<br> 
+        conditional probability distribution, conditioned not only on the previous time step ( $\mathbf{x}_{t-1}$ ), but 
+        on some external property ( $y$ ) as well, such that the denoising is:<br> 
         
         <p align="center">
         $p_{\theta}(\textbf{x}_t \mid \textbf{x}_{t-1}, y)$<br>
