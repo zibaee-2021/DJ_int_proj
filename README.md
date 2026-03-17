@@ -922,8 +922,7 @@
           it partly for the learning experience.
         
           The output is saved to one large csv with 7 columns: query, target, evalue, pident, alnlen, qcov, tcov. 
-          2713 PDB-chains choose 2 gives over 3 million pairs:
-          i.e.<br>
+          2713 PDB-chains choose 2 gives over 3 million pairs, i.e.:<br>
      
           <p align="center">
           $C(n,r)=\binom{n}{r}=\dfrac{n!}{r!(n-r)!}$
