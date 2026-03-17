@@ -726,11 +726,11 @@
     involves the eigendecomposition of the second derivates (Hessian) matrix of the potential energy. 
     
     ##### Disambiguation of the term 'mode' in ED vs in NMA:<br>
-    Note the use of the term 'mode' in ED is urelated to the use of the term 'mode' in NMA. Their only similarity is that 
-    they are both calculated via the same mathematical object type: eigenvectors.<br>
-    In PCA/ED: “modes” come from eigenvectors of covariance of observed coordinates.
-    In NMA: “normal modes” come from eigenvectors of Hessian of energy model.
-    Both are measures of collective motion patterns, but their similarity ends there.
+    The term **'mode'** is used in both ED and NMA. In both, they describe measures of collective motion patterns and
+    they are both calculated via the same mathematical object type, namely eigenvectors, but their similarity ends there.
+    <br>
+    In PCA/ED: 'modes' come from eigenvectors of covariance of observed coordinates.
+    In NMA: 'normal modes' come from eigenvectors of Hessian of energy model.
     
     | Feature              | ED/PCA Mode                                         | NMA Normal Mode                     |
     | -------------------- | --------------------------------------------------- |-------------------------------------|
