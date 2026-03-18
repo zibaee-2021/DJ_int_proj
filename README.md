@@ -1290,10 +1290,10 @@
 - L. Reifenrath, et al. BioRxiv 2025.11.24.690091. LoL-align: sensitive and fast probabilistic protein structure alignment.   
 
 </details>
-<details><summary>Use of AI for code generation:</summary><br>
+<details><summary>Using an LLM for code generation:</summary><br>
 
-  This is the first codebase in which I have made wholesale use of generative AI (GenAI) for building groups of fully-written functions. 
-  My previous usage of GenAI, in MSc project, had been limited to replace StackOverFlow/Google searches for complicated 
+  This is the first codebase in which I have made wholesale use of an LLM for building groups of fully-written functions. 
+  My previous usage of an LLM, in my MSc project, had been limited to replace StackOverFlow/Google searches for complicated 
   Pandas and NumPy operations, Matplotlib functions, regex and a few API calls and webscrapes. 
 
   However, in this mini-project, I have written prompts that provide the following, in a format that might be referred to as "agentic AI":
@@ -1301,7 +1301,7 @@
   - as much context as I can provide;
   - (sometimes) guidance on the implementation details I want to see used. 
 
-  I have also used GenAI here for:
+  I have also used an LLM here for:
   - assistance in breaking down and explaining some of the mathematics and algorithms via uploaded publications;
     - (I essentially interrogated it to extract a complete explanation, and try to weed out potentially redundant/incorrect 
       logic/code.) 
@@ -1314,13 +1314,13 @@
 
   My observations thusfar are that it has been excellent for lowering the barrier to getting up and running quickly with written logic (in Python) for the Molecular Dynamics (unused), TM-scores with TM-align, clustering RMSD/TM scores for generating dendrogram visualisations, and the methods of difference-distance matrix, essential dynamics and Gaussian network models. It made me slightly more confident to explore topics I was not familiar with, particularly  in terms of the mathematics involved.
   In terms of time saved overall: I found it probably did not reduce it by much if at all, due to the amount of time I spent stepping through GenAI code, to understand it fully and to spot and correct any errors/hallucinations (though this seemed to be surprisingly rare). Some of the delay was due to my not trusting and/or understanding every detail in the responses, hence leading to extensive 'interrogation'. Unsurprisingly the process of forming detailed, context-heavy and thought-through prompts aided greatly my own learning process. An unexpected benefit of my proof-reading and checking of the Python was that it mimics pair-programming, exercising the important skill of reading code not written by myself. 
-  In future, I'd be interested to apply a BDD and TDD approach with GenAI, such that unit tests would be pre-written.
+  In future, I'd be interested to apply a BDD and TDD approach with an LLM, such that unit tests would be pre-written.
 
-  All the following unused skeleton scripts in [unused_DL_model_training](src/unused_DL_model_training) dir were completely written by GenAI.
+  All the following unused skeleton scripts in [unused_DL_model_training](src/unused_DL_model_training) dir were completely written by an LLM.
 
-  - GenAI was used for writing the inital core functionalities in:
+  - LLM was used for writing the inital core functionalities in:
     - [atlas.py](src/unused_MD_scripts/atlas.py)
     - [diff_distance_matrix.py](src/diff_distance_matrix.py), [DynDom_reader.py](src/DynDom_reader.py), [essential_dynamics.py](src/essential_dynamics.py), [foldseek.py](src/foldseek.py), [mmseqs2.py](src/mmseqs2.py), [plotter.py](src/plotter.py), [tm_aligner.py](src/tm_aligner.py)
-  - GenAI was used for writing the clustering & visualisations in [RMSD.py](src/RMSD.py)
+  - LLM was used for writing the clustering & visualisations in [RMSD.py](src/RMSD.py)
 
 </details>
