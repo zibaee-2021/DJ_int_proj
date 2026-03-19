@@ -755,7 +755,7 @@
     The potential energy of the system $V(q)$, (which is reduced to only include the second term of a Taylor series), 
     can be written as:
     <p align="center">
-    $V(q)=\tfrac{1}{2}\left(\frac{\partial^{2}V}{\partial q_i\,\partial q_j}\right)^{0}\,\eta_i\,\eta_j
+    $V(q)=\tfrac{1}{2}\left(\dfrac{\partial^{2}V}{\partial q_i\,\partial q_j}\right)^{0}\,\eta_i\,\eta_j
     = \tfrac{1}{2}\,\eta_i\,V_{ij}\,\eta_j \,,$
     </p>
     Where $V_{ij}$ is the Hessian matrix (i.e. second derivatives of the potential with respect to the components of 
@@ -764,12 +764,12 @@
     
     The kinetic energy $T(q)$ can be written as:
     <p align="center">
-    $T(q) = \tfrac{1}{2} M \frac{d^{2}\eta_{i}}{dt^{2}},$
+    $T(q) = \tfrac{1}{2} M \dfrac{d^{2}\eta_{i}}{dt^{2}},$
     </p>
     where $M$ is mass of each particle.  
-    The entire equation of motion can be written as their equivalence:
+    The entire equation of motion can be written as their equivalence:<br>
     <p align="center">
-    $\tfrac{1}{2} M \frac{d^{2}\eta_{i}}{dt^{2}} + \tfrac{1}{2} \eta_{i} V_{ij} \eta_{j} = 0.$
+    $\tfrac{1}{2} M \dfrac{d^{2}\eta_{i}}{dt^{2}} + \tfrac{1}{2} \eta_{i} V_{ij} \eta_{j} = 0.$
     </p>
     
     One solution of the equation of motion above is the oscillatory equation:
