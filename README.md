@@ -768,6 +768,7 @@
     </p>
     where $M$ is mass of each particle.  
     The entire equation of motion can be written as their equivalence:<br>
+    
     <p align="center">
     $\tfrac{1}{2} M \dfrac{d^{2}\eta_{i}}{dt^{2}} + \tfrac{1}{2} \eta_{i} V_{ij} \eta_{j} = 0.$
     </p>
