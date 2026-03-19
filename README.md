@@ -689,8 +689,8 @@
     
     **Elastic network models (ENMs)** are a simplified form of NMA in which interatomic interactions are replaced by 
     Hookean springs connecting pairs of nodes within a cutoff distance (Tirion (1996)). 
-    The Gaussian network model (GNM) (Bahar et al. 1997) and anisotropic network model (ANM) (Atilgan et al. 2001)  
-    are two widely used implementations of this framework, providing scalar (isotropic) and vector (directional) 
+    The Gaussian network model (GNM) (Bahar et al. 1997) and anisotropic network model (ANM) (Atilgan et al. 2001) are 
+    two widely used implementations of this framework, providing scalar (isotropic) and vector (directional) 
     descriptions of fluctuations, respectively. 
     Although ENMs are not restricted to $\alpha$-carbon representations, it has been shown that such highly 
     coarse-grained, $\alpha$-carbon-only ENMs reproduce the low-frequency modes of full-atom NMA (Tirion 1996), 
