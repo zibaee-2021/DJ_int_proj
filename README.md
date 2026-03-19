@@ -60,7 +60,7 @@
 <details><summary><strong>Immediate goal:</strong></summary>
 
 - Assemble and curate a dataset of protein structures that are observed to populate different conformations.
-  For simplication, as well as to reduce computational demand, protein structures are parsed to contain alpha-carbons 
+  For simplication, as well as to reduce computational demand, protein structures are parsed to contain $\alpha$-carbons 
   only.
 
 - The main activity included exploratory data analysis of all NMR structures available in the RCSB, as well as Python 
@@ -96,7 +96,7 @@
     between them, followed by clustering. 
     - Using NMR structures that typically may have more than 10 models, one can construct RMSD matrices or TM-score 
     matrices, in which a scalar value of the difference between every pair of models is calculated directly from their 
-    Cartesian coordinates, here done for alpha-carbons only. (Apart from the use of different models of NMR data, one 
+    Cartesian coordinates, here done for $\alpha$-carbons only. (Apart from the use of different models of NMR data, one 
     would also be able to apply this method to different time points in an MD trajectory).
     
     - Subsequent clustering of the RMSD/TM-score matrices makes it possible for candidate ensembles to be identified, 
@@ -305,7 +305,7 @@
   - <details><summary><strong>Root mean-squared deviation (RMSD):</strong></summary><br>
     
     A long-established and intuitive method which calculates a scalar measure of the difference between two sets of 
-    atomic coordinates (Kabsch 1976). RMSD is suited to comparing pairs of alpha-carbon coordinates belonging to identical sequences, as is the case for 
+    atomic coordinates (Kabsch 1976). RMSD is suited to comparing pairs of $\alpha$-carbon coordinates belonging to identical sequences, as is the case for 
     different models of the same NMR structure and so it was used here.
     A lower RMSD indicates a higher degree of structural similarity between two protein structures.
     `calculate_rmsd()` uses Biopython's `SVDSuperimposer()`, which uses optimal least-squares superposition, giving 
@@ -688,7 +688,7 @@
     (The source of the potential can be quantum, molecular mechanics, coarse-grained, or anything else.)
     
     **Elastic network models (ENMs)** are a simplified form of NMA in which interatomic interactions are replaced by 
-    Hookean springs connecting pairs of nodes within a cutoff distance (Tirion (1996)). 
+    Hookean springs connecting pairs of nodes within a cutoff distance (Tirion 1996). 
     The Gaussian network model (GNM) (Bahar et al. 1997) and anisotropic network model (ANM) (Atilgan et al. 2001) are 
     two widely used implementations of this framework, providing scalar (isotropic) and vector (directional) 
     descriptions of fluctuations, respectively. 
@@ -748,7 +748,7 @@
     have been repeatedly observed to align with the directions of large-scale functional motions such as hinge bending, 
     twisting, and breathing in proteins.
     
-    Bauer et al. (2019) makes a case for the benefits of an increased adoption of NMA across the field of protein 
+    Bauer et al. 2019 made a case for the benefits of an increased adoption of NMA across the field of protein 
     structural biology. It is described as a relatively computationally-inexpensive method for identifying functionally 
     significant flexible states accesible to a protein about an equilibrium position (i.e. the given PDB structure). 
     It is based on the combination of the potential energy, kinetic energy and equations of motion. 
@@ -792,23 +792,20 @@
     to reconstruct the anharmonic oscillation of the protein as a whole by combining all of the normal modes, except for the
     fact that we still lack their amplitudes and the phases.
     
-    Normal Mode Analysis (NMA) is derived from a harmonic (quadratic) approximation to the potential energy surface and 
-    formally describes only infinitesimal oscillations around an equilibrium conformation. However, a major and 
-    well-supported empirical observation is that the directions of the lowest-frequency normal modes align strongly with 
-    the directions of biologically relevant, large-amplitude, anharmonic motions such as hinge bending, twisting, and 
-    breathing. Thus, while NMA does not predict the amplitudes or time evolution of large motions, it does correctly 
-    identify their principal geometric directions. This was first demonstrated by Tirion (1996), Bahar et al. (1997), and 
-    Atilgan et al. (2001), forming the foundation of elastic network models.
+    NMA is derived from a harmonic (quadratic) approximation to the potential energy surface and formally describes 
+    only infinitesimal oscillations around an equilibrium conformation. 
+    However, a major and well-supported empirical observation is that the directions of the lowest-frequency normal 
+    modes align strongly with the directions of biologically relevant, large-amplitude, anharmonic motions such as 
+    hinge bending, twisting, and breathing. 
+    Thus, while NMA does not predict the amplitudes or time evolution of large motions, it does correctly identify 
+    their principal geometric directions (Tirion 1996, Bahar et al. 1997, Atilgan et al. 2001), forming the foundation 
+    of ENMs.
     
     The NMA method involves diagonalising the Hessian of the potential energy of a protein, calculated from its Cartesian 
     coordinates. (Note: A `mode` refers to a collective vibration pattern of a protein that is independent from others 
     modes. They are modelled as small harmonic oscillations around an equilibrium structure. 
-    A less computationally-demanding but very effective version of this is called the Elastic/Gaussian Network Model (REF X). 
-    This model treats the protein instead as a harmonic oscillator, a graph where edges are springs connecting alpha-carbon 
-    atoms within a cutoff distance, e.g. 10 Ångströms.  
-    Like calculating the essential dynamics, it outputs the protein's modes and their amplitudes.   
     
-    Here, the Python implementation of NMA is done with an ENM potential of the GNM type.
+    Here, the Python implementation of NMA is done with an ENM potential, more specifically, of the GNM type.
     
     All computations are carried out in `nma_gnm.py`:<br> 
     
@@ -817,7 +814,7 @@
     1. The Kirchhoff matrix via `_build_kirchhoff_matrix()`. <br>
     If residues $i$ and $j$ are within some cutoff distance, 
     connect them with a spring of uniform constant $\gamma$. So where we assume there are only springs between contacting 
-    residues (alpha-carbon atoms), that these springs are isotropic, and finally that displacements are small. Under these 
+    residues ($\alpha$-carbon atoms), that these springs are isotropic, and finally that displacements are small. Under these 
     assumptions, the Hessian becomes the Kirchhoff matrix, ($\mathrm{L} = $\mathrm{D} - $\mathrm{A}$) which is what this 
     function returns  ('Gamma').
     2. The eigendecomposition for non-zero modes, via `_gnm_modes()`:<br>
@@ -834,7 +831,7 @@
     (Each mode represents a direction in configuration space along which the system can move independently of other 
     directions. The associated eigenvalue tells you how much restoring stiffness there is along that direction.)
     3. Fluctuations and correlations via `_gnm_fluctuations()`:
-    The `run_gnm()` completes the deriving of predicted collective conformational modes from a given protein’s alpha-carbon 
+    The `run_gnm()` completes the deriving of predicted collective conformational modes from a given protein’s $\alpha$-carbon 
     coordinates using a harmonic network model, with a call to `_gnm_fluctuations()` which calculates the MSFs (which are 
     proportional to B-factors), covariance and correlation matrix, via constructing the Moore–Penrose pseudo-inverse of the 
     Laplacian. There is an option to plot the results, specifically MSFs and B-factors against the protein sequence.
