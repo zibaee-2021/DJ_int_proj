@@ -1275,6 +1275,8 @@
       - Qin et al. RSC Adv. (2020) 10:16607–16615. Machine learning model for fast prediction of the natural frequencies of protein molecules.
       - C. Hou et al. PNAS (2026) 123(4):1-12. Protein language models trained on biophysical dynamics inform mutation effects.
 
+</details>
+
 - <details><summary>Datasets:</summary><br>
 
   - G. Qi, et al. Bioinformatics (2005) 21(12):2832-2838. A comprehensive and non-redundant database of protein domain movements. 
