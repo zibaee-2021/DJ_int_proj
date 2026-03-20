@@ -1178,7 +1178,7 @@
     
     I did later manage to find one paper on protein dynamics, Hou et al. 2025, in which one of these calculations, 
     namely NMA, is included in a deep learning framework, though none of my work here was informed by this as I only
-    found after I'd already begun exploring NMA, DDM and ED.<br>  
+    found it after I'd already begun exploring NMA, DDM and ED.<br>  
 
     Alternative methods, not explored here, include training Evoformer-based neural networks with a range of reduced 
     MSA depths (Aranganathan et al. 2026).
