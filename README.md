@@ -1266,7 +1266,7 @@
     
     - M. Schneider et al. Structure (2025) 33:1781–1792. EnsembleFlex: Protein structure ensemble analysis made easy. 
 
-  - <details><summary>Protein dynamics and deep learning:</summary><br>
+  - <details><summary>Protein dynamics and deep learning:</summary>
     
     - A. Aranganathan & ER. Beyerle. J. Chem. Inf. Model. (2026) 66(3):1661-1674. Applied Causality to Infer Protein Dynamics and Kinetics.
   
