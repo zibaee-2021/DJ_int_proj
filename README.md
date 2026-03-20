@@ -1230,7 +1230,7 @@
   - TM-score:
     - Y. Zhang & J. Skolnick. Proteins (2004) 57 (4):702–710. Scoring function for automated assessment of protein structure template quality. 
   - GDT:
-    - A. Zemla et al. Proteins (2001) Suppl. 5:13-21. Processing and evaluation of predictions in CASP4.<br>
+    - A. Zemla et al. Proteins (2001) Suppl. 5:13-21. Processing and evaluation of predictions in CASP4.<br><br>
 
   - <details><summary>Distance matrix:</summary><br>
     
