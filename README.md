@@ -1192,8 +1192,7 @@
   - H. Frauenfelder, G. Petsko & D. Tsernoglou. Nature (1979) 280:558–563. Temperature-dependent X-ray diffraction as a probe of protein structural dynamics. 
   - M. Perutz, H. Muirhead, J. Cox. et al. Nature (1968) 219:131–139. Three-dimensional Fourier synthesis of horse oxyhaemoglobin at 2.8 Å resolution: The Atomic Model. 
   - MH. Vos & J.L. Martin. Biochim. Biophys. Acta (1999) 21;1411(1):1-20. Femtosecond processes in proteins. 
-  - K. Henzler-Wildman & D. Kern. Nature (2007) 450:964–972. Dynamic personalities of proteins. 
-- 
+  - K. Henzler-Wildman & D. Kern. Nature (2007) 450:964–972. Dynamic personalities of proteins.
   - TE. Creighton, 2nd ed., WH. Freeman (1993). Proteins: Structures and Molecular Properties. 
   - G. Herzberg, Van Nostrand, New York (1945). Infrared and Raman Spectra of Polyatomic Molecules.
   - H. Frauenfelder, F. Parak & RD. Young. Ann. Rev. of Biophys. & Biophysical Chem. (1988) 17:451–479. Conformational substates in proteins.
