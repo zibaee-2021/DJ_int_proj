@@ -1223,7 +1223,7 @@
   - Bryant & Noé. Nature Comm. (2024) 15:7328. Structure prediction of alternative protein conformations. 
   - S. Lewis et al. Science (2025) 389:6761. Scalable emulation of protein equilibrium ensembles with generative deep learning. 
 
-- <details><summary>Identifying and/or quantifying structural variations:</summary><br>
+- <details><summary>Identifying and/or quantifying structural variations:</summary>
 
   - RMSD: 
     - W. Kabsch. Acta Cryst. A. (1976) 32:922-923. A solution for the best rotation to relate two sets of vectors. 
