@@ -1186,7 +1186,7 @@
 </details>
 <details><summary><strong>References:</strong></summary><br>
 
-- <details><summary>Protein dynamics:</summary><br>
+- <details><summary>Protein dynamics:</summary>
 
   - KU. Linderstrøm-Lang & JA. Schellman. Enzymes (1959) 1:443. Protein structure and enzymatic activity.
   - H. Frauenfelder, G. Petsko & D. Tsernoglou. Nature (1979) 280:558–563. Temperature-dependent X-ray diffraction as a probe of protein structural dynamics. 
