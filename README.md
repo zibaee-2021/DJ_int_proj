@@ -1201,10 +1201,10 @@
   
 - <details><summary>Diffusion Models:</summary><br>
     
-    - A. Hyvärinen et al. Mach. Learn. Res. (2005) 6:695-709. Estimation of Non-Normalized Statistical Models by Score Matching. $/leftarrow$ Not diffusion model but important for Song & Ermon 2019 onwards.
+    - A. Hyvärinen et al. Mach. Learn. Res. (2005) 6:695-709. Estimation of Non-Normalized Statistical Models by Score Matching. $\leftarrow$ Not diffusion model but important for Song & Ermon 2019 onwards.
     - J. Sohl-Dickstein et al. International Conference on Machine Learning (2015) 2256–2265. Deep unsupervised learning using nonequilibrium thermodynamics.
     - Y. Song & S. Ermon. Neural Information Processing Systems. ArXiv (2019):1907.05600. Generative Modeling by Estimating Gradients of the Data Distribution.
-    - J. Ho et al. ArXiv (2020) abs/2006.11239. Denoising Diffusion Probabilistic Models. $/leftarrow$ Appears to be the most cited diffusion model paper (currently 27437 citations). 
+    - J. Ho et al. ArXiv (2020) abs/2006.11239. Denoising Diffusion Probabilistic Models. $\leftarrow$ Appears to be the most cited diffusion model paper (currently 27437 citations). 
     - Y. Song et al. ArXiv (2020) abs/2010.02502. Denoising Diffusion Implicit Models.
     - Y. Song et al. ArXiv (2020) abs/2011.13456. Score-based generative modeling through stochastic differential equations.
     - R. Rombach et al. In IEEE Conference on Computer Vision and Pattern Recognition (2022) 10684–10695. High-resolution image synthesis with latent diffusion models.
