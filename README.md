@@ -816,7 +816,7 @@
     If residues $i$ and $j$ are within some cutoff distance, 
     connect them with a spring of uniform constant $\gamma$. So where we assume there are only springs between contacting 
     residues ($\alpha$-carbon atoms), that these springs are isotropic, and finally that displacements are small. Under these 
-    assumptions, the Hessian becomes the Kirchhoff matrix, ($\mathrm{L} = $\mathrm{D} - $\mathrm{A}$) which is what this 
+    assumptions, the Hessian becomes the Kirchhoff matrix, $(\mathrm{L} = \mathrm{D} - \mathrm{A})$ which is what this 
     function returns  ('Gamma').
     2. The eigendecomposition for non-zero modes, via `_gnm_modes()`:<br>
     The Laplacian matrix is symmetric and positive semi-definite (PSD) by definition. Symmetry alone gives us nice spectral 
