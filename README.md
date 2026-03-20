@@ -1209,7 +1209,7 @@
     - Y. Song et al. ArXiv (2020) abs/2011.13456. Score-based generative modeling through stochastic differential equations.
     - R. Rombach et al. In IEEE Conference on Computer Vision and Pattern Recognition (2022) 10684–10695. High-resolution image synthesis with latent diffusion models.
     
-    - <details><summary>Conditioning:</summary><br>
+    - <details><summary><strong>Conditioning:</strong></summary><br>
   
       - P. Dhariwal & A. Nichol. In Advances in Neural Information Processing Systems (2021) 34:8780–8794. Diffusion Models Beat GANs on Image Synthesis.
       - J. Ho & T. Salimans. ArXiv (2022) preprint abs/2207.12598. Classifier-free diffusion guidance. 
