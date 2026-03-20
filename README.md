@@ -1275,18 +1275,15 @@
       - Qin et al. RSC Adv. (2020) 10:16607–16615. Machine learning model for fast prediction of the natural frequencies of protein molecules.
       - C. Hou et al. PNAS (2026) 123(4):1-12. Protein language models trained on biophysical dynamics inform mutation effects.
 
-</details>
+  - <details><summary>Datasets:</summary><br>
 
-- <details><summary>Datasets:</summary><br>
-
-  - G. Qi, et al. Bioinformatics (2005) 21(12):2832-2838. A comprehensive and non-redundant database of protein domain movements. 
+    - G. Qi, et al. Bioinformatics (2005) 21(12):2832-2838. A comprehensive and non-redundant database of protein domain movements. 
     (https://dyndom.cmp.uea.ac.uk/dyndom/main.jsp)
 
-- <details><summary>Tools:</summary><br>
+  - <details><summary>Tools:</summary><br>
 
-- M. van Kempen, et al. Nat. Biotechnol. (2024) 42:243–246. Fast and accurate protein structure search with Foldseek. 
-- 
-- L. Reifenrath, et al. BioRxiv 2025.11.24.690091. LoL-align: sensitive and fast probabilistic protein structure alignment.   
+    - M. van Kempen, et al. Nat. Biotechnol. (2024) 42:243–246. Fast and accurate protein structure search with Foldseek.
+    - L. Reifenrath, et al. BioRxiv 2025.11.24.690091. LoL-align: sensitive and fast probabilistic protein structure alignment.   
 
 </details>
 <details><summary>Using an LLM for code generation:</summary><br>
