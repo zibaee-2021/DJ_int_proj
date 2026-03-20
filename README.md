@@ -1197,9 +1197,9 @@
   - G. Herzberg, Van Nostrand, New York (1945). Infrared and Raman Spectra of Polyatomic Molecules.
   - H. Frauenfelder, F. Parak & RD. Young. Ann. Rev. of Biophys. & Biophysical Chem. (1988) 17:451–479. Conformational substates in proteins.
   - W. Doster, S. Cusack & W. Petry. Nature (1989) 337: 754–756. Dynamical transition of myoglobin revealed by inelastic neutron scattering. 
-  - S. Harrison. Nat. Struct. Mol. Biol. (2008) 15, 690–698. Viral membrane fusion. 
-
+  - S. Harrison. Nat. Struct. Mol. Biol. (2008) 15, 690–698. Viral membrane fusion.
   </details>
+
   - <details><summary>Diffusion Models:</summary><br>
     
     - A. Hyvärinen et al. Mach. Learn. Res. (2005) 6:695-709. Estimation of Non-Normalized Statistical Models by Score Matching. $/leftarrow$ Not diffusion model but important for Song & Ermon 2019 onwards.
