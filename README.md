@@ -1198,8 +1198,6 @@
   - H. Frauenfelder, F. Parak & RD. Young. Ann. Rev. of Biophys. & Biophysical Chem. (1988) 17:451–479. Conformational substates in proteins.
   - W. Doster, S. Cusack & W. Petry. Nature (1989) 337: 754–756. Dynamical transition of myoglobin revealed by inelastic neutron scattering. 
   - S. Harrison. Nat. Struct. Mol. Biol. (2008) 15, 690–698. Viral membrane fusion.
-
-</details>
   
 - <details><summary>Diffusion Models:</summary><br>
     
