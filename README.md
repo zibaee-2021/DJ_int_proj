@@ -1292,7 +1292,8 @@
   My previous usage of an LLM, in my MSc project, had been limited to replace StackOverFlow/Google searches for complicated 
   Pandas and NumPy operations, Matplotlib functions, regex and a few API calls and webscrapes. 
 
-  However, in this mini-project, I have written prompts that provide the following, in a format that might be referred to as "agentic AI":
+  However, in this mini-project, I have written prompts that provide the following, in a format that might be referred to as "vibe coding",
+  (although the precise definition of this term is currently disputed):
   - detailed descriptions of the overall goal; 
   - as much context as I can provide;
   - (sometimes) guidance on the implementation details I want to see used. 
