@@ -1292,8 +1292,8 @@
   My previous usage of an LLM, in my MSc project, had been limited to replace StackOverFlow/Google searches for complicated 
   Pandas and NumPy operations, Matplotlib functions, regex and a few API calls and webscrapes. 
 
-  However, in this mini-project, I have written prompts that provide the following, in a format that might be referred to as "vibe coding",
-  (although the precise definition of this term is currently disputed):
+  However, in this mini-project, I have written prompts that provide the following:
+
   - detailed descriptions of the overall goal; 
   - as much context as I can provide;
   - (sometimes) guidance on the implementation details I want to see used. 
@@ -1311,7 +1311,11 @@
 
   My observations thusfar are that it has been excellent for lowering the barrier to getting up and running quickly with written logic (in Python) for the Molecular Dynamics (unused), TM-scores with TM-align, clustering RMSD/TM scores for generating dendrogram visualisations, and the methods of difference-distance matrix, essential dynamics and Gaussian network models. It made me slightly more confident to explore topics I was not familiar with, particularly  in terms of the mathematics involved.
   In terms of time saved overall: I found it probably did not reduce it by much if at all, due to the amount of time I spent stepping through LLM-generated code, to understand it fully and to spot and correct any errors/hallucinations (though this seemed to be surprisingly rare). Some of the delay was due to my not trusting and/or understanding every detail in the responses, hence leading to extensive 'interrogation'. Unsurprisingly the process of forming detailed, context-heavy and thought-through prompts aided greatly my own learning process. An unexpected benefit of my proof-reading and checking of the Python was that it mimics pair-programming, exercising the important skill of reading code not written by myself. 
-  In future, I'd be interested to apply a BDD and TDD approach with an LLM, such that unit tests would be pre-written.
+  In future, I'd be interested to apply a BDD and TDD approach with an LLM, such that unit tests would be pre-written. 
+  The way I've used it could possibly be referred to as "vibe coding" in some parts (although the precise definition of 
+  this term is not yet universally agreed on). According to how Andrew Ng defines "agentic" methods, the manner of some 
+  of my uses of an LLM here could be described as agentic but with a relatively low degree of autonomy, potentially 
+  just 'prompt-chaining'.
 
   All the following unused skeleton scripts in [unused_DL_model_training](src/unused_DL_model_training) dir were completely written by an LLM.
 
